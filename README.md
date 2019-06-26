@@ -1,2 +1,20 @@
-# GettingStarted_Examples
-This repository contains a collection of reference designs ans software application to get starter with Accelize Distribution Platform
+# Accelize Getting Started
+
+Welcome to the Accelize getting Started repository.
+
+This repository contains examples designs and application example to get you started with the Accelize Distribution Platform.
+
+1. **Hardware** - DRM Integration in your ip or design
+2. **Software** - Execute the DRM Library anywhere
+
+
+
+### 1. Hardware
+A collection of example designs covering the DRM IPs integration in various development environments.
+
+### 2. Software
+A collection of example applications demonstrating how to use the DRM Library in various execution environments such as CSPs (AWS, Nimbix, Alibaba, Huawei, ...) or on-premise (Alveo U2XX, ...)
+
+
+### Support
+For any issue or remark, please contact [support@accelize.com](mailto:support@accelize.com)
