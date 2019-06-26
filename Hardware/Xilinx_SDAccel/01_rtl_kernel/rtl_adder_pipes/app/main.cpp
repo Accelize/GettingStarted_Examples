@@ -1,21 +1,16 @@
 /**********
 Copyright (c) 2018, Xilinx, Inc.
 All rights reserved.
-
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
-
 1. Redistributions of source code must retain the above copyright notice,
 this list of conditions and the following disclaimer.
-
 2. Redistributions in binary form must reproduce the above copyright notice,
 this list of conditions and the following disclaimer in the documentation
 and/or other materials provided with the distribution.
-
 3. Neither the name of the copyright holder nor the names of its contributors
 may be used to endorse or promote products derived from this software
 without specific prior written permission.
-
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -30,12 +25,59 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*******************************************************************************
 Description: SDx Vector Addition using Blocking Pipes Operation
 *******************************************************************************/
+#include <CL/opencl.h>
+
+#define CL_HPP_CL_1_2_DEFAULT_BUILD
+#define CL_HPP_TARGET_OPENCL_VERSION 120
+#define CL_HPP_MINIMUM_OPENCL_VERSION 120
+#define CL_HPP_ENABLE_PROGRAM_CONSTRUCTION_FROM_ARRAY_COMPATIBILITY 1
+#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
+
+#define OCL_CHECK(error,call)                                       \
+    call;                                                           \
+    if (error != CL_SUCCESS) {                                      \
+      printf("%s:%d Error calling " #call ", error code is: %d\n",  \
+              __FILE__,__LINE__, error);                            \
+      exit(EXIT_FAILURE);                                           \
+    } 
+
+#include <vector>
+#include <CL/cl2.hpp>
+#include <iostream>
+#include <fstream>
+#include <CL/cl_ext_xilinx.h>
+
+#include <cstdio>
+#include <cstdlib>
+#include <unistd.h>
+
+
+char* read_binary_file(const std::string &xclbin_file_name, unsigned &nb) 
+{
+    std::cout << "INFO: Reading " << xclbin_file_name << std::endl;
+
+	if(access(xclbin_file_name.c_str(), R_OK) != 0) {
+		printf("ERROR: %s xclbin not available please build\n", xclbin_file_name.c_str());
+		exit(EXIT_FAILURE);
+	}
+    //Loading XCL Bin into char buffer 
+    std::cout << "Loading: '" << xclbin_file_name.c_str() << "'\n";
+    std::ifstream bin_file(xclbin_file_name.c_str(), std::ifstream::binary);
+    bin_file.seekg (0, bin_file.end);
+    nb = bin_file.tellg();
+    bin_file.seekg (0, bin_file.beg);
+    char *buf = new char [nb];
+    bin_file.read(buf, nb);
+    std::cout << "INFO: Reading " << xclbin_file_name  << "done!" << std::endl;
+    return buf;
+}
+
 
 #define DATA_SIZE 4096
 #define INCR_VALUE 10
 
-#include "xcl2.hpp"
 #include <vector>
+using namespace std;
 
 int main(int argc, char** argv)
 {
@@ -49,9 +91,9 @@ int main(int argc, char** argv)
     //Allocate Memory in Host Memory
     size_t vector_size_bytes = sizeof(int) * DATA_SIZE;
 
-    std::vector<int,aligned_allocator<int>> source_input     (DATA_SIZE);
-    std::vector<int,aligned_allocator<int>> source_hw_results(DATA_SIZE);
-    std::vector<int,aligned_allocator<int>> source_sw_results(DATA_SIZE);
+   int source_input     [DATA_SIZE];
+   int source_hw_results[DATA_SIZE];
+   int source_sw_results[DATA_SIZE];
 
     // Create the test data and Software Result 
     for(int i = 0 ; i < DATA_SIZE ; i++){
@@ -64,15 +106,25 @@ int main(int argc, char** argv)
     cl_int err;
     unsigned fileBufSize;
     //Create Program and Kernels.
-    std::vector<cl::Device> devices = xcl::get_xil_devices();
+    //std::vector<cl::Device> devices = xcl::get_xil_devices();
+    //cl::Device device = devices[0];
+    
+    /* Get platform/device information */
+    std::vector<cl::Platform> platforms;    
+    err = cl::Platform::get(&platforms);
+    cl::Platform platform = platforms[0];
+    
+    std::vector<cl::Device> devices;
+    err = platform.getDevices(CL_DEVICE_TYPE_ACCELERATOR, &devices);
     cl::Device device = devices[0];
+    /*****************/
 
     OCL_CHECK(err, cl::Context context(device, NULL, NULL, NULL, &err));
     OCL_CHECK(err, cl::CommandQueue q(context, device,
             CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE | CL_QUEUE_PROFILING_ENABLE, &err));
     std::string device_name = device.getInfo<CL_DEVICE_NAME>(); 
 
-    char* fileBuf = xcl::read_binary_file(binaryFile, fileBufSize);
+    char* fileBuf = read_binary_file(binaryFile, fileBufSize);
     cl::Program::Binaries bins{{fileBuf, fileBufSize}};
     devices.resize(1);
     OCL_CHECK(err, cl::Program program(context, devices, bins, NULL, &err));
@@ -82,9 +134,9 @@ int main(int argc, char** argv)
     
     //Allocate Buffer in Global Memory
     OCL_CHECK(err, cl::Buffer buffer_input (context,CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY, 
-            vector_size_bytes,source_input.data(), &err));
+            vector_size_bytes,source_input, &err));
     OCL_CHECK(err, cl::Buffer buffer_output(context,CL_MEM_USE_HOST_PTR | CL_MEM_WRITE_ONLY, 
-            vector_size_bytes,source_hw_results.data(), &err));
+            vector_size_bytes,source_hw_results, &err));
 
     int inc = INCR_VALUE;
     int size = DATA_SIZE;
@@ -124,7 +176,7 @@ int main(int argc, char** argv)
             std::cout << "i = " << i << " CPU result = " << source_sw_results[i]
                 << " Device result = " << source_hw_results[i] << std::endl;
             match = 1;
-            break;
+            //break;
         }
     }
 
