@@ -5,6 +5,8 @@
       <port name="s_axi_control" mode="slave" range="0x1000" dataWidth="32" portType="addressable" base="0x0"/>
       <port name="p0" mode="read_only" dataWidth="32" portType="stream"/>
       <port name="p1" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip_to_drm" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="drm_to_uip" mode="read_only" dataWidth="32" portType="stream"/>
     </ports>
     <args>
       <arg name="inc" addressQualifier="0" id="0" port="s_axi_control" size="0x4" offset="0x10" hostOffset="0x0" hostSize="0x4" type="int"/>
@@ -15,6 +17,10 @@
   </kernel>
   <pipe name="xcl_pipe_p0" width="0x4" depth="0x20" linkage="internal"/>
   <pipe name="xcl_pipe_p1" width="0x4" depth="0x20" linkage="internal"/>
+  <pipe name="pipe_drm_to_uip0" width="0x4" depth="20" linkage="internal"/>
+  <pipe name="pipe_uip0_to_drm" width="0x4" depth="20" linkage="internal"/>
   <connection srcInst="krnl_adder_stage_rtl" srcPort="p0" dstInst="xcl_pipe_p0" dstPort="M_AXIS" srcType="kernel" dstType="pipe"/>
   <connection srcInst="krnl_adder_stage_rtl" srcPort="p1" dstInst="xcl_pipe_p1" dstPort="S_AXIS" srcType="kernel" dstType="pipe"/>
+  <connection srcInst="krnl_adder_stage_rtl" srcPort="drm_to_uip" dstInst="pipe_drm_to_uip0" dstPort="M_AXIS" srcType="kernel" dstType="pipe"/>
+  <connection srcInst="krnl_adder_stage_rtl" srcPort="uip_to_drm" dstInst="pipe_uip0_to_drm" dstPort="S_AXIS" srcType="kernel" dstType="pipe"/>
 </root>

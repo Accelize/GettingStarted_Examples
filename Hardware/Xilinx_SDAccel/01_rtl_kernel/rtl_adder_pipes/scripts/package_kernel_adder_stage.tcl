@@ -38,6 +38,16 @@ set path_to_tmp_project "./tmp_kernel_pack_2_${suffix}"
 
 create_project -force kernel_pack $path_to_tmp_project 
 add_files -norecurse [glob $path_to_hdl/*.v $path_to_hdl/*.sv]
+
+# Accelize #####################################################
+set path_to_drm_hdk "./src/drm_hdk"
+read_vhdl [ glob $path_to_drm_hdk/common/vhdl/xilinx/*.vhdl ] -library drm_library
+read_vhdl [ glob $path_to_drm_hdk/activator0/rtl/*.vhdl ] -library drm_library
+read_verilog [ glob $path_to_drm_hdk/activator0/rtl/*.v ]
+#read_verilog [glob $path_to_hdl/*.v]
+set_property top krnl_adder_stage_rtl [current_fileset]
+# Accelize #####################################################
+
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 ipx::package_project -root_dir $path_to_packaged -vendor xilinx.com -library RTLKernel -taxonomy /KernelIP -import_files -set_current false
@@ -53,6 +63,8 @@ ipx::create_xgui_files [ipx::current_core]
 ipx::associate_bus_interfaces -busif s_axi_control -clock ap_clk [ipx::current_core]
 ipx::associate_bus_interfaces -busif p0 -clock ap_clk [ipx::current_core]
 ipx::associate_bus_interfaces -busif p1 -clock ap_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif drm_to_uip -clock ap_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif uip_to_drm -clock ap_clk [ipx::current_core]
 set_property xpm_libraries {XPM_CDC XPM_MEMORY XPM_FIFO} [ipx::current_core]
 set_property supported_families { } [ipx::current_core]
 set_property auto_family_support_level level_2 [ipx::current_core]

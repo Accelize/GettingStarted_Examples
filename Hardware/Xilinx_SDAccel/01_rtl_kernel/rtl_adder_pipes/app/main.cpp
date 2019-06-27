@@ -41,25 +41,34 @@ Description: SDx Vector Addition using Blocking Pipes Operation
       exit(EXIT_FAILURE);                                           \
     } 
 
+#define DATA_SIZE 4096
+#define INCR_VALUE 10
+
 #include <vector>
 #include <CL/cl2.hpp>
 #include <iostream>
 #include <fstream>
 #include <CL/cl_ext_xilinx.h>
-
+#include <xclhal2.h>
 #include <cstdio>
 #include <cstdlib>
 #include <unistd.h>
+#include <vector>
+using namespace std;
 
+xclDeviceHandle boardHandler;
 
+/**
+ * read_binary_file
+ */
 char* read_binary_file(const std::string &xclbin_file_name, unsigned &nb) 
 {
     std::cout << "INFO: Reading " << xclbin_file_name << std::endl;
 
-	if(access(xclbin_file_name.c_str(), R_OK) != 0) {
-		printf("ERROR: %s xclbin not available please build\n", xclbin_file_name.c_str());
-		exit(EXIT_FAILURE);
-	}
+    if(access(xclbin_file_name.c_str(), R_OK) != 0) {
+        printf("ERROR: %s xclbin not available please build\n", xclbin_file_name.c_str());
+        exit(EXIT_FAILURE);
+    }
     //Loading XCL Bin into char buffer 
     std::cout << "Loading: '" << xclbin_file_name.c_str() << "'\n";
     std::ifstream bin_file(xclbin_file_name.c_str(), std::ifstream::binary);
@@ -72,13 +81,36 @@ char* read_binary_file(const std::string &xclbin_file_name, unsigned &nb)
     return buf;
 }
 
+/*
+ * DRMLib Read Callback Function
+ */
+int32_t drm_read_callback(uint32_t addr, uint32_t *value)
+{   
+    int ret = (int)xclRead(boardHandler, XCL_ADDR_KERNEL_CTRL, DRM_BASE_ADDRESS+addr, value, 4);
+    if(ret <= 0) {
+        std::cout << __FUNCTION__ << ": Unable to read from the fpga ! ret = " << ret << std::endl;
+        return 1;
+    }
+    return 0;
+}
 
-#define DATA_SIZE 4096
-#define INCR_VALUE 10
+/*
+ * DRMLib Write Callback Function
+ */
+int32_t drm_write_callback(uint32_t addr, uint32_t value)
+{
+    int ret = (int)xclWrite(boardHandler, XCL_ADDR_KERNEL_CTRL, DRM_BASE_ADDRESS+addr, &value, 4);
+    if(ret <= 0) {
+        std::cout << __FUNCTION__ << ": Unable to write to the fpga ! ret=" << ret << std::endl;
+        return 1;
+    }
+    return 0;
+}
 
-#include <vector>
-using namespace std;
 
+/**
+ * Entry point
+ */
 int main(int argc, char** argv)
 {
     if (argc != 2) {
@@ -105,11 +137,8 @@ int main(int argc, char** argv)
 //OPENCL HOST CODE AREA START
     cl_int err;
     unsigned fileBufSize;
-    //Create Program and Kernels.
-    //std::vector<cl::Device> devices = xcl::get_xil_devices();
-    //cl::Device device = devices[0];
     
-    /* Get platform/device information */
+    //Get platform/device information
     std::vector<cl::Platform> platforms;    
     err = cl::Platform::get(&platforms);
     cl::Platform platform = platforms[0];
@@ -117,7 +146,6 @@ int main(int argc, char** argv)
     std::vector<cl::Device> devices;
     err = platform.getDevices(CL_DEVICE_TYPE_ACCELERATOR, &devices);
     cl::Device device = devices[0];
-    /*****************/
 
     OCL_CHECK(err, cl::Context context(device, NULL, NULL, NULL, &err));
     OCL_CHECK(err, cl::CommandQueue q(context, device,
@@ -128,6 +156,37 @@ int main(int argc, char** argv)
     cl::Program::Binaries bins{{fileBuf, fileBufSize}};
     devices.resize(1);
     OCL_CHECK(err, cl::Program program(context, devices, bins, NULL, &err));
+    
+    // Init xclhal2 library
+    if(xclProbe() < 1) {
+        std::cout << "[ERROR] xclProbe failed ..." << std::endl;
+        return -1;
+    }
+    boardHandler = xclOpen(0, "xclhal2_logfile.log", XCL_ERROR);
+    if(boardHandler == NULL) {
+        std::cout << "[ERROR] xclOpen failed ..." << std::endl;
+        return -1;
+    }
+    
+//ACCELIZE DRMLIB CODE AREA START      
+    DrmManager *pDrmManag = new DrmManager(
+        std::string("conf.json"),
+        std::string("cred.json"),
+        [&]( uint32_t  offset, uint32_t * value) {      /*Read DRM register*/
+            return  drm_read_callback(offset, value);
+        },
+        [&]( uint32_t  offset, uint32_t value) {        /*Write DRM register*/
+            return drm_write_callback(offset, value);
+        },
+        [&]( const  std::string & err_msg) {
+           std::cerr  << err_msg << std::endl;
+        }
+    );
+    std::cout << "[DRMLIB] Start Session .." << std::endl;
+    pDrmManag->activate();
+//ACCELIZE DRMLIB CODE AREA STOP
+    
+    //Create Kernels
     OCL_CHECK(err, cl::Kernel krnl_adder_stage(program,"krnl_adder_stage_rtl", &err));
     OCL_CHECK(err, cl::Kernel krnl_input_stage(program,"krnl_input_stage_rtl", &err));
     OCL_CHECK(err, cl::Kernel krnl_output_stage(program,"krnl_output_stage_rtl", &err));
@@ -167,6 +226,14 @@ int main(int argc, char** argv)
     OCL_CHECK(err, err = q.finish());
 
 //OPENCL HOST CODE AREA END
+
+//ACCELIZE DRMLIB CODE AREA START
+    std::cout << "[DRMLIB] Stop Session .." << std::endl;
+    pDrmManag->deactivate();
+//ACCELIZE DRMLIB CODE AREA STOP
+
+    // Release xclhal2 board handler
+    xclClose(boardHandler);
     
     // Compare the results of the Device to the simulation
     int match = 0;
