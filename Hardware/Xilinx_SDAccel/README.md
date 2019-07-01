@@ -6,7 +6,7 @@ Each of them shows a different context in which one could integrate the Accelize
 
 | Name                       | Description                            | Status      |
 | -------------------------- |--------------------------------------- |:----------: |
-| 01_rtl_kernel              | How to add DRM IPs in an RTL kernel    | Testing     |
+| 01_rtl_kernel              | How to add DRM IPs in an RTL kernel    | Tested OK with 2019.1     |
 | 02_c_kernel                | How to add DRM IPs in an C kernel      | Coming soon |
 | 03_ocl_kernel              | How to add DRM IPs in an OpenCL kernel | Coming soon |
 | 04_mixed_c_rtl_kernels     | How to add DRM IPs in multiple kernels | Coming soon |
@@ -28,8 +28,6 @@ Each of them shows a different context in which one could integrate the Accelize
 ### How to run compile & run application
 Prerequisites:
  * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
- *
-
-* Edit cred.json
-* Edit conf.json to change "boardType" and "frequency" parameters [Optional]
-* cc
+ * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
+ * Replace "app/cred.json" with your Access Key
+ * Edit "conf.json" to change "boardType" and "frequency" parameters [Optional]

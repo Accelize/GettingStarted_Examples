@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root versionMajor="1" versionMinor="0">
-  <kernel name="drm_controller_axi4st" language="ip" vlnv="accelize.com:hdk:drm_controller_axi4st:1.0" attributes="" preferredWorkGroupSizeMultiple="0" workGroupSize="1" debug="true" compileOptions=" -g" profileType="none">
+  <kernel name="drm_controller_axi4st" language="ip_c" vlnv="accelize.com:hdk:drm_controller_axi4st:1.0" attributes="" preferredWorkGroupSizeMultiple="0" workGroupSize="1" interrupt="false">
     <ports>
-      <port name="m_axi" mode="slave" range="0x1000" dataWidth="32" portType="addressable" base="0x0"/>
+      <port name="s_axi_control" mode="slave" range="0x1000" dataWidth="32" portType="addressable" base="0x0"/>
       <port name="drm_to_uip0" mode="write_only" dataWidth="32" portType="stream"/>
       <port name="uip0_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
     </ports>

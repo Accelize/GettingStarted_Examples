@@ -43,6 +43,7 @@ Description: SDx Vector Addition using Blocking Pipes Operation
 
 #define DATA_SIZE 4096
 #define INCR_VALUE 10
+#define DRM_BASE_ADDRESS 0x1C00000
 
 #include <vector>
 #include <CL/cl2.hpp>
@@ -55,6 +56,10 @@ Description: SDx Vector Addition using Blocking Pipes Operation
 #include <unistd.h>
 #include <vector>
 using namespace std;
+
+// Accelize DRMLib
+#include "accelize/drm.h"
+using namespace Accelize::DRM;
 
 xclDeviceHandle boardHandler;
 
@@ -77,7 +82,7 @@ char* read_binary_file(const std::string &xclbin_file_name, unsigned &nb)
     bin_file.seekg (0, bin_file.beg);
     char *buf = new char [nb];
     bin_file.read(buf, nb);
-    std::cout << "INFO: Reading " << xclbin_file_name  << "done!" << std::endl;
+    std::cout << "INFO: Reading " << xclbin_file_name  << " done!" << std::endl;
     return buf;
 }
 

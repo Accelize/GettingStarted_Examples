@@ -17,7 +17,7 @@ XRT_LIBDIR  := -L$(XRT_ROOT)/lib
 XRT_LIB := -lxrt_core -lxilinxopencl -lOpenCL
 
 # Accelize DRMLib
-#XLZDRM_LIB = -laccelize_drm
+XLZDRM_LIB = -laccelize_drm
 
 SRCS := $(wildcard *.$(CXX_EXT))
 OBJS := $(patsubst %.$(CXX_EXT), %.o, $(SRCS))
