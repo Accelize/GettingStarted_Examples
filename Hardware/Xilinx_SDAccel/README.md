@@ -31,3 +31,6 @@ Prerequisites:
  * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
  * Replace "app/cred.json" with your Access Key
  * Edit "conf.json" to change "boardType" and "frequency" parameters [Optional]
+ * In a terminal:
+   *  export LD_LIBRARY_PATH=/opt/xilinx/xrt/lib:/usr/local/lib:/usr/local/lib64
+   *  ./app {path_to_xclbin}

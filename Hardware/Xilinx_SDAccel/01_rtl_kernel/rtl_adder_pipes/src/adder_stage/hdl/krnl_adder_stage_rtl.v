@@ -98,7 +98,7 @@ inst_krnl_adder_stage_rtl_int (
   .p0_TDATA               ( p0_TDATA ),
   .p0_TVALID              ( p0_TVALID ),
   .p0_TREADY              ( p0_TREADY ),
-  .p1_TDATA               ( p1_TDATA ),
+  .p1_TDATA               ( p1_TDATA_int ),
   .p1_TVALID              ( p1_TVALID ),
   .p1_TREADY              ( p1_TREADY ),
   .s_axi_control_AWVALID  ( s_axi_control_AWVALID ),
@@ -126,7 +126,9 @@ wire            s_activation_code_ready;
 reg  [127:0]    s_tmp;
 reg             s_activated;
 wire            usage_unit_event;
+wire [C_DATA_WIDTH-1:0]     p1_TDATA_int;
 
+assign p1_TDATA           = s_activated ? p1_TDATA_int : {(C_DATA_WIDTH-1){1'b0}};
 assign usage_unit_event   = ap_rst_n && p0_TVALID && p0_TREADY; 
     
 // Activation Process
