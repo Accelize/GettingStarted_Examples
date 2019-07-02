@@ -1,0 +1,11 @@
+{
+  "design": {
+    "udid": "6AE1A700-0000-0000-0000-000000000001",
+    "boardType": "DRM_200"
+  },
+  "drm": { 
+    "mode": "nodelocked", 
+    "license_dir": "nl_licenses" 
+  } 
+}
+
