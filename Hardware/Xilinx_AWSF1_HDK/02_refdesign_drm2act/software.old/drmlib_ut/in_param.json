@@ -1,7 +1,0 @@
-{
-    "comment":"type 0:metering 1:nodelock - env 0:dev 1:prod",
-    "nb_boards" : 2,
-    "session_type" : 0,
-    "env" : 1,
-    "coin" : 10
-}
