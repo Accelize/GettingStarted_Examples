@@ -7,9 +7,8 @@ The following example design are based on [AWS-FPGA examples](https://github.com
 | Name                 | Description            | Status                                        | Internal AFI/AGFI                             |
 | ---------------------|------------------------|:--------------------------------------------: |:--------------------------------------------: | 
 | 01_refdesign_drm1act | 1 DRM Ctrl + 1 IP Act. | Tested OK with AMI v1.6.0 (Xilinx SDx 2018.3) | afi-0a09954be312fdd1c agfi-0585dc9e79690e5d3  |
-| 02_refdesign_drm2act | 1 DRM Ctrl + 2 IP Act. | Coming soon                                   | afi-05176f55a4bd18924 agfi-0a019c155b0c932c7  |
+| 02_refdesign_drm2act | 1 DRM Ctrl + 2 IP Act. | Tested OK with AMI v1.6.0 (Xilinx SDx 2018.3) | afi-03a6a6a3c86de8dda agfi-0e93c57fa7261b714  |
 
-**Note:** Each design example folder contains an "output.ref" folder containing prebuilt xilinx objects and bitstreams for reference. 
 
 ### How to synthesize the example designs
 
@@ -25,5 +24,4 @@ The following example design are based on [AWS-FPGA examples](https://github.com
  * Edit "conf.json" to change "boardType" and "frequency" parameters [Optional]
  * In a terminal:
    * sudo fpga-load-local-image -S 0 -I ${YOUR-AGFI-ID}
-   *  sudo ./app
-
+   * sudo ./app

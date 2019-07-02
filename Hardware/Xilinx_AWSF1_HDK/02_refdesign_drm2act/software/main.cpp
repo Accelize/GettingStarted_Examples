@@ -198,25 +198,6 @@ int main(int argc, char **argv)
     }
     else
         std::cout << __FUNCTION__ << ": Successfully attached PCIe handler on slot id 0" << std::endl;
-    
-    for(unsigned int j=0; j<5; j++) {
-        for(unsigned int i=0; i<0x70; i+=4) {
-            uint32_t val=0;
-            drm_read_callback(handle, i+(j*0x10000), &val);
-            printf("i=0x%X val=0x%X\n", i+(j*0x10000), val);
-        }
-        printf("\n");
-    }
-    //for(unsigned int i=0; i<0x70; i+=4) {
-    //    uint32_t val=0;
-    //    drm_read_callback(handle, i+0x10000, &val);
-    //    printf("i=0x%X val=0x%X\n", i+0x10000, val);
-    //}
-    //for(unsigned int i=0; i<0x70; i+=4) {
-    //    uint32_t val=0;
-    //    drm_read_callback(handle, i+0x20000, &val);
-    //    printf("i=0x%X val=0x%X\n", i+0x20000, val);
-    //}
 
  //ACCELIZE DRMLIB CODE AREA START      
     DrmManager *pDrmManag = new DrmManager(

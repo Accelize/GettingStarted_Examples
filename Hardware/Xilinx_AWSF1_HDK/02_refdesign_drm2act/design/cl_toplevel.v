@@ -40,7 +40,7 @@ end
 
 // AXI4-Lite interfaces
 wire [16-1:0]                           m_axi_LSB_awaddr        ;
-wire [16-1:0]                           m_axi_UNUSED1_awadd     ;
+wire [16-1:0]                           m_axi_UNUSED1_awaddr    ;
 wire [16-1:0]                           m_axi_UNUSED2_awaddr    ;
 wire [16-1:0]                           m_axi_LSB_araddr        ;
 wire [16-1:0]                           m_axi_UNUSED1_araddr    ;
