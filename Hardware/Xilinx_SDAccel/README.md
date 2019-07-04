@@ -1,7 +1,7 @@
 # Accelize Getting Started
 ## Xilinx SDAccel example designs
 
-The following example design are based on [Xilinx SDAccel examples](https://github.com/Xilinx/SDAccel_Examples)
+The following example designs are based on [Xilinx SDAccel examples](https://github.com/Xilinx/SDAccel_Examples)
 Each of them shows a different context in which one could integrate the Accelize DRM IPs
 
 | Name                       | Description                            | Status      |

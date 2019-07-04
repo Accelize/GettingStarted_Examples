@@ -17,11 +17,15 @@ The following example design are based on [AWS-FPGA examples](https://github.com
 * Follow the instructions from [AWS-FPGA GitHub](https://github.com/aws/aws-fpga/tree/master/hdk#how-to-create-an-amazon-fpga-image-afi-from-one-of-the-cl-examples-step-by-step-guide)
 
 ### How to run compile & run application
- * Install [Accelize DRM Library](https://github.com/Accelize/drmlib)
- * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
- * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
- * Replace "software/cred.json" with your Access Key
- * Edit "conf.json" to change "boardType" and "frequency" parameters [Optional]
- * In a terminal:
-   * sudo fpga-load-local-image -S 0 -I ${YOUR-AGFI-ID}
-   * sudo ./app
+* **Prerequisites**:
+  * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
+  * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
+  * Replace "software/cred.json" with your Access Key
+  * Edit "software/conf.json" to change "boardType" and "frequency" parameters [Optional]
+
+* **Execution:**
+  * cd software
+  * Compile using "make clean all"
+  * In a terminal:
+    * sudo fpga-load-local-image -S 0 -I ${YOUR-AGFI-ID}
+    * sudo ./app
