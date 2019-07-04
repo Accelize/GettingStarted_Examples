@@ -40,9 +40,9 @@ Each of them shows a different context in which one could integrate the Accelize
     * ./app {path-to-xclbin}
     
 * **AWS F1 Instances (Cloud Execution):**
- * cd app/02_AWS_F1
- * Compile using "make clean all"
- * In a terminal:
-   * sudo sh
-   * source /opt/xilinx/xrt/setup.sh
-   * ./app
+  * cd app/02_AWS_F1
+  * Compile using "make clean all"
+  * In a terminal:
+    * sudo sh
+    * source /opt/xilinx/xrt/setup.sh
+    * ./app
