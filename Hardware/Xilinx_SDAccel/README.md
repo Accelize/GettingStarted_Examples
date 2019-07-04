@@ -6,7 +6,7 @@ Each of them shows a different context in which one could integrate the Accelize
 
 | Name                       | Description                            | Status      |
 | -------------------------- |--------------------------------------- |:----------: |
-| 01_rtl_kernel              | How to add DRM IPs in an RTL kernel    | Tested OK with 2019.1     |
+| 01_rtl_kernel              | How to add DRM IPs in an RTL kernel    | Tested OK with 2018.3 & 2019.1     |
 | 02_c_kernel                | How to add DRM IPs in an C kernel      | Coming soon |
 | 03_ocl_kernel              | How to add DRM IPs in an OpenCL kernel | Coming soon |
 | 04_mixed_c_rtl_kernels     | How to add DRM IPs in multiple kernels | Coming soon |
@@ -26,11 +26,23 @@ Each of them shows a different context in which one could integrate the Accelize
   * run "make" command in terminal
 
 ### How to run compile & run application
-Prerequisites:
- * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
- * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
- * Replace "app/cred.json" with your Access Key
- * Edit "conf.json" to change "boardType" and "frequency" parameters [Optional]
+* **Prerequisites**:
+  * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
+  * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
+  * Replace "app/{your-exec-env}/cred.json" with your Access Key
+  * Edit "app/{your-exec-env}/conf.json" to change "boardType" and "frequency" parameters [Optional]
+
+* **Alveo Boards (On-Premise Execution):**
+  * cd app/01_OnPrem_Alveo
+  * Compile using "make clean all"
+  * In a terminal:
+    * export LD_LIBRARY_PATH=/opt/xilinx/xrt/lib:/usr/local/lib:/usr/local/lib6
+    * ./app {path-to-xclbin}
+    
+* **AWS F1 Instances (Cloud Execution):**
+ * cd app/02_AWS_F1
+ * Compile using "make clean all"
  * In a terminal:
-   *  export LD_LIBRARY_PATH=/opt/xilinx/xrt/lib:/usr/local/lib:/usr/local/lib64
-   *  ./app {path_to_xclbin}
+   * sudo sh
+   * source /opt/xilinx/xrt/setup.sh
+   * ./app
