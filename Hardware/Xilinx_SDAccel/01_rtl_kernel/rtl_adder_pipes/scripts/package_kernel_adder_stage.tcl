@@ -44,7 +44,6 @@ set path_to_drm_hdk "./src/drm_hdk"
 read_vhdl [ glob $path_to_drm_hdk/common/vhdl/xilinx/*.vhdl ] -library drm_library
 read_vhdl [ glob $path_to_drm_hdk/activator0/rtl/*.vhdl ] -library drm_library
 read_verilog [ glob $path_to_drm_hdk/activator0/rtl/*.v ]
-#read_verilog [glob $path_to_hdl/*.v]
 set_property top krnl_adder_stage_rtl [current_fileset]
 # Accelize #####################################################
 

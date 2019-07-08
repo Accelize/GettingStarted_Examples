@@ -1,0 +1,17 @@
+hello_afu.json
+
+common/sv/alteraProprietary/altchip_id_arria10.sv
+common/vhdl/alteraProprietary/drm_all_components.vhd
+controller/drm_controller_ip_axi4st.v
+controller/drm_controller_ip.v
+controller/drm_controller_ip.vhd
+
+User_IP/rtl/activator/rtl/drm_ip_activator_0x1003000e00050001.v
+User_IP/rtl/activator/rtl/drm_ip_activator_0x1003000e00050001.vhd
+User_IP/rtl/activator/rtl/drm_ip_activator_0x1003000e00050001_axi4st.v
+User_IP/rtl/user_ip.v
+
+ccip_axi4lite_bridge.v
+afu.sv
+ccip_interface_reg.sv
+ccip_std_afu.sv
