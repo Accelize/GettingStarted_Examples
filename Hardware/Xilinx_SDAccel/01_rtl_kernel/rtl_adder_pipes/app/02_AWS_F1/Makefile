@@ -31,7 +31,7 @@ XLZDRM_LIB = -laccelize_drm
 # Add current app
 SRCS += $(wildcard *.$(CXX_EXT))
 OBJS += $(patsubst %.$(CXX_EXT), %.o, $(SRCS))
--include $(OBJS:.o=.d)
+
 CXXFLAGS += -g -D_DEBUG -I$(SDK_DIR)/userspace/include $(XRT_INC_DIR) -I/usr/include/jsoncpp
 LDFLAGS += -L$(XRT_LIBDIR)
 LDLIBS += $(XRT_LIB) -laccelize_drm -lxilinxopencl -lOpenCL -lrt -pthread -lstdc++
@@ -39,8 +39,8 @@ LDLIBS += $(XRT_LIB) -laccelize_drm -lxilinxopencl -lOpenCL -lrt -pthread -lstdc
 all : $(EXENAME)
 
 %.o: %.$(CXX_EXT)
-	$(CXX) $(CXXFLAGS) $(MYCFLAGS) $(MYCXXFLAGS) -c $< -o $@
-	$(CXX) $(CXXFLAGS) $(MYCFLAGS) $(MYCXXFLAGS) -c -MM $< -o $(patsubst %.o, %.d, $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c -MM $< -o $(patsubst %.o, %.d, $@)
 
 $(EXENAME): $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS) 

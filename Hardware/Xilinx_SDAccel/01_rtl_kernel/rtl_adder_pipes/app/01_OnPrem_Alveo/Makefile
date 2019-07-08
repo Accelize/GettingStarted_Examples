@@ -21,7 +21,6 @@ XLZDRM_LIB = -laccelize_drm
 
 SRCS := $(wildcard *.$(CXX_EXT))
 OBJS := $(patsubst %.$(CXX_EXT), %.o, $(SRCS))
--include $(OBJS:.o=.d)
 
 CXXFLAGS += -Iinclude -I$(SDK_DIR)/userspace/include -I/usr/include/jsoncpp
 LDFLAGS += 
@@ -32,15 +31,15 @@ ifeq ($(DEBUG),1)
 CXXFLAGS += -g -DDEBUG
 endif
 
-CXXFLAGS += -Iinclude/xclhal2 $(XRT_INC_DIR)
+CXXFLAGS += $(XRT_INC_DIR)
 LDFLAGS += $(XRT_LIBDIR)
 LDLIBS += $(XRT_LIB) $(XLZDRM_LIB)
 
 all: $(EXENAME)
 
 %.o: %.$(CXX_EXT)
-	$(CXX) $(CXXFLAGS) $(MYCFLAGS) $(MYCXXFLAGS) $(CSP) $(NLPROV) -c $< -o $@
-	$(CXX) $(CXXFLAGS) $(MYCFLAGS) $(MYCXXFLAGS) -c -MM $< -o $(patsubst %.o, %.d, $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c -MM $< -o $(patsubst %.o, %.d, $@)
 
 $(EXENAME): $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(LDFLAGS) $(LDLIBS) 

@@ -52,9 +52,10 @@ Each of them shows a different context in which one could integrate the Accelize
 * **Alibaba Cloud F3 Instances (Cloud Execution):**
   * Create the FPGA image and program the FPGA with it as described in [steps 4 & 5 of the documentation](https://www.alibabacloud.com/help/doc-detail/61412.htm?spm=a2c63.p38356.a1.2.64977f7aRUG0s1)
   * cd app/03_AlibabaCloud_F3
+  * source /root/xbinst_oem/setup_ocl.sh
   * Compile using "make clean all"
   * In a terminal:
-    * sudo LD_LIBRARY_PATH=/opt/dcp1_1/hw/samples/drm_1activator/sw:/opt/dcp1_1/opencl/opencl_bsp/linux64/driver:/opt/dcp1_1/opencl/opencl_bsp/linux64/lib:/opt/intelFPGA_pro/17.1/hld/host/linux64/lib ./<YOUR_BINARY>
+    * 
   
 * **Huawei Cloud FP1 Instances (Cloud Execution):**
   * Create the FPGA image and program the FPGA with it as described in [the documentation](https://github.com/huaweicloud/huaweicloud-fpga/tree/master/fp1#uploading-and-registration)
