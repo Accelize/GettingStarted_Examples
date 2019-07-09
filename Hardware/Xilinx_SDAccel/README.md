@@ -30,6 +30,7 @@ Each of them shows a different context in which one could integrate the Accelize
 * **Prerequisites**:
   * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
   * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
+  * Install [Accelize DRM Library](http://accelize.s3-website-eu-west-1.amazonaws.com/documentation/stable/drm_library_installation.html#installation-from-packages) version 2.2 or higher
   * Replace "app/{your-exec-env}/cred.json" with your Access Key
   * Edit "app/{your-exec-env}/conf.json" to change "boardType" and "frequency" parameters [Optional]
 
@@ -48,21 +49,7 @@ Each of them shows a different context in which one could integrate the Accelize
     * sudo sh
     * source /opt/xilinx/xrt/setup.sh
     * ./app
-    
-* **Alibaba Cloud F3 Instances (Cloud Execution):**
-  * Create the FPGA image and program the FPGA with it as described in [steps 4 & 5 of the documentation](https://www.alibabacloud.com/help/doc-detail/61412.htm?spm=a2c63.p38356.a1.2.64977f7aRUG0s1)
-  * cd app/03_AlibabaCloud_F3
-  * source /root/xbinst_oem/setup_ocl.sh
-  * Compile using "make clean all"
-  * In a terminal:
-    * 
-  
-* **Huawei Cloud FP1 Instances (Cloud Execution):**
-  * Create the FPGA image and program the FPGA with it as described in [the documentation](https://github.com/huaweicloud/huaweicloud-fpga/tree/master/fp1#uploading-and-registration)
-  * cd app/04_HuaweiCloud_FP1
-  * Compile using "make clean all"
-  * In a terminal:
-    * 
+
  
     
 
