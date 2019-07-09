@@ -1,13 +1,15 @@
 # Accelize Getting Started
 ## Xilinx SDAccel Python API
 
-The following API is supposed to be used with Accelize SDAccel example ["rtl_kernel/rtl_adder_pipes"](https://github.com/Accelize/GettingStarted_Examples/tree/master/Hardware/Xilinx_SDAccel/01_rtl_kernel/rtl_adder_pipes)
+The following API is meant to be used with Accelize SDAccel example ["rtl_kernel/rtl_adder_pipes"](https://github.com/Accelize/GettingStarted_Examples/tree/master/Hardware/Xilinx_SDAccel/01_rtl_kernel/rtl_adder_pipes)
 
 ### Folder Structure
 * **xrt_python_binding/**
   * Python binding for XRT, based on [Xilinx GitHub Python Wrappers](https://github.com/Xilinx/XRT/tree/master/src/python) 
 * **main.py**
   * Python equivalent to "main.cpp" source file 
+* **conf.json** and **cred.json**
+  * Configuration files for the DRM Library
 
 
 ### How to run application
