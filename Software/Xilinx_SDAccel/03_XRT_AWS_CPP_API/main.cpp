@@ -1,16 +1,21 @@
 /**********
 Copyright (c) 2018, Xilinx, Inc.
 All rights reserved.
+
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
+
 1. Redistributions of source code must retain the above copyright notice,
 this list of conditions and the following disclaimer.
+
 2. Redistributions in binary form must reproduce the above copyright notice,
 this list of conditions and the following disclaimer in the documentation
 and/or other materials provided with the distribution.
+
 3. Neither the name of the copyright holder nor the names of its contributors
 may be used to endorse or promote products derived from this software
 without specific prior written permission.
+
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -25,36 +30,14 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /*******************************************************************************
 Description: SDx Vector Addition using Blocking Pipes Operation
 *******************************************************************************/
-
-#define CL_HPP_CL_1_2_DEFAULT_BUILD
-#define CL_HPP_TARGET_OPENCL_VERSION 120
-#define CL_HPP_MINIMUM_OPENCL_VERSION 120
-#define CL_HPP_ENABLE_PROGRAM_CONSTRUCTION_FROM_ARRAY_COMPATIBILITY 1
-#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
-#include <CL/opencl.h>
-
-#define OCL_CHECK(error,call)                                       \
-    call;                                                           \
-    if (error != CL_SUCCESS) {                                      \
-      printf("%s:%d Error calling " #call ", error code is: %d\n",  \
-              __FILE__,__LINE__, error);                            \
-      exit(EXIT_FAILURE);                                           \
-    } 
-
 #define DATA_SIZE 4096
 #define INCR_VALUE 10
-#define DRM_BASE_ADDRESS 0x1C00000
+#define DRM_BASE_ADDRESS 0x0000000
 
+#include "xcl2.hpp"
 #include <vector>
-#include <CL/cl2.hpp>
-#include <iostream>
-#include <fstream>
-#include <CL/cl_ext_xilinx.h>
 #include <xclhal2.h>
-#include <cstdio>
-#include <cstdlib>
-#include <unistd.h>
-#include <vector>
+
 using namespace std;
 
 // Accelize DRMLib
@@ -63,38 +46,25 @@ using namespace Accelize::DRM;
 
 xclDeviceHandle boardHandler;
 
-/**
- * read_binary_file
- */
-char* read_binary_file(const std::string &xclbin_file_name, unsigned &nb) 
-{
-    std::cout << "INFO: Reading " << xclbin_file_name << std::endl;
-
-    if(access(xclbin_file_name.c_str(), R_OK) != 0) {
-        printf("ERROR: %s xclbin not available please build\n", xclbin_file_name.c_str());
-        exit(EXIT_FAILURE);
-    }
-    //Loading XCL Bin into char buffer 
-    std::cout << "Loading: '" << xclbin_file_name.c_str() << "'\n";
-    std::ifstream bin_file(xclbin_file_name.c_str(), std::ifstream::binary);
-    bin_file.seekg (0, bin_file.end);
-    nb = bin_file.tellg();
-    bin_file.seekg (0, bin_file.beg);
-    char *buf = new char [nb];
-    bin_file.read(buf, nb);
-    std::cout << "INFO: Reading " << xclbin_file_name  << " done!" << std::endl;
-    return buf;
-}
+using std::vector;
 
 /*
  * DRMLib Read Callback Function
  */
 int32_t drm_read_callback(uint32_t addr, uint32_t *value)
-{   
+{  
+    if(xclLockDevice(boardHandler)) {
+        std::cout << "[ERROR] xclLock failed ..." << std::endl;
+        return 1;
+    }
     int ret = (int)xclRead(boardHandler, XCL_ADDR_KERNEL_CTRL, DRM_BASE_ADDRESS+addr, value, 4);
     if(ret <= 0) {
         std::cout << __FUNCTION__ << ": Unable to read from the fpga ! ret = " << ret << std::endl;
         return 1;
+    }
+    if(xclUnlockDevice(boardHandler)) {
+        std::cout << "[ERROR] xclUnlock failed ..." << std::endl;
+        return -1;
     }
     return 0;
 }
@@ -104,10 +74,18 @@ int32_t drm_read_callback(uint32_t addr, uint32_t *value)
  */
 int32_t drm_write_callback(uint32_t addr, uint32_t value)
 {
+    if(xclLockDevice(boardHandler)) {
+        std::cout << "[ERROR] xclLock failed ..." << std::endl;
+        return 1;
+    }
     int ret = (int)xclWrite(boardHandler, XCL_ADDR_KERNEL_CTRL, DRM_BASE_ADDRESS+addr, &value, 4);
     if(ret <= 0) {
         std::cout << __FUNCTION__ << ": Unable to write to the fpga ! ret=" << ret << std::endl;
         return 1;
+    }
+    if(xclUnlockDevice(boardHandler)) {
+        std::cout << "[ERROR] xclUnlock failed ..." << std::endl;
+        return -1;
     }
     return 0;
 }
@@ -118,19 +96,12 @@ int32_t drm_write_callback(uint32_t addr, uint32_t value)
  */
 int main(int argc, char** argv)
 {
-    if (argc != 2) {
-        std::cout << "Usage: " << argv[0] << " <XCLBIN File>" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    std::string binaryFile = argv[1];
-
     //Allocate Memory in Host Memory
     size_t vector_size_bytes = sizeof(int) * DATA_SIZE;
 
-   int source_input     [DATA_SIZE];
-   int source_hw_results[DATA_SIZE];
-   int source_sw_results[DATA_SIZE];
+    int source_input     [DATA_SIZE];
+    int source_hw_results[DATA_SIZE];
+    int source_sw_results[DATA_SIZE];
 
     // Create the test data and Software Result 
     for(int i = 0 ; i < DATA_SIZE ; i++){
@@ -141,24 +112,26 @@ int main(int argc, char** argv)
 
 //OPENCL HOST CODE AREA START
     cl_int err;
-    unsigned fileBufSize;
     
-    //Get platform/device information
-    std::vector<cl::Platform> platforms;    
-    err = cl::Platform::get(&platforms);
-    cl::Platform platform = platforms[0];
-    
-    std::vector<cl::Device> devices;
-    err = platform.getDevices(CL_DEVICE_TYPE_ACCELERATOR, &devices);
+    // The get_xil_devices will return vector of Xilinx Devices
+    std::cout << "Starting xcl::get_xil_devices " << std::endl;
+    std::vector<cl::Device> devices = xcl::get_xil_devices();
     cl::Device device = devices[0];
-
+    
+    //Creating Context and Command Queue for selected Device 
     OCL_CHECK(err, cl::Context context(device, NULL, NULL, NULL, &err));
     OCL_CHECK(err, cl::CommandQueue q(context, device,
             CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE | CL_QUEUE_PROFILING_ENABLE, &err));
-    std::string device_name = device.getInfo<CL_DEVICE_NAME>(); 
+    OCL_CHECK(err, std::string device_name = device.getInfo<CL_DEVICE_NAME>(&err));
+    std::cout << "Found Device=" << device_name.c_str() << std::endl;
 
-    char* fileBuf = read_binary_file(binaryFile, fileBufSize);
-    cl::Program::Binaries bins{{fileBuf, fileBufSize}};
+    // import_binary() command will find the OpenCL binary file created using the 
+    // xocc compiler load into OpenCL Binary and return as Binaries
+    // OpenCL and it can contain many functions which can be executed on the
+    // device.
+    std::string binaryFile = xcl::find_binary_file(device_name,"rtl_adder_pipes_drm_aws");
+    std::cout << "binaryFile = " << binaryFile << std::endl;
+    cl::Program::Binaries bins = xcl::import_binary_file(binaryFile);
     devices.resize(1);
     OCL_CHECK(err, cl::Program program(context, devices, bins, NULL, &err));
     
@@ -172,7 +145,7 @@ int main(int argc, char** argv)
         std::cout << "[ERROR] xclOpen failed ..." << std::endl;
         return -1;
     }
-    
+
 //ACCELIZE DRMLIB CODE AREA START      
     DrmManager *pDrmManag = new DrmManager(
         std::string("conf.json"),
@@ -190,7 +163,7 @@ int main(int argc, char** argv)
     std::cout << "[DRMLIB] Start Session .." << std::endl;
     pDrmManag->activate();
 //ACCELIZE DRMLIB CODE AREA STOP
-    
+
     //Create Kernels
     OCL_CHECK(err, cl::Kernel krnl_adder_stage(program,"krnl_adder_stage_rtl", &err));
     OCL_CHECK(err, cl::Kernel krnl_input_stage(program,"krnl_input_stage_rtl", &err));
@@ -252,8 +225,7 @@ int main(int argc, char** argv)
         }
     }
 
-    delete[] fileBuf;
-
     std::cout << "TEST " << (match ? "FAILED" : "PASSED") << std::endl; 
     return (match ? EXIT_FAILURE :  EXIT_SUCCESS);
 }
+
