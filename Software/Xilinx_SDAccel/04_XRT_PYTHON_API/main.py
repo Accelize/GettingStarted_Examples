@@ -3,24 +3,16 @@
 
 # pylint: disable=C0301
 """
-    Accelize Getting Started Exmaple Designs
+    Accelize Getting Started Example Designs
     Python binding
     
-    *******************************************************************************
-    *      Description: SDx Vector Addition using Blocking Pipes Operation        *
-    *******************************************************************************
+    ********************************************************************
+    * Description: SDx Vector Addition using Blocking Pipes Operation  *
+    ********************************************************************
 """
-import os
 import sys
 import argparse
-import subprocess
-import re
 import time
-import shutil
-import fnmatch
-import json
-import logging
-import glob
 import ctypes
 import pyopencl as cl
 import numpy as np
@@ -34,45 +26,43 @@ from xrt_binding import *
 DRM_BASE_ADDRESS=0x1C00000
 DATA_SIZE=4096
 INCR_VALUE=10
-boardHandler = ctypes.c_void_p()
 
 
 def drm_read_callback(addr, reg):
-    readSize = xclRead(boardHandler, xclAddressSpace.XCL_ADDR_KERNEL_CTRL, 
+    """DRM Library Register Read Callback Function"""
+    readSize = xclRead(boardHandler, 
+        xclAddressSpace.XCL_ADDR_KERNEL_CTRL, 
         DRM_BASE_ADDRESS+addr, reg, 4)
     if readSize <= 0:
-        print(f"drm_read_callback: Unable to read from the fpga ! readSize={readSize}")
+        print(f"drm_read_callback: Unable to read \
+                from the fpga ! readSize={readSize}")
         return 1
-    return 0;
+    return 0
     
     
 def drm_write_callback(addr, reg):
-    value = bytearray(4)
+    """DRM Library Register Write Callback Function"""
     value = reg.to_bytes(4, byteorder="little")
     pvalue = (ctypes.c_char * len(value)).from_buffer_copy(value)
-    writtenSize = xclWrite(boardHandler, xclAddressSpace.XCL_ADDR_KERNEL_CTRL, 
+    writtenSize = xclWrite(boardHandler, 
+        xclAddressSpace.XCL_ADDR_KERNEL_CTRL, 
         DRM_BASE_ADDRESS+addr, pvalue, 4)
     if writtenSize <= 0:
-        print(f"drm_write_callback: Unable to read from the fpga ! writtenSize={writtenSize}")
+        print(f"drm_write_callback: Unable to read \
+                from the fpga ! writtenSize={writtenSize}")
         return 1
-    return 0;
+    return 0
     
     
 def rtl_adder_run(xclbinpath):
     global boardHandler
-   
-    # Allocate Memory in Host Memory
-    source_input      = np.zeros(DATA_SIZE, np.uint32)
+        
+    source_input      = np.arange(DATA_SIZE, dtype=np.uint32)
+    source_sw_results = np.arange(INCR_VALUE, DATA_SIZE + INCR_VALUE, 
+                            dtype=np.uint32)
     source_hw_results = np.zeros(DATA_SIZE, np.uint32)
-    source_sw_results = np.zeros(DATA_SIZE, np.uint32)
-    
-    # Create the test data and Software Result 
-    for i in range(0, DATA_SIZE):
-        source_input[i] = i
-        source_sw_results[i] = i + INCR_VALUE
-        source_hw_results[i] = 1
  
-#OPENCL HOST CODE AREA START
+    ##OPENCL HOST CODE AREA START
 
     # Get platform/device information
     clPlatform = cl.get_platforms()[0]
@@ -89,10 +79,11 @@ def rtl_adder_run(xclbinpath):
     # Init xclhal2 library
     if xclProbe()<1:
         print("[ERROR] xclProbe failed ...")
-        return -1;        
-    boardHandler = xclOpen(0, ctypes.c_char_p(b"xrt_logfile.log"), xclVerbosityLevel.XCL_INFO);
+        raise        
+    boardHandler = xclOpen(0, ctypes.c_char_p(b"xrt_logfile.log"), 
+                        xclVerbosityLevel.XCL_INFO)
 
-#ACCELIZE DRMLIB CODE AREA START 
+    ##ACCELIZE DRMLIB CODE AREA START 
     drm_manager = DrmManager(
         # Configuration files paths
         "./conf.json" ,
@@ -102,10 +93,13 @@ def rtl_adder_run(xclbinpath):
         drm_write_callback,
     )
     drm_manager.activate()
-    time.sleep(2);
-#ACCELIZE DRMLIB CODE AREA STOP
-    
-    with cl.CommandQueue(context=ctx, device=clDevice, properties=cl.command_queue_properties.OUT_OF_ORDER_EXEC_MODE_ENABLE|cl.command_queue_properties.PROFILING_ENABLE) as q:
+    print(f"[DRMLIB] Session ID: {drm_manager.get('session_id')}")
+    time.sleep(2)
+    ##ACCELIZE DRMLIB CODE AREA STOP
+    qprops = cl.command_queue_properties.OUT_OF_ORDER_EXEC_MODE_ENABLE|\
+             cl.command_queue_properties.PROFILING_ENABLE
+    with cl.CommandQueue(context=ctx, device=clDevice, 
+            properties=qprops) as q:
         
         # Create Kernels
         krnl_adder_stage  = cl.Kernel(prg, "krnl_adder_stage_rtl")
@@ -113,12 +107,16 @@ def rtl_adder_run(xclbinpath):
         krnl_output_stage = cl.Kernel(prg, "krnl_output_stage_rtl")
         
         # Create Buffer
-        buffer_input  = cl.Buffer(ctx, cl.mem_flags.USE_HOST_PTR|cl.mem_flags.READ_ONLY, size=0, hostbuf=source_input)
-        buffer_output = cl.Buffer(ctx, cl.mem_flags.USE_HOST_PTR|cl.mem_flags.READ_ONLY, size=0, hostbuf=source_hw_results)
+        buffer_input  = cl.Buffer(ctx, 
+                cl.mem_flags.USE_HOST_PTR|cl.mem_flags.READ_ONLY, 
+                size=0, hostbuf=source_input)
+        buffer_output = cl.Buffer(ctx, 
+                cl.mem_flags.USE_HOST_PTR|cl.mem_flags.READ_ONLY, 
+                size=0, hostbuf=source_hw_results)
                
         # Set the Kernel Arguments
-        npSize = np.int32(DATA_SIZE);
-        npIncr = np.int32(INCR_VALUE);
+        npSize = np.int32(DATA_SIZE)
+        npIncr = np.int32(INCR_VALUE)
         krnl_input_stage.set_args(buffer_input, npSize)
         krnl_adder_stage.set_args(npIncr, npSize)
         krnl_output_stage.set_args(buffer_output, npSize)
@@ -132,34 +130,38 @@ def rtl_adder_run(xclbinpath):
         cl.enqueue_nd_range_kernel(q, krnl_output_stage,[1], [1])
 
     # Copy Result from Device Global Memory to Host Local Memory
-    cl.enqueue_migrate_mem_objects(q, [buffer_output], flags=cl.mem_migration_flags.HOST)
+    cl.enqueue_migrate_mem_objects(q, [buffer_output], 
+        flags=cl.mem_migration_flags.HOST)
     q.finish()
-#OPENCL HOST CODE AREA STOP
+    ##OPENCL HOST CODE AREA STOP
 
-#ACCELIZE DRMLIB CODE AREA START     
+    ##ACCELIZE DRMLIB CODE AREA START     
     drm_manager.deactivate()
-#ACCELIZE DRMLIB CODE AREA STOP
+    ##ACCELIZE DRMLIB CODE AREA STOP
 
     # Release xclhal2 board handler
-    #xclClose(boardHandler)     # /!\ XRT Python binding is in development state, xclClose() generate crash at the time this you is written
+    #xclClose(boardHandler) # /!\ XRT Python binding is in development
+                            # state, xclClose() generate crash at the 
+                            # time this script is written
     
-    # Compare the results of the Device to the simulation
-    for i in range(0, DATA_SIZE):
-        if source_hw_results[i] != source_sw_results[i]:
-            print(f"Error: Result mismatch i={i} CPU={source_sw_results[i]} != DEVICE={source_hw_results[i]}")
-            return 1
+    diff = source_hw_results != source_sw_results
+    if diff.any():
+        print(f"Error: Result mismatch i={i} \
+            CPU={source_sw_results[i]} != \
+            DEVICE={source_hw_results[i]}")
+        raise
             
-    print(f"TEST PASSED")
-    return 0
+    print("TEST PASSED")
 
 if __name__ == '__main__':
 
     # Parse the arguments
     option = argparse.ArgumentParser()
     
-    option.add_argument('-x', '--xclbin', dest="xclbin_path", type=str, default=None,
+    option.add_argument('-x', '--xclbin', dest="xclbin_path", 
+                        type=str, default=None,
                         required=True, help="Path to .xclbin file")
     
     args = option.parse_args()
-    sys.exit(rtl_adder_run(args.xclbin_path))
+    rtl_adder_run(args.xclbin_path)
     
