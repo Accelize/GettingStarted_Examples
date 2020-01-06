@@ -38,7 +38,7 @@ Each of them shows a different context in which one could integrate the Accelize
   * cd app/01_OnPrem_Alveo
   * Compile using "make clean all"
   * In a terminal:
-    * export LD_LIBRARY_PATH=/opt/xilinx/xrt/lib:/usr/local/lib:/usr/local/lib6
+    * export LD_LIBRARY_PATH=/opt/xilinx/xrt/lib:/usr/local/lib:/usr/local/lib64
     * ./app {path-to-xclbin}
     
 * **AWS F1 Instances (Cloud Execution):**
@@ -48,8 +48,14 @@ Each of them shows a different context in which one could integrate the Accelize
   * In a terminal:
     * sudo sh
     * source /opt/xilinx/xrt/setup.sh
-    * ./app
+    * ./app {path-to-awsxclbin}
 
- 
+* **AlibabaCloud F3 Instances (Cloud Execution):**
+  * Create and Download an image as described in [Step 4 & Step 5](https://www.alibabacloud.com/help/doc-detail/91531.htm) section of the documentation 
+  * cd app/03_AlibabaCloud_F3
+  * source /root/xbinst_oem/F3_env_setup.sh xocl
+  * Compile using "make clean all"
+  * In a terminal:
+    * ./run.sh {path-to-xclbin}
     
 
