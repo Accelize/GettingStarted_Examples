@@ -43,12 +43,17 @@ Each of them shows a different context in which one could integrate the Accelize
     
 * **AWS F1 Instances (Cloud Execution):**
   * Create ".awsxclbin" as described in [Create an Amazon FPGA Image (AFI)](https://github.com/aws/aws-fpga/tree/master/SDAccel#2-create-an-amazon-fpga-image-afi) section of the documentation 
+  * git clone https://github.com/aws/aws-fpga.git --recursive $AWS_FPGA_REPO_DIR
+  * source $AWS_FPGA_REPO_DIR/sdaccel_runtime_setup.sh
   * cd app/02_AWS_F1
   * Compile using "make clean all"
   * In a terminal:
     * sudo sh
     * source /opt/xilinx/xrt/setup.sh
     * ./app {path-to-awsxclbin}
+  * **TROUBLESHOOTING**:
+    * "xclProbe found 0 FPGA slots with xocl driver running": 
+      * Reset the FPGA using "sudo fpga-clear-local-image -S 0" command and try again
 
 * **AlibabaCloud F3 Instances (Cloud Execution):**
   * Create and Download an image as described in [Step 4 & Step 5](https://www.alibabacloud.com/help/doc-detail/91531.htm) section of the documentation 

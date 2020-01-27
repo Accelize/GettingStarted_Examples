@@ -43,25 +43,19 @@ file copy -force $CL_DIR/design/cl_hello_world.sv                     $TARGET_DI
 file mkdir $TARGET_DIR/
 exec cp -rf $CL_DIR/design/axi_crossbar_1s3m $TARGET_DIR/
 # DRM
-file copy -force $CL_DIR/design/drm/drm_controller_ip_axi4st.v $TARGET_DIR
-file copy -force $CL_DIR/design/drm/drm_controller_ip.vhdl     $TARGET_DIR
-# DRM COMPONENTS
-file copy -force $CL_DIR/design/common/vhdl/xilinx/drm_all_components.vhdl    $TARGET_DIR
-# ACTIVATOR 0
-file copy -force $CL_DIR/design/user_ip_1/activator0/rtl/drm_activation_code_package_0x1003000e00030001.v $TARGET_DIR
-file copy -force $CL_DIR/design/user_ip_1/activator0/rtl/drm_ip_activator_0x1003000e00030001.v $TARGET_DIR
-file copy -force $CL_DIR/design/user_ip_1/activator0/rtl/drm_ip_activator_0x1003000e00030001.vhdl $TARGET_DIR
-file copy -force $CL_DIR/design/user_ip_1/activator0/rtl/drm_ip_activator_0x1003000e00030001_axi4st.v $TARGET_DIR
-# ACTIVATOR 1
-file copy -force $CL_DIR/design/user_ip_2/activator1/rtl/drm_activation_code_package_0x1003000e00040001.v $TARGET_DIR
-file copy -force $CL_DIR/design/user_ip_2/activator1/rtl/drm_ip_activator_0x1003000e00040001.v $TARGET_DIR
-file copy -force $CL_DIR/design/user_ip_2/activator1/rtl/drm_ip_activator_0x1003000e00040001.vhdl $TARGET_DIR
-file copy -force $CL_DIR/design/user_ip_2/activator1/rtl/drm_ip_activator_0x1003000e00040001_axi4st.v $TARGET_DIR
-# ILA XBAR AXI4L 
-exec cp -rf $CL_DIR/design/ila_xbar_axi4l $TARGET_DIR/
+file copy -force $CL_DIR/design/drm_hdk/controller/rtl/core/drm_controller_ip.vhdl $TARGET_DIR                                                   
+file copy -force $CL_DIR/design/drm_hdk/controller/rtl/syn/drm_controller.sv $TARGET_DIR                                                         
+# DRM COMPONENTS                                                                                                                                 
+file copy -force $CL_DIR/design/drm_hdk/common/vhdl/xilinx/drm_all_components.vhdl    $TARGET_DIR                                                
+# ACTIVATOR0                                                                                                                                     
+file copy -force $CL_DIR/design/drm_hdk/activator0/core/drm_ip_activator_0x1003000e00030001.vhdl $TARGET_DIR                                     
+file copy -force $CL_DIR/design/drm_hdk/activator0/syn/drm_activator_0x1003000e00030001.sv $TARGET_DIR
+# ACTIVATOR1                                                                                                                                     
+file copy -force $CL_DIR/design/drm_hdk/activator1/core/drm_ip_activator_0x1003000e00040001.vhdl $TARGET_DIR                                     
+file copy -force $CL_DIR/design/drm_hdk/activator1/syn/drm_activator_0x1003000e00040001.sv $TARGET_DIR
 # USER IPS
-file copy -force $CL_DIR/design/user_ip_1/user_ip_1.v                 $TARGET_DIR
-file copy -force $CL_DIR/design/user_ip_2/user_ip_2.v                 $TARGET_DIR
+file copy -force $CL_DIR/design/user_ip_1.v                 $TARGET_DIR
+file copy -force $CL_DIR/design/user_ip_2.v                 $TARGET_DIR
 # TOP LEVEL
 file copy -force $CL_DIR/design/cl_toplevel.v                         $TARGET_DIR
 
@@ -86,19 +80,14 @@ encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET
 encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/cl_id_defines.vh                     
 encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/cl_hello_world_pkg.sv  
 encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/cl_hello_world.sv 
-encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/drm_activation_code_package_0x1003000e00030001.v 
-encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/drm_ip_activator_0x1003000e00030001.v
-encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/drm_ip_activator_0x1003000e00030001_axi4st.v
-encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/drm_activation_code_package_0x1003000e00040001.v 
-encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/drm_ip_activator_0x1003000e00040001.v
-encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/drm_ip_activator_0x1003000e00040001_axi4st.v
-encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/drm_controller_ip_axi4st.v
+encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/drm_controller.sv                                           
+encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/drm_activator_0x1003000e00030001.sv                         
+encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/drm_activator_0x1003000e00040001.sv                         
 encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/user_ip_1.v 
 encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/user_ip_2.v 
 encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_keyfile.txt -lang verilog $TARGET_DIR/cl_toplevel.v
 
 # encrypt *vhdl files
-encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_vhdl_keyfile.txt -lang vhdl -quiet $TARGET_DIR/drm_controller_ip.vhdl
+encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_vhdl_keyfile.txt -lang vhdl -quiet $TARGET_DIR/drm_controller_ip.vhdl                             
 encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_vhdl_keyfile.txt -lang vhdl -quiet $TARGET_DIR/drm_ip_activator_0x1003000e00030001.vhdl
 encrypt -k $HDK_SHELL_DIR/build/scripts/vivado_vhdl_keyfile.txt -lang vhdl -quiet $TARGET_DIR/drm_ip_activator_0x1003000e00040001.vhdl
-

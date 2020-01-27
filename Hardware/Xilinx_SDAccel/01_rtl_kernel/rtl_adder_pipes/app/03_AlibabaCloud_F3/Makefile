@@ -15,7 +15,7 @@ endif
 
 # Xilinx Runtime (XRT)
 XRT_INC_DIR := -I${XILINX_SDX}/runtime/driver/include -I${XILINX_SDX}/runtime/include/1_2
-XRT_LIBDIR  := -L${XILINX_SDX}/platforms/xilinx_aliyun-f3_dynamic_5_0/sw/driver/gem -L${XILINX_SDX}/runtime/lib/x86_64
+XRT_LIBDIR  := -L${XILINX_SDX}/root/xbinst_oem/runtime/platforms/xilinx_vu9p_faas_f3/driver -L${XILINX_SDX}/runtime/lib/x86_64
 XRT_LIB     := -lxclgemdrv -lxilinxopencl -lrt -pthread
 
 # Accelize DRMLib

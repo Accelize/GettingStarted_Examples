@@ -48,7 +48,7 @@
 `timescale 1ps/1ps
 `default_nettype none
 
-module axi_register_slice_v2_1_17_tdm_sample (
+module axi_register_slice_v2_1_19_tdm_sample (
 ///////////////////////////////////////////////////////////////////////////////
 // Port Declarations
 ///////////////////////////////////////////////////////////////////////////////
@@ -100,6 +100,305 @@ reg                sample_cycle_d;
 endmodule // tdm_sample
 
 `default_nettype wire
+
+
+// -- (c) Copyright 2017 Xilinx, Inc. All rights reserved.
+// --
+// -- This file contains confidential and proprietary information
+// -- of Xilinx, Inc. and is protected under U.S. and 
+// -- international copyright and other intellectual property
+// -- laws.
+// --
+// -- DISCLAIMER
+// -- This disclaimer is not a license and does not grant any
+// -- rights to the materials distributed herewith. Except as
+// -- otherwise provided in a valid license issued to you by
+// -- Xilinx, and to the maximum extent permitted by applicable
+// -- law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND
+// -- WITH ALL FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES
+// -- AND CONDITIONS, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING
+// -- BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, NON-
+// -- INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE; and
+// -- (2) Xilinx shall not be liable (whether in contract or tort,
+// -- including negligence, or under any other theory of
+// -- liability) for any loss or damage of any kind or nature
+// -- related to, arising under or in connection with these
+// -- materials, including for any direct, or any indirect,
+// -- special, incidental, or consequential loss or damage
+// -- (including loss of data, profits, goodwill, or any type of
+// -- loss or damage suffered as a result of any action brought
+// -- by a third party) even if such damage or loss was
+// -- reasonably foreseeable or Xilinx had been advised of the
+// -- possibility of the same.
+// --
+// -- CRITICAL APPLICATIONS
+// -- Xilinx products are not designed or intended to be fail-
+// -- safe, or for use in any application requiring fail-safe
+// -- performance, such as life-support or safety devices or
+// -- systems, Class III medical devices, nuclear facilities,
+// -- applications related to the deployment of airbags, or any
+// -- other applications that could lead to death, personal
+// -- injury, or severe property or environmental damage
+// -- (individually and collectively, "Critical
+// -- Applications"). Customer assumes the sole risk and
+// -- liability of any use of Xilinx products in Critical
+// -- Applications, subject only to applicable laws and
+// -- regulations governing limitations on product liability.
+// --
+// -- THIS COPYRIGHT NOTICE AND DISCLAIMER MUST BE RETAINED AS
+// -- PART OF THIS FILE AT ALL TIMES.
+//-----------------------------------------------------------------------------
+
+`timescale 1ps/1ps
+(* DowngradeIPIdentifiedWarnings="yes" *) 
+(* autopipeline_module="yes" *)
+module axi_register_slice_v2_1_19_auto_slr #
+  (
+   parameter integer C_DATA_WIDTH = 32
+   )
+  (
+   // System Signals
+   input wire ACLK,
+   input wire ARESETN,
+
+   // Slave side
+   input  wire [C_DATA_WIDTH-1:0] S_PAYLOAD_DATA,
+   input  wire S_VALID,
+   output wire S_READY,
+
+   // Master side
+   output wire [C_DATA_WIDTH-1:0] M_PAYLOAD_DATA,
+   output wire M_VALID,
+   input  wire M_READY
+   );
+
+    wire                    handshake_pipe;
+    wire                    ready_pipe;
+    wire [C_DATA_WIDTH-1:0] payload_pipe;
+    (* keep="true" *)                                                                reg  s_aclear = 1'b0;
+    (* autopipeline_group="fwd",autopipeline_limit=24,autopipeline_include="resp" *) reg  s_areset_fwd   = 1'b0;
+    (* autopipeline_group="resp" *)                                                  reg  s_areset_resp  = 1'b0;
+    (* keep="true" *)                                                                reg  s_areset_resp2 = 1'b0;
+    (* keep="true" *)                                                                reg  m_aclear = 1'b0;
+    (* autopipeline_group="fwd",autopipeline_limit=24,autopipeline_include="resp" *) reg  m_areset_fwd   = 1'b0;
+    (* autopipeline_group="resp" *)                                                  reg  m_areset_resp  = 1'b0;
+    (* keep="true" *)                                                                reg  m_areset_resp2 = 1'b0;
+    
+  // Global Reset pipelining
+  
+    always @(posedge ACLK) begin
+      s_aclear       <= ~ARESETN;
+      s_areset_fwd   <= ~ARESETN; 
+      s_areset_resp  <= s_areset_fwd;  // Auto-pipeline
+      s_areset_resp2 <= s_areset_resp; // Auto-pipeline
+    end
+    
+    always @(posedge ACLK) begin
+      m_aclear       <= ~ARESETN;
+      m_areset_fwd   <= ~ARESETN; 
+      m_areset_resp  <= m_areset_fwd;  // Auto-pipeline
+      m_areset_resp2 <= m_areset_resp; // Auto-pipeline
+    end
+    
+  // Source-side submodule
+    
+    axi_register_slice_v2_1_19_auto_src #
+      (
+       .C_DATA_WIDTH (C_DATA_WIDTH)
+      )
+      slr_auto_src
+      (
+       .ACLK             (ACLK),    
+       .s_aclear         (s_aclear),
+       .s_areset_resp2   (s_areset_resp2),  
+       .S_VALID          (S_VALID),  
+       .S_READY          (S_READY), 
+       .S_PAYLOAD_DATA   (S_PAYLOAD_DATA),
+       .ready_pipe        (ready_pipe), 
+       .handshake_pipe    (handshake_pipe),
+       .payload_pipe      (payload_pipe)  
+      );
+    
+  // Destination-side submodule
+    
+    axi_register_slice_v2_1_19_auto_dest #
+      (
+       .C_DATA_WIDTH (C_DATA_WIDTH)
+      )
+      slr_auto_dest
+      (
+       .ACLK           (ACLK),    
+       .m_aclear       (m_aclear),
+       .m_areset_resp2 (m_areset_resp2),  
+       .M_READY        (M_READY), 
+       .M_VALID        (M_VALID),  
+       .M_PAYLOAD_DATA (M_PAYLOAD_DATA),
+       .handshake_pipe  (handshake_pipe),
+       .ready_pipe      (ready_pipe),  
+       .payload_pipe    (payload_pipe)  
+      );
+    
+endmodule  // auto_slr
+
+module axi_register_slice_v2_1_19_auto_src #
+  (
+   parameter integer C_DATA_WIDTH = 32
+  )
+  (
+   input  wire ACLK,
+   input  wire s_aclear,
+   input  wire s_areset_resp2,
+   input  wire S_VALID,
+   input  wire ready_pipe,
+   output wire S_READY,
+   output wire handshake_pipe,
+   output wire  [C_DATA_WIDTH-1:0] payload_pipe,
+   input  wire [C_DATA_WIDTH-1:0] S_PAYLOAD_DATA
+   );
+    
+   (* autopipeline_group="fwd",autopipeline_limit=24,autopipeline_include="resp" *) reg  [C_DATA_WIDTH-1:0] payload_pipe_r;
+    (* keep="true" *) reg  s_areset_resp3 = 1'b0;
+    wire s_aresetn_d;
+    wire s_aresetn_q;
+    wire s_handshake_d;
+    wire s_ready_i;
+    
+    assign S_READY = s_ready_i & s_aresetn_q;
+    assign s_aresetn_d = (~s_areset_resp2 & s_areset_resp3) | s_aresetn_q;
+    assign s_handshake_d = S_VALID & s_ready_i & s_aresetn_q;
+    assign payload_pipe = payload_pipe_r;
+    
+    always @(posedge ACLK) begin
+      s_areset_resp3 <= s_areset_resp2;
+    end
+    
+    always @(posedge ACLK) begin
+      payload_pipe_r <= S_PAYLOAD_DATA;
+    end
+    
+    // Assert s_aresetn_q asynchronously on leading edge of s_aclear; De-assert synchronously on trailing edge of s_areset_resp2.
+    FDCE #(
+        .INIT(1'b0)
+     ) reset_asyncclear (
+        .Q   (s_aresetn_q),
+        .C   (ACLK), 
+        .CE  (1'b1),
+        .CLR (s_aclear),
+        .D   (s_aresetn_d)
+     );
+    
+    (* autopipeline_group="fwd",autopipeline_limit=24,autopipeline_include="resp" *)
+    FDCE #(
+        .INIT(1'b0)
+     ) handshake_asyncclear (
+        .Q   (handshake_pipe),
+        .C   (ACLK), 
+        .CE  (1'b1),
+        .CLR (s_aclear),
+        .D   (s_handshake_d)
+     );
+    
+    FDCE #(
+        .INIT(1'b0)
+     ) ready_asyncclear (
+        .Q   (s_ready_i),
+        .C   (ACLK), 
+        .CE  (1'b1),
+        .CLR (s_aclear),
+        .D   (ready_pipe)
+     );
+    
+endmodule  // auto_src
+
+module axi_register_slice_v2_1_19_auto_dest #
+  (
+   parameter integer C_DATA_WIDTH = 32
+   )
+  (
+   input  wire ACLK,
+   input  wire m_aclear,
+   input  wire m_areset_resp2,
+   input  wire M_READY,
+   input  wire handshake_pipe,
+   output wire ready_pipe,
+   output wire M_VALID,
+   input  wire [C_DATA_WIDTH-1:0] payload_pipe,
+   output wire [C_DATA_WIDTH-1:0] M_PAYLOAD_DATA
+   );
+    
+    (* keep="true" *) reg  m_areset_resp3 = 1'b0;
+    wire m_aresetn_d;
+    wire m_aresetn_q;
+    wire m_valid_i;
+    wire pop;
+    wire m_ready_d;
+    wire m_handshake_q;
+    reg  [C_DATA_WIDTH-1:0] m_payload_q;
+    
+    assign M_VALID = m_valid_i;
+    assign m_aresetn_d = (~m_areset_resp2 & m_areset_resp3) | m_aresetn_q;
+    assign m_ready_d = (M_READY | ~m_valid_i) & m_aresetn_q;
+    assign pop     = M_READY & m_valid_i;
+    
+    always @(posedge ACLK) begin
+      m_areset_resp3 <= m_areset_resp2;
+    end
+    
+    always @(posedge ACLK) begin
+      m_payload_q <= payload_pipe;
+    end
+    
+    // Assert m_aresetn_q asynchronously on leading edge of m_aclear; De-assert synchronously on trailing edge of m_areset_resp2.
+    FDCE #(
+        .INIT(1'b0)
+     ) reset_asyncclear (
+        .Q   (m_aresetn_q),
+        .C   (ACLK), 
+        .CE  (1'b1),
+        .CLR (m_aclear),
+        .D   (m_aresetn_d)
+     );
+    
+    FDCE #(
+        .INIT(1'b0)
+     ) handshake_asyncclear (
+        .Q   (m_handshake_q),
+        .C   (ACLK), 
+        .CE  (1'b1),
+        .CLR (m_aclear),
+        .D   (handshake_pipe)
+     );
+    
+    (* autopipeline_group="resp" *)
+    FDCE #(
+        .INIT(1'b0)
+     ) ready_asyncclear (
+        .Q   (ready_pipe),
+        .C   (ACLK), 
+        .CE  (1'b1),
+        .CLR (m_aclear),
+        .D   (m_ready_d)
+     );
+    
+    axi_register_slice_v2_1_19_axic_reg_srl_fifo #
+      (
+       .C_FIFO_WIDTH (C_DATA_WIDTH), 
+       .C_FIFO_SIZE  (5)  
+      )
+      srl_fifo
+      (
+       .aclk    (ACLK),    
+       .areset  (~m_aresetn_q),
+       .aclear  (m_aclear),  
+       .s_mesg  (m_payload_q),  
+       .s_valid (m_handshake_q), 
+       .m_mesg  (M_PAYLOAD_DATA),  
+       .m_valid (m_valid_i), 
+       .m_ready (pop)
+      );
+    
+endmodule  // auto_dest
+
 
 
 // -- (c) Copyright 2010 - 2017 Xilinx, Inc. All rights reserved.
@@ -162,7 +461,7 @@ endmodule // tdm_sample
 
 `timescale 1ps/1ps
 (* DowngradeIPIdentifiedWarnings="yes" *) 
-module axi_register_slice_v2_1_17_srl_rtl #
+module axi_register_slice_v2_1_19_srl_rtl #
   (
    parameter         C_A_WIDTH = 2          // Address Width (>= 1)
    )
@@ -186,7 +485,7 @@ endmodule  // srl_rtl
 
 `timescale 1ps/1ps
 (* DowngradeIPIdentifiedWarnings="yes" *) 
-module axi_register_slice_v2_1_17_axic_register_slice #
+module axi_register_slice_v2_1_19_axic_register_slice #
   (
    parameter C_FAMILY     = "virtex6",
    parameter C_DATA_WIDTH = 32,
@@ -249,10 +548,10 @@ module axi_register_slice_v2_1_17_axic_register_slice #
       reg push;
       reg pop;
       wire s_handshake_d;
-      (* max_fanout = 66 *) reg s_valid_d;
-      (* max_fanout = 66 *) reg s_ready_d = 1'b0;
-      (* max_fanout = 66 *) reg s_ready_reg = 1'b0;
-      (* max_fanout = 66 *) reg [2:0] fifoaddr = 3'b110;
+      reg s_valid_d;
+      reg s_ready_d = 1'b0;
+      reg s_ready_reg = 1'b0;
+      reg [2:0] fifoaddr = 3'b110;
       
       reg areset_d = 1'b0;
       always @(posedge ACLK) begin
@@ -389,7 +688,7 @@ module axi_register_slice_v2_1_17_axic_register_slice #
     //---------------------------------------------------------------------------
       genvar i;
       for (i=0;i<C_DATA_WIDTH;i=i+1) begin : gen_srls
-        axi_register_slice_v2_1_17_srl_rtl #
+        axi_register_slice_v2_1_19_srl_rtl #
           (
            .C_A_WIDTH (2)
           )
@@ -889,7 +1188,7 @@ endmodule // axic_register_slice
 
 `timescale 1ps/1ps
 (* DowngradeIPIdentifiedWarnings="yes" *) 
-module axi_register_slice_v2_1_17_multi_slr #
+module axi_register_slice_v2_1_19_multi_slr #
   (
    parameter C_FAMILY     = "virtex6",
    parameter integer C_DATA_WIDTH = 32,
@@ -929,7 +1228,7 @@ module axi_register_slice_v2_1_17_multi_slr #
   
   if (C_NUM_SLR_CROSSINGS==0) begin : single_slr
     
-    axi_register_slice_v2_1_17_single_slr # (
+    axi_register_slice_v2_1_19_single_slr # (
       .C_FAMILY     ( C_FAMILY              ) ,
       .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
       .C_PIPELINES  (C_PIPELINES_MASTER) 
@@ -954,7 +1253,7 @@ module axi_register_slice_v2_1_17_multi_slr #
     wire dummy_reset;
         
     if (C_CHANNEL==P_FORWARD) begin : fwd
-      axi_register_slice_v2_1_17_source_region_slr # (
+      axi_register_slice_v2_1_19_source_region_slr # (
         .C_FAMILY     ( C_FAMILY ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_SLR_WIDTH  ( C_DATA_WIDTH ),
@@ -976,7 +1275,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( src_ready   )
       );
       
-      axi_register_slice_v2_1_17_dest_region_slr #(
+      axi_register_slice_v2_1_19_dest_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_REG_CONFIG ( P_REG_CONFIG ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1000,7 +1299,7 @@ module axi_register_slice_v2_1_17_multi_slr #
       );
       
     end else begin : resp
-      axi_register_slice_v2_1_17_source_region_slr # (
+      axi_register_slice_v2_1_19_source_region_slr # (
         .C_FAMILY     ( C_FAMILY ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_SLR_WIDTH  ( C_DATA_WIDTH ),
@@ -1022,7 +1321,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( src_ready   )
       );
       
-      axi_register_slice_v2_1_17_dest_region_slr #(
+      axi_register_slice_v2_1_19_dest_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_REG_CONFIG ( P_REG_CONFIG ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1060,7 +1359,7 @@ module axi_register_slice_v2_1_17_multi_slr #
     wire dummy_reset2;
         
     if (C_CHANNEL==P_FORWARD) begin : fwd
-      axi_register_slice_v2_1_17_source_region_slr # (
+      axi_register_slice_v2_1_19_source_region_slr # (
         .C_FAMILY     ( C_FAMILY ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_SLR_WIDTH  ( C_DATA_WIDTH ),
@@ -1082,7 +1381,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( src_ready   )
       );
       
-      axi_register_slice_v2_1_17_middle_region_slr #(
+      axi_register_slice_v2_1_19_middle_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1104,7 +1403,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( dest_ready   )
       );
       
-      axi_register_slice_v2_1_17_dest_region_slr #(
+      axi_register_slice_v2_1_19_dest_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_REG_CONFIG ( P_REG_CONFIG ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1128,7 +1427,7 @@ module axi_register_slice_v2_1_17_multi_slr #
       );
       
     end else begin : resp
-      axi_register_slice_v2_1_17_source_region_slr # (
+      axi_register_slice_v2_1_19_source_region_slr # (
         .C_FAMILY     ( C_FAMILY ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_SLR_WIDTH  ( C_DATA_WIDTH ),
@@ -1150,7 +1449,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( src_ready   )
       );
       
-      axi_register_slice_v2_1_17_middle_region_slr #(
+      axi_register_slice_v2_1_19_middle_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1172,7 +1471,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( dest_ready   )
       );
       
-      axi_register_slice_v2_1_17_dest_region_slr #(
+      axi_register_slice_v2_1_19_dest_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_REG_CONFIG ( P_REG_CONFIG ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1215,7 +1514,7 @@ module axi_register_slice_v2_1_17_multi_slr #
     wire dummy_reset3;
         
     if (C_CHANNEL==P_FORWARD) begin : fwd
-      axi_register_slice_v2_1_17_source_region_slr # (
+      axi_register_slice_v2_1_19_source_region_slr # (
         .C_FAMILY     ( C_FAMILY ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_SLR_WIDTH  ( C_DATA_WIDTH ),
@@ -1237,7 +1536,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( src_ready   )
       );
       
-      axi_register_slice_v2_1_17_middle_region_slr #(
+      axi_register_slice_v2_1_19_middle_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1259,7 +1558,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( mid_ready   )
       );
       
-      axi_register_slice_v2_1_17_middle_region_slr #(
+      axi_register_slice_v2_1_19_middle_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1281,7 +1580,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( dest_ready   )
       );
       
-      axi_register_slice_v2_1_17_dest_region_slr #(
+      axi_register_slice_v2_1_19_dest_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_REG_CONFIG ( P_REG_CONFIG ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1305,7 +1604,7 @@ module axi_register_slice_v2_1_17_multi_slr #
       );
       
     end else begin : resp
-      axi_register_slice_v2_1_17_source_region_slr # (
+      axi_register_slice_v2_1_19_source_region_slr # (
         .C_FAMILY     ( C_FAMILY ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_SLR_WIDTH  ( C_DATA_WIDTH ),
@@ -1327,7 +1626,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( src_ready   )
       );
       
-      axi_register_slice_v2_1_17_middle_region_slr #(
+      axi_register_slice_v2_1_19_middle_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1349,7 +1648,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( mid_ready   )
       );
       
-      axi_register_slice_v2_1_17_middle_region_slr #(
+      axi_register_slice_v2_1_19_middle_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_DATA_WIDTH ( C_DATA_WIDTH ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1371,7 +1670,7 @@ module axi_register_slice_v2_1_17_multi_slr #
         .laguna_m_ready     ( dest_ready   )
       );
       
-      axi_register_slice_v2_1_17_dest_region_slr #(
+      axi_register_slice_v2_1_19_dest_region_slr #(
         .C_FAMILY     ( C_FAMILY         ) ,
         .C_REG_CONFIG ( P_REG_CONFIG ) ,
         .C_CHANNEL    ( C_CHANNEL ),
@@ -1401,7 +1700,7 @@ endmodule  // multi_slr
 
 `timescale 1ps/1ps
 (* DowngradeIPIdentifiedWarnings="yes" *) 
-module axi_register_slice_v2_1_17_middle_region_slr #
+module axi_register_slice_v2_1_19_middle_region_slr #
   (
    parameter C_FAMILY     = "virtex6",
    parameter integer C_DATA_WIDTH = 32,
@@ -1542,7 +1841,7 @@ endmodule  // middle_region_slr
 
 `timescale 1ps/1ps
 (* DowngradeIPIdentifiedWarnings="yes" *) 
-module axi_register_slice_v2_1_17_source_region_slr #
+module axi_register_slice_v2_1_19_source_region_slr #
   (
    parameter C_FAMILY     = "virtex6",
    parameter integer C_REG_CONFIG = 12,
@@ -1622,7 +1921,7 @@ module axi_register_slice_v2_1_17_source_region_slr #
       end
     end
 
-    axi_register_slice_v2_1_17_tdm_sample tdm_sample_inst (
+    axi_register_slice_v2_1_19_tdm_sample tdm_sample_inst (
       .slow_clk     (ACLK),
       .fast_clk     (ACLK2X),
       .sample_cycle (sample_cycle)
@@ -1726,7 +2025,7 @@ endmodule  // source_region_slr
 
 `timescale 1ps/1ps
 (* DowngradeIPIdentifiedWarnings="yes" *)
-module axi_register_slice_v2_1_17_dest_region_slr #
+module axi_register_slice_v2_1_19_dest_region_slr #
   (
    parameter C_FAMILY     = "virtex6",
    parameter integer C_REG_CONFIG = 12,
@@ -1945,7 +2244,7 @@ module axi_register_slice_v2_1_17_dest_region_slr #
         .D   (laguna_s_handshake)
      );
         
-    axi_register_slice_v2_1_17_axic_reg_srl_fifo #
+    axi_register_slice_v2_1_19_axic_reg_srl_fifo #
       (
        .C_FIFO_WIDTH (C_DATA_WIDTH), 
        .C_FIFO_SIZE  ((C_PIPELINES+C_SOURCE_LATENCY>14) ? 6 : (C_PIPELINES+C_SOURCE_LATENCY>6) ? 5 : 4)  
@@ -1968,7 +2267,7 @@ endmodule  // dest_region_slr
 
 `timescale 1ps/1ps
 (* DowngradeIPIdentifiedWarnings="yes" *)
-module axi_register_slice_v2_1_17_single_slr #
+module axi_register_slice_v2_1_19_single_slr #
   (
    parameter C_FAMILY     = "virtex6",
    parameter integer C_DATA_WIDTH = 32,
@@ -2107,7 +2406,7 @@ module axi_register_slice_v2_1_17_single_slr #
     
     end else begin : srl_fifo
     
-      axi_register_slice_v2_1_17_axic_reg_srl_fifo #
+      axi_register_slice_v2_1_19_axic_reg_srl_fifo #
         (
          .C_FIFO_WIDTH (C_DATA_WIDTH), 
          .C_FIFO_SIZE  ((C_PIPELINES>12) ? 5 : 4)  
@@ -2130,7 +2429,7 @@ module axi_register_slice_v2_1_17_single_slr #
 endmodule  // single_slr
 
 (* DowngradeIPIdentifiedWarnings="yes" *) 
-module axi_register_slice_v2_1_17_axic_reg_srl_fifo #
+module axi_register_slice_v2_1_19_axic_reg_srl_fifo #
   // FIFO with no s_ready back-pressure; must guarantee parent will never push beyond full
   (
    parameter integer C_FIFO_WIDTH  = 1,      // Width of s_mesg/m_mesg.
@@ -2333,7 +2632,7 @@ module axi_register_slice_v2_1_17_axic_reg_srl_fifo #
     // Instantiate SRLs
     //---------------------------------------------------------------------------
     for (i=0;i<C_FIFO_WIDTH;i=i+1) begin : srl
-      (* keep_hierarchy = "yes" *) axi_register_slice_v2_1_17_srl_rtl #
+      (* keep_hierarchy = "yes" *) axi_register_slice_v2_1_19_srl_rtl #
         (
          .C_A_WIDTH (C_FIFO_SIZE)
         )
@@ -2414,7 +2713,7 @@ endmodule  // axic_reg_srl_fifo
 `timescale 1ps/1ps
 
 (* DowngradeIPIdentifiedWarnings="yes" *) 
-module axi_register_slice_v2_1_17_axi_register_slice #
+module axi_register_slice_v2_1_19_axi_register_slice #
   (
    parameter C_FAMILY                            = "virtex6",
    parameter C_AXI_PROTOCOL                      = 0,
@@ -2440,6 +2739,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
    //   12 => SLR Crossing (source->dest flops, full-width payload, single clock)
    //   13 => TDM SLR Crossing (source->dest flops, half-width payload, dual clock)
    //   15 => Variable SLR Crossings (single clock)
+   //   16 -> Auto-pipelining
    parameter integer C_REG_CONFIG_AW = 7,
    parameter integer C_REG_CONFIG_W  = 1,
    parameter integer C_REG_CONFIG_B  = 7,
@@ -2663,7 +2963,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
   );
     
   if (C_REG_CONFIG_AW <= 9) begin : aw
-    axi_register_slice_v2_1_17_axic_register_slice # (
+    axi_register_slice_v2_1_19_axic_register_slice # (
       .C_FAMILY     ( C_FAMILY              ) ,
       .C_DATA_WIDTH ( G_AXI_AWPAYLOAD_WIDTH ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_AW       ) 
@@ -2686,7 +2986,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
     
   end else if (C_REG_CONFIG_AW == 15) begin : aw15
     
-    axi_register_slice_v2_1_17_multi_slr # (
+    axi_register_slice_v2_1_19_multi_slr # (
       .C_FAMILY     ( C_FAMILY              ) ,
       .C_DATA_WIDTH ( G_AXI_AWPAYLOAD_WIDTH ) ,
       .C_CHANNEL    ( P_FORWARD ),
@@ -2696,6 +2996,27 @@ module axi_register_slice_v2_1_17_axi_register_slice #
       .C_PIPELINES_MIDDLE  (C_PIPELINES_MIDDLE_AW) 
     )
     aw_multi (
+      // System Signals
+      .ACLK(aclk),
+      .ARESETN(aresetn),
+
+      // Slave side
+      .S_PAYLOAD_DATA(s_awpayload),
+      .S_VALID(s_axi_awvalid),
+      .S_READY(s_axi_awready),
+
+      // Master side
+      .M_PAYLOAD_DATA(m_awpayload),
+      .M_VALID(m_axi_awvalid),
+      .M_READY(m_axi_awready)
+    );
+    
+  end else if (C_REG_CONFIG_AW == 16) begin : aw16
+    
+    axi_register_slice_v2_1_19_auto_slr # (
+      .C_DATA_WIDTH ( G_AXI_AWPAYLOAD_WIDTH ) 
+    )
+    aw_auto (
       // System Signals
       .ACLK(aclk),
       .ARESETN(aresetn),
@@ -2721,7 +3042,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
     wire slr_awhandshake;
     wire slr_awready;
         
-    axi_register_slice_v2_1_17_source_region_slr #(
+    axi_register_slice_v2_1_19_source_region_slr #(
       .C_FAMILY     ( C_FAMILY         ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_AW       ) ,
       .C_CHANNEL    ( P_FORWARD ),
@@ -2743,7 +3064,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
       .laguna_m_ready     ( slr_awready   )
     );
 
-    axi_register_slice_v2_1_17_dest_region_slr #(
+    axi_register_slice_v2_1_19_dest_region_slr #(
       .C_FAMILY     ( C_FAMILY         ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_AW       ) ,
       .C_CHANNEL    ( P_FORWARD ),
@@ -2768,7 +3089,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
   end  // gen_aw
     
   if (C_REG_CONFIG_W <= 9) begin : w
-    axi_register_slice_v2_1_17_axic_register_slice # (
+    axi_register_slice_v2_1_19_axic_register_slice # (
       .C_FAMILY     ( C_FAMILY             ) ,
       .C_DATA_WIDTH ( G_AXI_WPAYLOAD_WIDTH ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_W       ) 
@@ -2791,7 +3112,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
     
   end else if (C_REG_CONFIG_W == 15) begin : w15
     
-    axi_register_slice_v2_1_17_multi_slr # (
+    axi_register_slice_v2_1_19_multi_slr # (
       .C_FAMILY     ( C_FAMILY              ) ,
       .C_DATA_WIDTH ( G_AXI_WPAYLOAD_WIDTH ) ,
       .C_CHANNEL    ( P_FORWARD ),
@@ -2801,6 +3122,27 @@ module axi_register_slice_v2_1_17_axi_register_slice #
       .C_PIPELINES_MIDDLE  (C_PIPELINES_MIDDLE_W) 
     )
     w_multi (
+      // System Signals
+      .ACLK(aclk),
+      .ARESETN(aresetn),
+
+      // Slave side
+      .S_PAYLOAD_DATA(s_wpayload),
+      .S_VALID(s_axi_wvalid),
+      .S_READY(s_axi_wready),
+
+      // Master side
+      .M_PAYLOAD_DATA(m_wpayload),
+      .M_VALID(m_axi_wvalid),
+      .M_READY(m_axi_wready)
+    );
+    
+  end else if (C_REG_CONFIG_W == 16) begin : w16
+    
+    axi_register_slice_v2_1_19_auto_slr # (
+      .C_DATA_WIDTH ( G_AXI_WPAYLOAD_WIDTH ) 
+    )
+    w_auto (
       // System Signals
       .ACLK(aclk),
       .ARESETN(aresetn),
@@ -2826,7 +3168,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
     wire slr_whandshake;
     wire slr_wready;
         
-    axi_register_slice_v2_1_17_source_region_slr #(
+    axi_register_slice_v2_1_19_source_region_slr #(
       .C_FAMILY     ( C_FAMILY         ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_W       ) ,
       .C_CHANNEL    ( P_FORWARD ),
@@ -2848,7 +3190,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
       .laguna_m_ready     ( slr_wready   )
     );
 
-    axi_register_slice_v2_1_17_dest_region_slr #(
+    axi_register_slice_v2_1_19_dest_region_slr #(
       .C_FAMILY     ( C_FAMILY         ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_W       ) ,
       .C_CHANNEL    ( P_FORWARD ),
@@ -2873,7 +3215,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
   end  // gen_w
 
   if (C_REG_CONFIG_B <= 9) begin : b
-    axi_register_slice_v2_1_17_axic_register_slice # (
+    axi_register_slice_v2_1_19_axic_register_slice # (
       .C_FAMILY     ( C_FAMILY             ) ,
       .C_DATA_WIDTH ( G_AXI_BPAYLOAD_WIDTH ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_B       ) 
@@ -2896,7 +3238,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
  
   end else if (C_REG_CONFIG_B == 15) begin : b15
     
-    axi_register_slice_v2_1_17_multi_slr # (
+    axi_register_slice_v2_1_19_multi_slr # (
       .C_FAMILY     ( C_FAMILY              ) ,
       .C_DATA_WIDTH ( G_AXI_BPAYLOAD_WIDTH ) ,
       .C_CHANNEL    ( P_RESPONSE ),
@@ -2906,6 +3248,27 @@ module axi_register_slice_v2_1_17_axi_register_slice #
       .C_PIPELINES_MIDDLE  (C_PIPELINES_MIDDLE_B) 
     )
     b_multi (
+      // System Signals
+      .ACLK(aclk),
+      .ARESETN(aresetn),
+
+      // Slave side
+      .S_PAYLOAD_DATA(m_bpayload),
+      .S_VALID(m_axi_bvalid),
+      .S_READY(m_axi_bready),
+
+      // Master side
+      .M_PAYLOAD_DATA(s_bpayload),
+      .M_VALID(s_axi_bvalid),
+      .M_READY(s_axi_bready)
+    );
+    
+  end else if (C_REG_CONFIG_B == 16) begin : b16
+    
+    axi_register_slice_v2_1_19_auto_slr # (
+      .C_DATA_WIDTH ( G_AXI_BPAYLOAD_WIDTH ) 
+    )
+    b_auto (
       // System Signals
       .ACLK(aclk),
       .ARESETN(aresetn),
@@ -2931,7 +3294,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
     wire slr_bhandshake;
     wire slr_bready;
         
-    axi_register_slice_v2_1_17_source_region_slr #(
+    axi_register_slice_v2_1_19_source_region_slr #(
       .C_FAMILY     ( C_FAMILY         ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_B       ) ,
       .C_CHANNEL    ( P_RESPONSE ),
@@ -2953,7 +3316,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
       .laguna_m_ready     ( slr_bready   )
     );
 
-    axi_register_slice_v2_1_17_dest_region_slr #(
+    axi_register_slice_v2_1_19_dest_region_slr #(
       .C_FAMILY     ( C_FAMILY         ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_B       ) ,
       .C_CHANNEL    ( P_RESPONSE ),
@@ -2978,7 +3341,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
   end  // gen_b
 
   if (C_REG_CONFIG_AR <= 9) begin : ar
-    axi_register_slice_v2_1_17_axic_register_slice # (
+    axi_register_slice_v2_1_19_axic_register_slice # (
       .C_FAMILY     ( C_FAMILY              ) ,
       .C_DATA_WIDTH ( G_AXI_ARPAYLOAD_WIDTH ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_AR       ) 
@@ -3001,7 +3364,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
     
   end else if (C_REG_CONFIG_AR == 15) begin : ar15
     
-    axi_register_slice_v2_1_17_multi_slr # (
+    axi_register_slice_v2_1_19_multi_slr # (
       .C_FAMILY     ( C_FAMILY              ) ,
       .C_DATA_WIDTH ( G_AXI_ARPAYLOAD_WIDTH ) ,
       .C_CHANNEL    ( P_FORWARD ),
@@ -3011,6 +3374,27 @@ module axi_register_slice_v2_1_17_axi_register_slice #
       .C_PIPELINES_MIDDLE  (C_PIPELINES_MIDDLE_AR) 
     )
     ar_multi (
+      // System Signals
+      .ACLK(aclk),
+      .ARESETN(aresetn),
+
+      // Slave side
+      .S_PAYLOAD_DATA(s_arpayload),
+      .S_VALID(s_axi_arvalid),
+      .S_READY(s_axi_arready),
+
+      // Master side
+      .M_PAYLOAD_DATA(m_arpayload),
+      .M_VALID(m_axi_arvalid),
+      .M_READY(m_axi_arready)
+    );
+    
+  end else if (C_REG_CONFIG_AR == 16) begin : ar16
+    
+    axi_register_slice_v2_1_19_auto_slr # (
+      .C_DATA_WIDTH ( G_AXI_ARPAYLOAD_WIDTH ) 
+    )
+    ar_auto (
       // System Signals
       .ACLK(aclk),
       .ARESETN(aresetn),
@@ -3036,7 +3420,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
     wire slr_arhandshake;
     wire slr_arready;
         
-    axi_register_slice_v2_1_17_source_region_slr #(
+    axi_register_slice_v2_1_19_source_region_slr #(
       .C_FAMILY     ( C_FAMILY         ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_AR       ) ,
       .C_CHANNEL    ( P_FORWARD ),
@@ -3058,7 +3442,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
       .laguna_m_ready     ( slr_arready   )
     );
 
-    axi_register_slice_v2_1_17_dest_region_slr #(
+    axi_register_slice_v2_1_19_dest_region_slr #(
       .C_FAMILY     ( C_FAMILY         ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_AR       ) ,
       .C_CHANNEL    ( P_FORWARD ),
@@ -3083,7 +3467,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
   end  // gen_ar
         
   if (C_REG_CONFIG_R <= 9) begin : r
-    axi_register_slice_v2_1_17_axic_register_slice # (
+    axi_register_slice_v2_1_19_axic_register_slice # (
       .C_FAMILY     ( C_FAMILY             ) ,
       .C_DATA_WIDTH ( G_AXI_RPAYLOAD_WIDTH ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_R       ) 
@@ -3106,7 +3490,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
     
   end else if (C_REG_CONFIG_R == 15) begin : r15
     
-    axi_register_slice_v2_1_17_multi_slr # (
+    axi_register_slice_v2_1_19_multi_slr # (
       .C_FAMILY     ( C_FAMILY              ) ,
       .C_DATA_WIDTH ( G_AXI_RPAYLOAD_WIDTH ) ,
       .C_CHANNEL    ( P_RESPONSE ),
@@ -3116,6 +3500,27 @@ module axi_register_slice_v2_1_17_axi_register_slice #
       .C_PIPELINES_MIDDLE  (C_PIPELINES_MIDDLE_R) 
     )
     r_multi (
+      // System Signals
+      .ACLK(aclk),
+      .ARESETN(aresetn),
+
+      // Slave side
+      .S_PAYLOAD_DATA(m_rpayload),
+      .S_VALID(m_axi_rvalid),
+      .S_READY(m_axi_rready),
+
+      // Master side
+      .M_PAYLOAD_DATA(s_rpayload),
+      .M_VALID(s_axi_rvalid),
+      .M_READY(s_axi_rready)
+    );
+    
+  end else if (C_REG_CONFIG_R == 16) begin : r16
+    
+    axi_register_slice_v2_1_19_auto_slr # (
+      .C_DATA_WIDTH ( G_AXI_RPAYLOAD_WIDTH ) 
+    )
+    r_auto (
       // System Signals
       .ACLK(aclk),
       .ARESETN(aresetn),
@@ -3141,7 +3546,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
     wire slr_rhandshake;
     wire slr_rready;
         
-    axi_register_slice_v2_1_17_source_region_slr #(
+    axi_register_slice_v2_1_19_source_region_slr #(
       .C_FAMILY     ( C_FAMILY         ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_R       ) ,
       .C_CHANNEL    ( P_RESPONSE ),
@@ -3163,7 +3568,7 @@ module axi_register_slice_v2_1_17_axi_register_slice #
       .laguna_m_ready     ( slr_rready   )
     );
 
-    axi_register_slice_v2_1_17_dest_region_slr #(
+    axi_register_slice_v2_1_19_dest_region_slr #(
       .C_FAMILY     ( C_FAMILY         ) ,
       .C_REG_CONFIG ( C_REG_CONFIG_R       ) ,
       .C_CHANNEL    ( P_RESPONSE ),

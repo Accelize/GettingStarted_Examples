@@ -43,7 +43,7 @@ Description: SDx Vector Addition using Blocking Pipes Operation
 
 #define DATA_SIZE 4096
 #define INCR_VALUE 10
-#define DRM_BASE_ADDRESS 0x1C00000
+#define DRM_BASE_ADDRESS 0x0000000
 
 #include <vector>
 #include <CL/cl2.hpp>
@@ -248,7 +248,7 @@ int main(int argc, char** argv)
             std::cout << "i = " << i << " CPU result = " << source_sw_results[i]
                 << " Device result = " << source_hw_results[i] << std::endl;
             match = 1;
-            //break;
+            break;
         }
     }
 

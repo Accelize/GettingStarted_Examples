@@ -6,16 +6,24 @@ SDX_PLATFORM=/tools/xilinx/vivado_2018.3/platforms/xilinx_u200_xdma_201830_1/xil
 OUTPUT_DIR=xclbin
 DRM_XO=${OUTPUT_DIR}/drm.xo
 DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_drm.xclbin
-XP_PARAMS=--xp "param:compiler.preserveHlsOutput=1" --xp "param:compiler.generateExtraRunData=true"
 SDX_KERNELS = adder input output
 SDX_KERNELS_OBJS = $(SDX_KERNELS:%=${OUTPUT_DIR}/%.xo)
 KERNEL_FREQ_MHZ = 100
 
+SDX_INTERKERNELS_STREAMS += --nk krnl_input_stage_rtl:1:k1
+SDX_INTERKERNELS_STREAMS += --nk krnl_output_stage_rtl:1:k3
+SDX_INTERKERNELS_STREAMS += --nk drm_controller_kernel:1:k4
+SDX_INTERKERNELS_STREAMS += --nk krnl_adder_stage_rtl:1:k2
+SDX_INTERKERNELS_STREAMS += --sc k1.p0:k2.p0
+SDX_INTERKERNELS_STREAMS += --sc k2.p1:k3.p1
+SDX_INTERKERNELS_STREAMS += --sc k4.drm_to_uip0:k2.drm_to_uip
+SDX_INTERKERNELS_STREAMS += --sc k2.uip_to_drm:k4.uip0_to_drm
+
 $(DRM_XO):
 	@echo -e "\n\n===> Generating [$@] Kernel ..."
-	@make -C src/drm_hdk/drm_contoller_xo_packager
+	@make -C src/drm_hdk/controller/sdaccel
 	@mkdir -p ${OUTPUT_DIR}
-	@cp -f src/drm_hdk/drm_contoller_xo_packager/drm.xo ${DRM_XO}
+	@cp -f src/drm_hdk/controller/sdaccel/drm_controller_kernel.xo ${DRM_XO}
 
 $(SDX_KERNELS_OBJS):
 	@echo -e "\n\n===> Generating [$@] Kernel ..."
@@ -26,15 +34,15 @@ $(SDX_KERNELS_OBJS):
 ${DESIGN_OBJ}: $(DRM_XO) $(SDX_KERNELS_OBJS)
 	@echo -e "\n\n===> Generating ${DESIGN_OBJ} ..."
 	@mkdir -p ${OUTPUT_DIR}
-	@xocc -l ${XP_PARAMS} -s -o ${DESIGN_OBJ} -t hw --platform ${SDX_PLATFORM} --kernel_frequency ${KERNEL_FREQ_MHZ} $(DRM_XO) $(SDX_KERNELS_OBJS)
+	@xocc -l ${XP_PARAMS} -s -o ${DESIGN_OBJ} ${SDX_INTERKERNELS_STREAMS} -t hw --platform ${SDX_PLATFORM} --kernel_frequency ${KERNEL_FREQ_MHZ} $(DRM_XO) $(SDX_KERNELS_OBJS)
 
 clean:
-	@rm -rf tmp* vivado* packaged_kernel *.log _x .Xil
-	@make -C src/drm_hdk/drm_contoller_xo_packager clean
+	@rm -rf tmp* vivado* packaged_kernel *.log _x .Xil *.out
+	@make -C src/drm_hdk/controller/sdaccel clean
 
 clean_all: clean
 	@rm -rf ${OUTPUT_DIR}
-	@make -C src/drm_hdk/drm_contoller_xo_packager clean_all
+	@make -C src/drm_hdk/controller/sdaccel cleanall
 
 all: ${DESIGN_OBJ}
 

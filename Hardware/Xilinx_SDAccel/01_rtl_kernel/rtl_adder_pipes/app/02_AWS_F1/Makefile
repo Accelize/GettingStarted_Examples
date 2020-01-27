@@ -9,7 +9,7 @@ CXX := g++
 CXXFLAGS := -Wall -Werror -std=c++11
 
 # Import XCL2 and OpenCL Libraries
-COMMON_REPO  := $(AWS_FPGA_REPO_DIR)/SDAccel/examples/xilinx
+COMMON_REPO  := $(AWS_FPGA_REPO_DIR)/SDAccel/examples/xilinx_2019.1
 ABS_COMMON_REPO = $(shell readlink -f $(COMMON_REPO))
 include $(ABS_COMMON_REPO)/libs/opencl/opencl.mk
 include $(ABS_COMMON_REPO)/libs/xcl2/xcl2.mk

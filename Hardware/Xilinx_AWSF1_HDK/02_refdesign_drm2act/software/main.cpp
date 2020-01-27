@@ -142,28 +142,25 @@ int check_afi_ready(int slot_id)
 int32_t testActivation(pci_bar_handle_t pci_bar_handle)
 {
     uint32_t reg=0;
-    uint32_t act_code_rdy=0;
     uint32_t activated=0;
 
     /* Activator 0 */
     drm_read_callback(pci_bar_handle, USER_IP_0_BASE_ADDRESS, &reg);
-    act_code_rdy = (reg&0x02)>>1;
     activated = (reg&0x01);
-    if(act_code_rdy!=1 || activated!=1) {
-        printf("%s: ERROR: Activator 0: Val=0x%x => Idx=%d act_code_rdy=%d, activated=%d\n", __FUNCTION__, reg, (reg&0xFC)>>2, (reg&0x02)>>1, (reg&0x01));
+    if(activated!=1) {
+        printf("%s: ERROR: Activator 0: activated=%d\n", __FUNCTION__, (reg&0x01));
         return 1;
     }
-    printf("%s: SUCCESS: Activator 0: Val=0x%x => Idx=%d act_code_rdy=%d, activated=%d\n", __FUNCTION__, reg, (reg&0xFC)>>2, (reg&0x02)>>1, (reg&0x01));
+    printf("%s: SUCCESS: Activator 0: activated=%d\n", __FUNCTION__, (reg&0x01));
     
     /* Activator 1 */
     drm_read_callback(pci_bar_handle, USER_IP_1_BASE_ADDRESS, &reg);
-    act_code_rdy = (reg&0x02)>>1;
     activated = (reg&0x01);
-    if(act_code_rdy!=1 || activated!=1) {
-        printf("%s: ERROR: Activator 1: Val=0x%x => Idx=%d act_code_rdy=%d, activated=%d\n", __FUNCTION__, reg, (reg&0xFC)>>2, (reg&0x02)>>1, (reg&0x01));
+    if(activated!=1) {
+        printf("%s: ERROR: Activator 1: activated=%d\n", __FUNCTION__, (reg&0x01));
         return 1;
     }
-    printf("%s: SUCCESS: Activator 1: Val=0x%x => Idx=%d act_code_rdy=%d, activated=%d\n", __FUNCTION__, reg, (reg&0xFC)>>2, (reg&0x02)>>1, (reg&0x01));
+    printf("%s: SUCCESS: Activator 1: activated=%d\n", __FUNCTION__, (reg&0x01));
 
     return 0;
 }
@@ -174,6 +171,12 @@ int32_t testActivation(pci_bar_handle_t pci_bar_handle)
 int main(int argc, char **argv) 
 {    
     int ret=0;
+    
+    /* Initialize the fpga_mgmt library */
+    if(fpga_mgmt_init()) {
+        std::cerr << "Unable to initialize the fpga_mgmt library" << std::endl;
+        return 1;
+    }
     
     /* Initialize the fpga_pci library so we could have access to FPGA PCIe from this applications */
     if(fpga_pci_init()) {

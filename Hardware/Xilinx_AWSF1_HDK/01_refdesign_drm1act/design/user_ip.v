@@ -3,7 +3,6 @@
 // default_nettype of none prevents implicit wire declaration.
 `default_nettype none
 `timescale 1 ns / 1 ps
-`include "drm_activation_code_package_0x1003000e00020001.v"
 module user_ip
 (
   // System Signals
@@ -37,7 +36,7 @@ module user_ip
   output wire                        uip_to_drm_tvalid
 );
 
-    localparam  EXP_ACT_CODE = `C_DRM_ACTIVATION_CODE;
+    localparam  EXP_ACT_CODE = 128'hEE1241B2D99AD5EE56C713B6D45FF06B;
     reg         areset = 1'b0;
     wire        usage_unit_event;
 
@@ -60,7 +59,7 @@ module user_ip
         if (rst_n == 1'b0) begin
             s_activated     <= 1'b0;
             s_tmp           <= {128{1'b0}};
-        end else if (s_activation_code_ready == 1'b1 && |s_drm_activation_code) begin
+        end else if (|s_drm_activation_code) begin
             s_tmp       <= (EXP_ACT_CODE ^ s_drm_activation_code) ;
             s_activated <= ~|s_tmp;
         end else begin
@@ -79,7 +78,6 @@ module user_ip
     reg  [31:0]     s_mailbox_2;
     reg  [31:0]     s_mailbox_3;
     wire [127:0]    s_drm_activation_code;
-    wire            s_activation_code_ready;
     reg  [127:0]    s_tmp;
     reg             s_activated;
     
@@ -99,7 +97,7 @@ module user_ip
                         s_read_state_machine        <= FSMWAIT;
                         m00_axi_arready             <= 1'b1;
                         m00_axi_rvalid              <= 1'b1;
-                        m00_axi_rdata               <=  (m00_axi_araddr[15:0]==16'h00)?{{30{1'b0}},s_activation_code_ready, s_activated}:
+                        m00_axi_rdata               <=  (m00_axi_araddr[15:0]==16'h00)?{{31{1'b0}},s_activated}:
                                                         (m00_axi_araddr[15:0]==16'h04)?s_mailbox_1:
                                                         (m00_axi_araddr[15:0]==16'h08)?s_mailbox_2:
                                                         (m00_axi_araddr[15:0]==16'h0C)?s_mailbox_3:
@@ -182,7 +180,7 @@ module user_ip
         end
     end
     
-    drm_ip_activator_0x1003000e00020001_axi4st drm_ip_activator_0x1003000e00020001_axi4st_inst (
+    drm_activator_0x1003000e00020001 drm_activator_0x1003000e00020001_inst (    
       .drm_aclk              ( clk                     ),
       .drm_arstn             ( rst_n                   ),       
       .drm_to_uip_tdata      ( drm_to_uip_tdata        ),
@@ -192,11 +190,7 @@ module user_ip
       .uip_to_drm_tdata      ( uip_to_drm_tdata        ),
       .uip_to_drm_tvalid     ( uip_to_drm_tvalid       ),
       .ip_core_aclk          ( clk                     ),
-      .ip_core_arstn         ( rst_n                   ),
-      .drm_event             ( usage_unit_event        ),
-      .drm_arst              ( areset                  ),
-      .activation_code_ready ( s_activation_code_ready ),
-      .demo_mode             (                         ),
+      .metering_event        ( usage_unit_event        ),
       .activation_code       ( s_drm_activation_code   )
     );
 

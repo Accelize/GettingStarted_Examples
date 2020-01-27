@@ -1,3 +1,16 @@
+2019.1:
+ * Version 2.1 (Rev. 20)
+ * General: Hide support for versal
+ * Revision change in one or more subcores
+
+2018.3.1:
+ * Version 2.1 (Rev. 19)
+ * No changes
+
+2018.3:
+ * Version 2.1 (Rev. 19)
+ * Revision change in one or more subcores
+
 2018.2:
  * Version 2.1 (Rev. 18)
  * General: When DECERR, it returns RDATA=0xDEC0DE1C
@@ -126,7 +139,7 @@
  * Native Vivado Release
  * There have been no functional or interface changes to this IP.  The version number has changed to support unique versioning in Vivado starting with 2013.1.
 
-(c) Copyright 2012 - 2018 Xilinx, Inc. All rights reserved.
+(c) Copyright 2012 - 2019 Xilinx, Inc. All rights reserved.
 
 This file contains confidential and proprietary information
 of Xilinx, Inc. and is protected under U.S. and

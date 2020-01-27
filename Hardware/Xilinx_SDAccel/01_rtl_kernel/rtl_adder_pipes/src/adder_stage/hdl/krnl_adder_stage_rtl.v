@@ -122,7 +122,6 @@ inst_krnl_adder_stage_rtl_int (
 
 localparam      EXP_ACT_CODE = 128'h7E745E528F0CF2F36C304A2F18DB0CE0;
 wire [127:0]    s_drm_activation_code;
-wire            s_activation_code_ready;
 reg  [127:0]    s_tmp;
 reg             s_activated;
 wire            usage_unit_event;
@@ -137,7 +136,7 @@ begin
     if (ap_rst_n == 1'b0) begin
         s_activated     <= 1'b0;
         s_tmp           <= {128{1'b0}};
-    end else if (s_activation_code_ready == 1'b1 && |s_drm_activation_code) begin
+    end else if (|s_drm_activation_code) begin
         s_tmp       <= (EXP_ACT_CODE ^ s_drm_activation_code) ;
         s_activated <= ~|s_tmp;
     end else begin
@@ -145,8 +144,8 @@ begin
         s_activated <= 1'b0;
     end
 end
-    
-drm_ip_activator_0x1003000e00010001_axi4st drm_ip_activator_0x1003000e00010001_axi4st_inst (
+
+drm_activator_0x1003000e00010001 drm_activator_0x1003000e00010001_inst (
       .drm_aclk              (ap_clk                            ),
       .drm_arstn             (ap_rst_n                          ),       
       .drm_to_uip_tdata      (drm_to_uip_tdata                  ),
@@ -156,11 +155,7 @@ drm_ip_activator_0x1003000e00010001_axi4st drm_ip_activator_0x1003000e00010001_a
       .uip_to_drm_tdata      (uip_to_drm_tdata                  ),
       .uip_to_drm_tvalid     (uip_to_drm_tvalid                 ),
       .ip_core_aclk          (ap_clk                            ),
-      .ip_core_arstn         (ap_rst_n                          ),
-      .drm_event             (usage_unit_event                  ),
-      .drm_arst              (~ap_rst_n                         ),
-      .activation_code_ready (s_activation_code_ready           ),
-      .demo_mode             (                                  ),
+      .metering_event        (usage_unit_event                  ),
       .activation_code       (s_drm_activation_code             )
     );
 

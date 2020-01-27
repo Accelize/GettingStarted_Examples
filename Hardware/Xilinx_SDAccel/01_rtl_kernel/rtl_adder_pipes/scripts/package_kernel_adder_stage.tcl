@@ -42,8 +42,11 @@ add_files -norecurse [glob $path_to_hdl/*.v $path_to_hdl/*.sv]
 # Accelize #####################################################
 set path_to_drm_hdk "./src/drm_hdk"
 read_vhdl [ glob $path_to_drm_hdk/common/vhdl/xilinx/*.vhdl ] -library drm_library
-read_vhdl [ glob $path_to_drm_hdk/activator0/rtl/*.vhdl ] -library drm_library
-read_verilog [ glob $path_to_drm_hdk/activator0/rtl/*.v ]
+read_vhdl [ glob $path_to_drm_hdk/activator0/core/*.vhdl ] -library drm_library
+read_verilog [ glob $path_to_drm_hdk/activator0/core/*.v ]
+read_vhdl [ glob $path_to_drm_hdk/activator0/syn/*.vhdl ] -library drm_library
+read_verilog [ glob $path_to_drm_hdk/activator0/syn/*.sv ]
+
 set_property top krnl_adder_stage_rtl [current_fileset]
 # Accelize #####################################################
 

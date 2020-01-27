@@ -1,10 +1,10 @@
-// Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+// Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
-// Tool Version: Vivado v.2018.2 (lin64) Build 2258646 Thu Jun 14 20:02:38 MDT 2018
-// Date        : Fri Nov 30 15:17:44 2018
-// Host        : ip-172-31-45-183.eu-west-1.compute.internal running 64-bit CentOS Linux release 7.5.1804 (Core)
+// Tool Version: Vivado v.2019.1 (lin64) Build 2552052 Fri May 24 14:47:09 MDT 2019
+// Date        : Wed Jan 22 09:57:29 2020
+// Host        : ip-172-31-12-209.eu-west-1.compute.internal running 64-bit CentOS Linux release 7.7.1908 (Core)
 // Command     : write_verilog -force -mode synth_stub
-//               /accelize_share/home/gdufourcq/vivado_generated_ips/axi_crossbar_1s3m/axi_crossbar_1s3m_stub.v
+//               /accelize_share/home/gdufourcq/vivado_generated_ips/2019.1/axi_crossbar_1s3m/axi_crossbar_1s3m_stub.v
 // Design      : axi_crossbar_1s3m
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xcvu9p-flga2104-1-e
@@ -13,7 +13,7 @@
 // This empty module with port declaration file causes synthesis tools to infer a black box for IP.
 // The synthesis directives are for Synopsys Synplify support to prevent IO buffer insertion.
 // Please paste the declaration into a Verilog source file or add the file as an additional source.
-(* X_CORE_INFO = "axi_crossbar_v2_1_18_axi_crossbar,Vivado 2018.2" *)
+(* X_CORE_INFO = "axi_crossbar_v2_1_20_axi_crossbar,Vivado 2019.1" *)
 module axi_crossbar_1s3m(aclk, aresetn, s_axi_awaddr, s_axi_awprot, 
   s_axi_awvalid, s_axi_awready, s_axi_wdata, s_axi_wstrb, s_axi_wvalid, s_axi_wready, 
   s_axi_bresp, s_axi_bvalid, s_axi_bready, s_axi_araddr, s_axi_arprot, s_axi_arvalid, 

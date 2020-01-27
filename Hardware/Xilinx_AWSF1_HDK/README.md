@@ -6,8 +6,8 @@ The following example design are based on [AWS-FPGA examples](https://github.com
 
 | Name                 | Description            | Status                                        | Internal AFI/AGFI                             |
 | ---------------------|------------------------|:--------------------------------------------: |:--------------------------------------------: | 
-| 01_refdesign_drm1act | 1 DRM Ctrl + 1 IP Act. | Tested OK with AMI v1.6.0 (Xilinx SDx 2018.3) | afi-0a09954be312fdd1c agfi-0585dc9e79690e5d3  |
-| 02_refdesign_drm2act | 1 DRM Ctrl + 2 IP Act. | Tested OK with AMI v1.6.0 (Xilinx SDx 2018.3) | afi-03a6a6a3c86de8dda agfi-0e93c57fa7261b714  |
+| 01_refdesign_drm1act | 1 DRM Ctrl + 1 IP Act. | Tested OK with AMI v1.7.0 (Xilinx SDx 2019.1) | afi-039fafffc43948c76 agfi-067ff2a68da8060b6  |
+| 02_refdesign_drm2act | 1 DRM Ctrl + 2 IP Act. | Tested OK with AMI v1.7.0 (Xilinx SDx 2019.1) | afi-07b635cb0dfc4b084 agfi-03d7b75350a8d7b39  |
 
 
 ### How to synthesize the example designs
@@ -22,8 +22,11 @@ The following example design are based on [AWS-FPGA examples](https://github.com
   * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
   * Replace "software/cred.json" with your Access Key
   * Edit "software/conf.json" to change "boardType" and "frequency" parameters [Optional]
+  * [Install the DRM library](http://accelize.s3-website-eu-west-1.amazonaws.com/documentation/stable/drm_library_installation.html)
 
 * **Execution:**
+  * git clone https://github.com/aws/aws-fpga.git $AWS_FPGA_REPO_DIR
+  * source $AWS_FPGA_REPO_DIR/sdk_setup.sh 
   * cd software
   * Compile using "make clean all"
   * In a terminal:

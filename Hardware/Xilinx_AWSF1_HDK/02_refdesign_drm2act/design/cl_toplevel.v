@@ -149,10 +149,10 @@ axi_crossbar_1s3m axi4lite_crossbar_1s3m_inst (
 );
 
 // DRM block
-drm_controller_ip_axi4st drm_controller_ip_axi4st_inst
+drm_controller drm_controller_inst
 (
-  .ap_clk                     ( clk                   ),
-  .ap_rst_n                   ( rst_n                 ),  
+  .drm_aclk                   ( clk                   ),
+  .drm_arstn                  ( rst_n                 ),  
   .drm_to_uip0_tdata          ( drm_to_uip0_tdata     ),
   .drm_to_uip0_tvalid         ( drm_to_uip0_tvalid    ),
   .drm_to_uip0_tready         ( drm_to_uip0_tready    ),
@@ -165,23 +165,25 @@ drm_controller_ip_axi4st drm_controller_ip_axi4st_inst
   .uip1_to_drm_tready         ( uip1_to_drm_tready    ),
   .uip1_to_drm_tdata          ( uip1_to_drm_tdata     ),
   .uip1_to_drm_tvalid         ( uip1_to_drm_tvalid    ),  
-  .m_axi_awvalid              ( m_axi_drm_awvalid     ),
-  .m_axi_awready              ( m_axi_drm_awready     ),
-  .m_axi_awaddr               ( m_axi_LSB_awaddr      ),
-  .m_axi_wvalid               ( m_axi_drm_wvalid      ),
-  .m_axi_wready               ( m_axi_drm_wready      ),
-  .m_axi_wdata                ( m_axi_drm_wdata       ),
-  .m_axi_wstrb                ( m_axi_drm_wstrb       ),
-  .m_axi_bvalid               ( m_axi_drm_bvalid      ),
-  .m_axi_bready               ( m_axi_drm_bready      ),
-  .m_axi_bresp                ( m_axi_drm_bresp       ),
-  .m_axi_arvalid              ( m_axi_drm_arvalid     ),
-  .m_axi_arready              ( m_axi_drm_arready     ),
-  .m_axi_araddr               ( m_axi_LSB_araddr      ),
-  .m_axi_rvalid               ( m_axi_drm_rvalid      ),
-  .m_axi_rready               ( m_axi_drm_rready      ),
-  .m_axi_rdata                ( m_axi_drm_rdata       ),
-  .m_axi_rresp                ( m_axi_drm_rresp       )
+  .s_axi_aclk                 ( clk                   ),
+  .s_axi_arstn                ( rst_n                 ),  
+  .s_axi_awvalid              ( m_axi_drm_awvalid     ),
+  .s_axi_awready              ( m_axi_drm_awready     ),
+  .s_axi_awaddr               ( m_axi_LSB_awaddr      ),
+  .s_axi_wvalid               ( m_axi_drm_wvalid      ),
+  .s_axi_wready               ( m_axi_drm_wready      ),
+  .s_axi_wdata                ( m_axi_drm_wdata       ),
+  .s_axi_wstrb                ( m_axi_drm_wstrb       ),
+  .s_axi_bvalid               ( m_axi_drm_bvalid      ),
+  .s_axi_bready               ( m_axi_drm_bready      ),
+  .s_axi_bresp                ( m_axi_drm_bresp       ),
+  .s_axi_arvalid              ( m_axi_drm_arvalid     ),
+  .s_axi_arready              ( m_axi_drm_arready     ),
+  .s_axi_araddr               ( m_axi_LSB_araddr      ),
+  .s_axi_rvalid               ( m_axi_drm_rvalid      ),
+  .s_axi_rready               ( m_axi_drm_rready      ),
+  .s_axi_rdata                ( m_axi_drm_rdata       ),
+  .s_axi_rresp                ( m_axi_drm_rresp       )
 );
 
 // User Protected IPs

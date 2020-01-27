@@ -92,9 +92,9 @@ read_ip [ list \
   $HDK_SHELL_DESIGN_DIR/ip/ila_0/ila_0.xci\
   $HDK_SHELL_DESIGN_DIR/ip/cl_debug_bridge/cl_debug_bridge.xci \
   $HDK_SHELL_DESIGN_DIR/ip/ila_vio_counter/ila_vio_counter.xci \
-  $HDK_SHELL_DESIGN_DIR/ip/vio_0/vio_0.xci \
-  $ENC_SRC_DIR/ila_xbar_axi4l/ila_xbar_axi4l.xci
+  $HDK_SHELL_DESIGN_DIR/ip/vio_0/vio_0.xci
 ]
+
 
 # Additional IP's that might be needed if using the DDR
 read_bd [ list \
