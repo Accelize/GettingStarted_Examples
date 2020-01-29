@@ -188,7 +188,11 @@ int main(int argc, char** argv)
         }
     );
     std::cout << "[DRMLIB] Start Session .." << std::endl;
-    pDrmManag->activate();
+    try {                                                                                          
+        pDrmManag->activate();                                                                     
+    } catch( const Exception& e ) {                                                                
+        cerr << "DRM error: " << e.what() << endl;                                                 
+    }
 //ACCELIZE DRMLIB CODE AREA STOP
     
     //Create Kernels
@@ -234,7 +238,11 @@ int main(int argc, char** argv)
 
 //ACCELIZE DRMLIB CODE AREA START
     std::cout << "[DRMLIB] Stop Session .." << std::endl;
-    pDrmManag->deactivate();
+    try {                                                                                          
+        pDrmManag->deactivate();                                                                     
+    } catch( const Exception& e ) {                                                                
+        cerr << "DRM error: " << e.what() << endl;                                                 
+    }
 //ACCELIZE DRMLIB CODE AREA STOP
 
     // Release xclhal2 board handler
