@@ -1,0 +1,18 @@
+{
+  "design": {
+    "boardType": "AlibabaCloud_F1"
+  },
+  "licensing": {
+    "url": "https://master.metering.accelize.com"
+  },
+  "drm": { 
+    "frequency_mhz": 200,
+     "bypass_frequency_detection": true,
+    "mode": "metering", 
+    "license_dir": "." 
+  }, 
+  "settings": {
+    "log_verbosity": 2
+  }
+}
+
