@@ -4,5 +4,6 @@
 
 | Name                       | Description                                                      | Status      |
 | -------------------------- |----------------------------------------------------------------- |:----------: |
-| rtl_adder_pipes            | Same design as Xilinx Getting Started one but with DRM IPs added | Tested OK with Xilinx Vitis pre-release      |
+| rtl_adder_pipes_AWS_v1.8.1 | Same design as Xilinx Getting Started one but with DRM IPs added | Tested OK with Xilinx Vitis 2019.2 & AWS 1.8.1     |
+| rtl_adder_pipes_Alveo      | Same design as Xilinx Getting Started one but with DRM IPs added | Tested OK with Xilinx Vitis 2019.2      |
 
