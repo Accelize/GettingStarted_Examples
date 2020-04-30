@@ -6,7 +6,8 @@ Each of them shows a different context in which one could integrate the Accelize
 
 | Name                       | Description                            | Status      |
 | -------------------------- |--------------------------------------- |:----------: |
-| 01_rtl_kernel              | How to add DRM IPs in an RTL kernel    | Tested OK with Xilinx Vitis 2019.2 & AWS 1.8.1|
+| 01_rtl_kernel_XDMA         | How to add DRM IPs in an RTL kernel    | Tested OK with Xilinx Vitis 2019.2 & AWS 1.8.1|
+| 01_rtl_kernel_QDMA         | How to add DRM IPs in an RTL kernel    | Tested OK with Xilinx Vitis 2019.2 & AWS 1.8.1|
 | 02_c_kernel                | How to add DRM IPs in an C kernel      | Coming soon |
 | 03_ocl_kernel              | How to add DRM IPs in an OpenCL kernel | Coming soon |
 | 04_mixed_c_rtl_kernels     | How to add DRM IPs in multiple kernels | Coming soon |
@@ -23,7 +24,7 @@ Each of them shows a different context in which one could integrate the Accelize
   * [Alveo] Initialize Vivado and Vitis environment variables (XILINX_VIVADO, XILINX_VITIS)
   * [AWS] git clone https://github.com/aws/aws-fpga.git $AWS_FPGA_REPO_DIR  
   * [AWS] source $AWS_FPGA_REPO_DIR/vitis_setup.sh
-  * source XRT setup script
+  * source /opt/xilinx/xrt/setup.sh
 * Launch synthesis:
   * run "make" command in terminal
 
