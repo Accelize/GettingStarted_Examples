@@ -41,7 +41,8 @@ Description: SDx Vector Addition using Blocking Pipes Operation
       exit(EXIT_FAILURE);                                           \
     } 
 
-#define DATA_SIZE 4096
+#define LOOP 10
+#define DATA_SIZE 256
 #define INCR_VALUE 10
 #define DRM_BASE_ADDRESS 0x1800000
 
@@ -114,6 +115,35 @@ int32_t drm_write_callback(uint32_t addr, uint32_t value)
 
 
 /**
+ * run_app()
+ */
+void run_app(   cl::CommandQueue & q, cl::Kernel & krnl_adder_stage, cl::Kernel & krnl_input_stage, cl::Kernel & krnl_output_stage,
+        cl::Buffer & buffer_input, cl::Buffer & buffer_output,
+        uint32_t* source_hw_results)
+{
+    cl_int err;
+     
+    //Copy input data to device global memory
+    cl::Event write_event;
+    OCL_CHECK(err, err = q.enqueueMigrateMemObjects({buffer_input},0,NULL,&write_event));
+
+    //Launch the Kernel
+    std::vector<cl::Event> eventVec;
+    eventVec.push_back(write_event);
+    OCL_CHECK(err, err = q.enqueueTask(krnl_input_stage, &eventVec));
+    OCL_CHECK(err, err = q.enqueueTask(krnl_adder_stage, &eventVec));
+    OCL_CHECK(err, err = q.enqueueTask(krnl_output_stage, &eventVec));
+
+    //wait for all kernels to finish their operations
+    OCL_CHECK(err, err = q.finish());
+
+    //Copy Result from Device Global Memory to Host Local Memory
+    OCL_CHECK(err, err = q.enqueueMigrateMemObjects({buffer_output},CL_MIGRATE_MEM_OBJECT_HOST));
+    OCL_CHECK(err, err = q.finish());
+
+}
+
+/**
  * Entry point
  */
 int main(int argc, char** argv)
@@ -128,15 +158,15 @@ int main(int argc, char** argv)
     //Allocate Memory in Host Memory
     size_t vector_size_bytes = sizeof(int) * DATA_SIZE;
 
-   int source_input     [DATA_SIZE];
-   int source_hw_results[DATA_SIZE];
-   int source_sw_results[DATA_SIZE];
+    uint32_t source_input     [DATA_SIZE];
+    uint32_t source_hw_results[DATA_SIZE];
+    uint32_t source_sw_results[DATA_SIZE];
 
     // Create the test data and Software Result 
     for(int i = 0 ; i < DATA_SIZE ; i++){
         source_input[i] = i;
-        source_sw_results[i] = i + INCR_VALUE;
         source_hw_results[i] = 0;
+        source_sw_results[i] = i + INCR_VALUE;
     }
 
 //OPENCL HOST CODE AREA START
@@ -212,24 +242,23 @@ int main(int argc, char** argv)
     OCL_CHECK(err, err = krnl_output_stage.setArg(0,buffer_output));
     OCL_CHECK(err, err = krnl_output_stage.setArg(1,size));
 
-    //Copy input data to device global memory
-    cl::Event write_event;
-    OCL_CHECK(err, err = q.enqueueMigrateMemObjects({buffer_input},0/* 0 means from host*/,NULL,&write_event));
-
-    //Launch the Kernel
-    std::vector<cl::Event> eventVec;
-    eventVec.push_back(write_event);
-    OCL_CHECK(err, err = q.enqueueTask(krnl_input_stage, &eventVec));
-    OCL_CHECK(err, err = q.enqueueTask(krnl_adder_stage, &eventVec));
-    OCL_CHECK(err, err = q.enqueueTask(krnl_output_stage, &eventVec));
-
-    //wait for all kernels to finish their operations
-    OCL_CHECK(err, err = q.finish());
-
-    //Copy Result from Device Global Memory to Host Local Memory
-    OCL_CHECK(err, err = q.enqueueMigrateMemObjects({buffer_output},CL_MIGRATE_MEM_OBJECT_HOST));
-    OCL_CHECK(err, err = q.finish());
-
+    
+    // App Loop
+    int match = 0;
+    for(uint32_t i=0; i<LOOP; i++) {
+        std::cout << "Running RTL Adder Pipes LOOP " << (i+1) << std::endl;
+        run_app(q, krnl_adder_stage, krnl_input_stage, krnl_output_stage, buffer_input, buffer_output, source_hw_results);
+        
+        // Compare the results of the Device to the simulation
+        for (int i = 0 ; i < DATA_SIZE ; i++){
+            if (source_hw_results[i] != source_sw_results[i]){
+                std::cout << "Error: Result mismatch" << std::endl;
+                std::cout << "i = " << i << " CPU result = " << source_sw_results[i]
+                    << " Device result = " << source_hw_results[i] << std::endl;
+                match = 1;  
+            }
+        }
+    }
 //OPENCL HOST CODE AREA END
 
 //ACCELIZE DRMLIB CODE AREA START
@@ -239,18 +268,6 @@ int main(int argc, char** argv)
 
     // Release xclhal2 board handler
     xclClose(boardHandler);
-    
-    // Compare the results of the Device to the simulation
-    int match = 0;
-    for (int i = 0 ; i < DATA_SIZE ; i++){
-        if (source_hw_results[i] != source_sw_results[i]){
-            std::cout << "Error: Result mismatch" << std::endl;
-            std::cout << "i = " << i << " CPU result = " << source_sw_results[i]
-                << " Device result = " << source_hw_results[i] << std::endl;
-            match = 1;
-            break;
-        }
-    }
 
     delete[] fileBuf;
 

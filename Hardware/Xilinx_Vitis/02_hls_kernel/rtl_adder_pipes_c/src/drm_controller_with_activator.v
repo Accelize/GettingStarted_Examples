@@ -23,6 +23,10 @@ module drm_controller_with_activator
   output wire [32-1:0]              activation_code3_tdata          ,
   output wire                       activation_code3_tvalid         ,
   input wire                        activation_code3_tready         ,
+  // AXI4-ST metering event
+  input wire [32-1:0]               metering_event_tdata          ,
+  input wire                        metering_event_tvalid         ,
+  output wire                       metering_event_tready         ,
   // AXI4-Lite Control Port
   input wire                        s_axi_control_awvalid      ,
   output  wire                      s_axi_control_awready      ,
@@ -92,6 +96,7 @@ wire           uip0_to_drm_tvalid  ;
  wire [127:0]    s_drm_activation_code;
  wire            s_drm_activation_code_ready;
  wire            s_act_code_is_not_null;
+ wire            s_metering_event;
  
  assign s_act_code_is_not_null = |s_drm_activation_code;
  
@@ -104,6 +109,9 @@ wire           uip0_to_drm_tvalid  ;
  assign activation_code1_tdata   = s_drm_activation_code[63:32];
  assign activation_code2_tdata   = s_drm_activation_code[95:64];
  assign activation_code3_tdata   = s_drm_activation_code[127:96];
+ 
+ assign metering_event_tready = 1'b1;
+ assign s_metering_event = metering_event_tvalid & metering_event_tdata[0];
 
 
 top_drm_activator_0x1003000e00010001 top_drm_activator_0x1003000e00010001_inst (
@@ -116,7 +124,7 @@ top_drm_activator_0x1003000e00010001 top_drm_activator_0x1003000e00010001_inst (
        .uip_to_drm_tdata      (uip0_to_drm_tdata                 ),
        .uip_to_drm_tvalid     (uip0_to_drm_tvalid                ),
        .ip_core_aclk          (ap_clk                            ),
-       .metering_event        (1'b0                              ),
+       .metering_event        (s_metering_event                  ),
        .activation_code       (s_drm_activation_code             )
      ); 
 

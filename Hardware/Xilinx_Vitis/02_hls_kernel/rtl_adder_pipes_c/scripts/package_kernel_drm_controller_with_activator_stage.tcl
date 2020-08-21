@@ -61,6 +61,7 @@ ipx::associate_bus_interfaces -busif activation_code0 -clock ap_clk [ipx::curren
 ipx::associate_bus_interfaces -busif activation_code1 -clock ap_clk [ipx::current_core]
 ipx::associate_bus_interfaces -busif activation_code2 -clock ap_clk [ipx::current_core]
 ipx::associate_bus_interfaces -busif activation_code3 -clock ap_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif metering_event -clock ap_clk [ipx::current_core]
 set_property xpm_libraries {XPM_CDC XPM_MEMORY XPM_FIFO} [ipx::current_core]
 set_property supported_families { } [ipx::current_core]
 set_property auto_family_support_level level_2 [ipx::current_core]
