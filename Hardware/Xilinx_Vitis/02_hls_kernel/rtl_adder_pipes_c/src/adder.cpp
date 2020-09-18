@@ -33,7 +33,6 @@ void adder(  int inc,
     unsigned int expected_ac0      = 0x18DB0CE0;
     
     datap temp_metering;
-    temp_metering.data;
     
     // Read latest Activation Code Value
     datap temp_ac0 = activation_code0.read();

@@ -11,7 +11,7 @@ use IEEE.std_logic_1164.all;
 package drm_activator_0x1003000e00010001_sim_pkg is
 
   -- Indicate to use or not the BFM.
-  -- For synthesis is MUST be set to false
+  -- For synthesis it MUST be set to false
   constant USE_BFM : boolean  := TRUE;
 
   -- Specify the path to a valid DRM License XML file used by the Controller BFM

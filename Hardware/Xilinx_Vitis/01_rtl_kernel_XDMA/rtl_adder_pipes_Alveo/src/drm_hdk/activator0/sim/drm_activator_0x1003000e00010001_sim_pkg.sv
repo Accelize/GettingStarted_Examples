@@ -8,7 +8,7 @@
 package drm_activator_0x1003000e00010001_sim_pkg;
 
   /** Indicate to use or not the BFM.
-  * For synthesis is MUST be set to false
+  * For synthesis it MUST be set to false
   */
   parameter USE_BFM = 1;
 

@@ -145,7 +145,7 @@ begin
     end
 end
 
-drm_activator_0x1003000e00010001 drm_activator_0x1003000e00010001_inst (
+top_drm_activator_0x1003000e00010001 top_drm_activator_0x1003000e00010001_inst (
       .drm_aclk              (ap_clk                            ),
       .drm_arstn             (ap_rst_n                          ),       
       .drm_to_uip_tdata      (drm_to_uip_tdata                  ),

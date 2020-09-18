@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root versionMajor="1" versionMinor="6">
+  <kernel name="kernel_drm_controller" language="ip" vlnv="accelize.com:drm_hdk:kernel_drm_controller:1.0" attributes="" preferredWorkGroupSizeMultiple="0" workGroupSize="1" interrupt="false" hwControlProtocol="ap_ctrl_none">
+    <ports>
+      <port name="s_axi_control" mode="slave" range="0x10000" dataWidth="32" portType="addressable" base="0x0"/>
+      <port name="drm_to_uip0" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip0_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
+      <port name="drm_to_uip1" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip1_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
+      <port name="drm_to_uip2" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip2_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
+      <port name="drm_to_uip3" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip3_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
+      <port name="drm_to_uip4" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip4_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
+      <port name="drm_to_uip5" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip5_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
+      <port name="drm_to_uip6" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip6_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
+      <port name="drm_to_uip7" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip7_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
+      <port name="drm_to_uip8" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip8_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
+      <port name="drm_to_uip9" mode="write_only" dataWidth="32" portType="stream"/>
+      <port name="uip9_to_drm" mode="read_only" dataWidth="32" portType="stream"/>
+    </ports>
+    <args>
+      <arg name="drm_to_uip0" addressQualifier="4" id="0" port="drm_to_uip0" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="uip0_to_drm" addressQualifier="4" id="1" port="uip0_to_drm" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="drm_to_uip1" addressQualifier="4" id="2" port="drm_to_uip1" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="uip1_to_drm" addressQualifier="4" id="3" port="uip1_to_drm" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="drm_to_uip2" addressQualifier="4" id="4" port="drm_to_uip2" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="uip2_to_drm" addressQualifier="4" id="5" port="uip2_to_drm" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="drm_to_uip3" addressQualifier="4" id="6" port="drm_to_uip3" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="uip3_to_drm" addressQualifier="4" id="7" port="uip3_to_drm" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="drm_to_uip4" addressQualifier="4" id="8" port="drm_to_uip4" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="uip4_to_drm" addressQualifier="4" id="9" port="uip4_to_drm" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="drm_to_uip5" addressQualifier="4" id="10" port="drm_to_uip5" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="uip5_to_drm" addressQualifier="4" id="11" port="uip5_to_drm" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="drm_to_uip6" addressQualifier="4" id="12" port="drm_to_uip6" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="uip6_to_drm" addressQualifier="4" id="13" port="uip6_to_drm" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="drm_to_uip7" addressQualifier="4" id="14" port="drm_to_uip7" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="uip7_to_drm" addressQualifier="4" id="15" port="uip7_to_drm" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="drm_to_uip8" addressQualifier="4" id="16" port="drm_to_uip8" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="uip8_to_drm" addressQualifier="4" id="17" port="uip8_to_drm" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="drm_to_uip9" addressQualifier="4" id="18" port="drm_to_uip9" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+      <arg name="uip9_to_drm" addressQualifier="4" id="19" port="uip9_to_drm" size="0x4" offset="0x0" hostOffset="0x0" hostSize="0x4" type="stream&lt;ap_axiu&lt;32, 0, 0, 0> >&amp;"/>
+    </args>
+  </kernel>
+</root>

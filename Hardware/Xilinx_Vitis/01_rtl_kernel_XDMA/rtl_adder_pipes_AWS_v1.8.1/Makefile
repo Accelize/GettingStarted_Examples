@@ -15,7 +15,7 @@ $(DRM_XO):
 	@echo -e "\n\n===> Generating [$@] Kernel ..."
 	@make -C src/drm_hdk/controller/sdaccel
 	@mkdir -p ${OUTPUT_DIR}
-	@cp -f src/drm_hdk/controller/sdaccel/drm_controller_kernel.xo ${DRM_XO}
+	@cp -f src/drm_hdk/controller/sdaccel/kernel_drm_controller.xo ${DRM_XO}
 
 $(VTS_KERNELS_OBJS):
 	@echo -e "\n\n===> Generating [$@] Kernel ..."

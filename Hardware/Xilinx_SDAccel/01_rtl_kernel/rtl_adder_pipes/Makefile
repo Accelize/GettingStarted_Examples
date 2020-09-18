@@ -2,7 +2,8 @@
 # Accelize DRM Reference Design Makefile
 #
 #
-SDX_PLATFORM=/tools/xilinx/vivado_2018.3/platforms/xilinx_u200_xdma_201830_1/xilinx_u200_xdma_201830_1.xpfm
+#SDX_PLATFORM=/tools/xilinx/vivado_2018.3/platforms/xilinx_u200_xdma_201830_1/xilinx_u200_xdma_201830_1.xpfm
+SDX_PLATFORM=/tools/xilinx/vivado_2019.1/platforms/xilinx_u200_xdma_201830_2/xilinx_u200_xdma_201830_2.xpfm
 OUTPUT_DIR=xclbin
 DRM_XO=${OUTPUT_DIR}/drm.xo
 DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_drm.xclbin
