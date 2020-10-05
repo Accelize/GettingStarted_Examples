@@ -35,12 +35,12 @@ The following example design are based on [AWS-FPGA examples](https://github.com
     
 ### How to compile & run Docker application
 * **Prerequisites**:
-  * install DockerCE on execution host 
+  * install DockerCE on development and execution hosts 
 * **Build:**
   * docker image build -f aws_f1.Dockerfile --tag=${YOUR-DOCKERHUB-REPO} . 
   * docker push ${YOUR-DOCKERHUB-REPO}
 * **Run:**
   * sudo fpga-load-local-image -S 0 -I ${YOUR-AGFI-ID}
-  * git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git && cd Xilinx_Base_Runtime
-  * source utilities/xilinx_aws_docker_setup.sh
+  * git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git
+  * source Xilinx_Base_Runtime/utilities/xilinx_aws_docker_setup.sh
   * docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AWS_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}

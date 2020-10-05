@@ -28,7 +28,7 @@ Each of them shows a different context in which one could integrate the Accelize
 * Launch synthesis:
   * run "make" command in terminal
 
-### How to run compile & run application
+### How to compile & run application
 * **Prerequisites**:
   * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
   * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
@@ -49,3 +49,23 @@ Each of them shows a different context in which one could integrate the Accelize
   * source /opt/xilinx/xrt/setup.sh
   * make clean all
   * ./app {path-to-awsxclbin}
+  
+### How to compile & run Docker application
+* **Prerequisites**:
+  * install DockerCE on development and execution hosts 
+* **Alveo Boards (On-Premise Execution)**:
+  * **Build:**
+    * docker image build -f alveo_u200.Dockerfile --tag=${YOUR-DOCKERHUB-REPO} . 
+    * docker push ${YOUR-DOCKERHUB-REPO}
+  * **Run:**
+    * git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git
+    * source Xilinx_Base_Runtime/utilities/xilinx_docker_setup.sh
+    * docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AWS_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
+* **AWS**:
+  * **Build:**
+    * docker image build -f aws_f1.Dockerfile --tag=${YOUR-DOCKERHUB-REPO} . 
+    * docker push ${YOUR-DOCKERHUB-REPO}
+  * **Run:**
+    * git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git
+    * source Xilinx_Base_Runtime/utilities/xilinx_aws_docker_setup.sh
+    * docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AWS_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
