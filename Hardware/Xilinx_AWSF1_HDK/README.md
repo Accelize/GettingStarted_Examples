@@ -6,8 +6,8 @@ The following example design are based on [AWS-FPGA examples](https://github.com
 
 | Name                 | Description            | Status                                        | Internal AFI/AGFI                             |
 | ---------------------|------------------------|:--------------------------------------------: |:--------------------------------------------: | 
-| 01_refdesign_drm1act | 1 DRM Ctrl + 1 IP Act. | Tested OK with AMI v1.7.0 (Xilinx SDx 2019.1) | afi-039fafffc43948c76 agfi-067ff2a68da8060b6  |
-| 02_refdesign_drm2act | 1 DRM Ctrl + 2 IP Act. | Tested OK with AMI v1.7.0 (Xilinx SDx 2019.1) | afi-07b635cb0dfc4b084 agfi-03d7b75350a8d7b39  |
+| cl_hello_world_drm1act | 1 DRM Ctrl + 1 IP Act. | Tested OK with AMI v1.8.1 (Xilinx SDx 2019.2) | afi-02a9b22e655cfcb68 agfi-02a72a28bf91afa30 |
+| cl_hello_world_drm2act | 1 DRM Ctrl + 2 IP Act. | Tested OK with AMI v1.8.1 (Xilinx SDx 2019.2) | afi-00141f163aaa2b4da agfi-03208949a846b98b8  |
 
 
 ### How to synthesize the example designs
@@ -16,7 +16,7 @@ The following example design are based on [AWS-FPGA examples](https://github.com
 * Open a terminal in the design folder
 * Follow the instructions from [AWS-FPGA GitHub](https://github.com/aws/aws-fpga/tree/master/hdk#how-to-create-an-amazon-fpga-image-afi-from-one-of-the-cl-examples-step-by-step-guide)
 
-### How to run compile & run application
+### How to compile & run application
 * **Prerequisites**:
   * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
   * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
@@ -32,3 +32,15 @@ The following example design are based on [AWS-FPGA examples](https://github.com
   * In a terminal:
     * sudo fpga-load-local-image -S 0 -I ${YOUR-AGFI-ID}
     * sudo ./app
+    
+### How to compile & run Docker application
+* **Prerequisites**:
+  * install DockerCE on execution host 
+* **Build:**
+  * docker image build -f aws_f1.Dockerfile --tag=${YOUR-DOCKERHUB-REPO} . 
+  * docker push ${YOUR-DOCKERHUB-REPO}
+* **Run:**
+  * sudo fpga-load-local-image -S 0 -I ${YOUR-AGFI-ID}
+  * git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git && cd Xilinx_Base_Runtime
+  * source utilities/xilinx_aws_docker_setup.sh
+  * docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AWS_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
