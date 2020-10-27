@@ -44,8 +44,8 @@ using namespace Accelize::DRM;
 
 int usleep(unsigned);
 
-#define UIP1_BASE_ADDR          0x20000
-#define DRM_BASE_ADDR           0x10000
+#define UIP1_BASE_ADDR          0x10000
+#define DRM_BASE_ADDR           0x20000
 
 #define HELLO_AFU_ID             AFU_ACCEL_UUID  // Defined in afu_json_info.h
 #define SCRATCH_REG              0X80
@@ -157,10 +157,21 @@ int main(int argc, char *argv[])
     ON_ERR_EXIT(res, "mapping MMIO space");
 
     printf("Running Test\n");
+    uint64_t rreg=0;
 
+    // Print AFU Info
+    printf("\n>>> Print AFU Info\n");
+    for(uint32_t i=0; i<0x12; i+=4) {
+        int ret = fpgaReadMMIO64(afc_handle, 0, (i*2), &rreg);
+        uint32_t rreg1 = (uint32_t) rreg;
+        uint32_t rreg2 = (uint32_t) (rreg >> 32);
+        printf("[ret=%d] i=0x%X Reg=0x%X Reg=0x%X\n", ret, i, rreg2, rreg1);
+    }
     /* Reset AFC */
     res = fpgaReset(afc_handle);
     ON_ERR_EXIT(res, "resetting AFC");
+    
+//ACCELIZE DRMLIB CODE AREA START
     DrmManager *pDrmManag = new DrmManager(
         std::string("conf.json"),
         std::string("cred.json"),
@@ -178,11 +189,12 @@ int main(int argc, char *argv[])
     pDrmManag->activate();
 //ACCELIZE DRMLIB CODE AREA STOP
 
-    sleep(1);
+    sleep(3);
+    
     // Check IP Activation status
     uint64_t reg = 0;
     res = fpgaReadMMIO64(afc_handle, 0, UIP1_BASE_ADDR, &reg);
-    if(reg==3)
+    if(reg==1)
        printf("FPGA Design IPs successfully activated\n");
     else {
         printf("[ERROR] Unable to activate FPGA Design IPs\n");

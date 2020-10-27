@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<root versionMajor="1" versionMinor="0">
-  <kernel name="kernel_drm_controller" language="ip" vlnv="accelize.com:hdk:kernel_drm_controller:1.0" attributes="" preferredWorkGroupSizeMultiple="0" workGroupSize="1" interrupt="false">
+<root versionMajor="1" versionMinor="6">
+  <kernel name="kernel_drm_controller" language="ip" vlnv="accelize.com:drm_hdk:kernel_drm_controller:1.0" attributes="" preferredWorkGroupSizeMultiple="0" workGroupSize="1" interrupt="false" hwControlProtocol="ap_ctrl_none">
     <ports>
       <port name="s_axi_control" mode="slave" range="0x10000" dataWidth="32" portType="addressable" base="0x0"/>
       <port name="drm_to_uip0" mode="write_only" dataWidth="32" portType="stream"/>

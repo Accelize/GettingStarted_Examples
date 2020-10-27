@@ -69,7 +69,7 @@ module ccip_std_afu
 
     ccip_interface_reg inst_green_ccip_interface_reg
        (
-        .pClk                     (pClk),
+        .pClk                     (uClk_usr),
         .pck_cp2af_softReset_T0   (pck_cp2af_softReset),
         .pck_cp2af_pwrState_T0    (pck_cp2af_pwrState),
         .pck_cp2af_error_T0       (pck_cp2af_error),
@@ -90,7 +90,7 @@ module ccip_std_afu
 
     afu afu
        (
-        .clk            (pClk),
+        .clk            (uClk_usr),
         .reset          (pck_cp2af_softReset_T1),
 
         .cp2af_sRxPort  (pck_cp2af_sRx_T1),

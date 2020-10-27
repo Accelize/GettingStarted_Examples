@@ -39,6 +39,7 @@ end entity top_drm_activator_0x1003000e00010001;
 architecture top_drm_activator_0x1003000e00010001_rtl of top_drm_activator_0x1003000e00010001 is
 
   constant POR_DURATION        : integer := 16;
+  constant GND                 : std_logic := '0';
 
   signal por_shifter           : std_logic_vector(POR_DURATION-1 downto 0) := (others=>'0'); -- init for simulation
   signal i_ip_core_arstn       : std_ulogic;
@@ -151,7 +152,7 @@ begin
     IP_CORE_ACLK          => ip_core_aclk,
     IP_CORE_ARSTN         => i_ip_core_arstn,
     DRM_EVENT             => metering_event,
-    DRM_ARST              => '0',
+    DRM_ARST              => GND,
     ACTIVATION_CODE_READY => open,
     DEMO_MODE             => open,
     ACTIVATION_CODE       => activation_code

@@ -13,14 +13,6 @@ Each of them shows a different context in which one could integrate the Accelize
 
 ### [Arria10 Nodes] How to synthesize the example designs
 * **Note:** Only nodes 137 and 138 comes with Accelize DRM Library pre-installed
-* Accelize DRM Synthesis License Installation:
-  * Copy **accelize_drm_synthesis_license.dat** on devcloud (user roor folder)
-  * Add the following lines in "~/.altera.quartus/quartus2.ini"
-`[General 17.1_pro]
-LICENSE_FILE = /usr/local/licenseserver/quartus.lic:/home/u32094/accelize_drm_synthesis_license.dat`
-`[General 18.1_pro]
-LICENSE_FILE = /usr/local/licenseserver/quartus.lic:/home/u32094/accelize_drm_synthesis_license.dat 
-`
 * Launch Bitstream Generation:
   * source /opt/a10/inteldevstack/init_env.sh
   * rm -rf build_synth
@@ -32,14 +24,6 @@ LICENSE_FILE = /usr/local/licenseserver/quartus.lic:/home/u32094/accelize_drm_sy
   
 ### [Stratix10 Nodes] How to synthesize the example designs
 * **Note:** Only node 189 comes with Accelize DRM Library pre-installed
-* Accelize DRM Synthesis License Installation:
-  * Copy **accelize_drm_synthesis_license.dat** on devcloud (user roor folder)
-  * Add the following lines in "~/.altera.quartus/quartus2.ini"
-`[General 17.1_pro]
-LICENSE_FILE = /usr/local/licenseserver/quartus.lic:/home/u32094/accelize_drm_synthesis_license.dat`
-`[General 18.1_pro]
-LICENSE_FILE = /usr/local/licenseserver/quartus.lic:/home/u32094/accelize_drm_synthesis_license.dat 
-`
 * Launch Bitstream Generation:
   * source /opt/intel/inteldevstack/init_env.sh
   * rm -rf build_synth
@@ -47,6 +31,7 @@ LICENSE_FILE = /usr/local/licenseserver/quartus.lic:/home/u32094/accelize_drm_sy
   * cd build_synth
   * cp -f ../afu.qsf hw/afu.qsf
   * run.sh
+
 
 ### How to run compile & run application
  * Environement setup:

@@ -36,11 +36,11 @@ module user_ip
   output wire [32-1:0]               uip_to_drm_tdata           ,
   output wire                        uip_to_drm_tvalid          
 );
-    localparam  EXP_ACT_CODE = 128'h1C61CF7238D5D2FD7D82F5C697D753B1;
-    reg         areset = 1'b0;
-    wire        usage_unit_event;
+    
+    localparam      EXP_ACT_CODE = 128'h7E745E528F0CF2F36C304A2F18DB0CE0;
+    reg             areset = 1'b0;
+    wire            usage_unit_event;
     wire [127:0]    s_drm_activation_code;
-    wire            s_activation_code_ready;
     reg  [127:0]    s_tmp;
     reg             s_activated;
     
@@ -58,7 +58,7 @@ module user_ip
         if (rst_n == 1'b0) begin
             s_activated     <= 1'b0;
             s_tmp           <= {128{1'b0}};
-        end else if (s_activation_code_ready == 1'b1 && |s_drm_activation_code) begin
+        end else if (|s_drm_activation_code) begin
             s_tmp       <= (EXP_ACT_CODE ^ s_drm_activation_code) ;
             s_activated <= ~|s_tmp;
         end else begin
@@ -98,11 +98,11 @@ module user_ip
                         s_read_state_machine        <= FSMWAIT;
                         m_axi_arready               <= 1'b1;
                         m_axi_rvalid                <= 1'b1;
-                        m_axi_rdata                 <=  (m_axi_araddr[15:0]==16'h00)?{{30{1'b0}},s_activation_code_ready, s_activated}:
+                        m_axi_rdata                 <=  (m_axi_araddr[15:0]==16'h00)?{{31{1'b0}}, s_activated}:
                                                         (m_axi_araddr[15:0]==16'h02)?s_mailbox_1:
                                                         (m_axi_araddr[15:0]==16'h04)?s_mailbox_2:
                                                         (m_axi_araddr[15:0]==16'h06)?s_mailbox_3:
-                            {16'h06AE, m_axi_araddr};
+                                                        {16'h06AE, m_axi_araddr};
                     end
                 end
                 
@@ -181,7 +181,7 @@ module user_ip
         end
     end
     
-    drm_ip_activator_0x1003000e00050001_axi4st drm_ip_activator_0x1003000e00050001_axi4st_inst (
+    top_drm_activator_0x1003000e00010001 top_drm_activator_0x1003000e00010001_inst (
       .drm_aclk              (clk                            ),
       .drm_arstn             (rst_n                          ),       
       .drm_to_uip_tdata      (drm_to_uip_tdata               ),
@@ -191,11 +191,7 @@ module user_ip
       .uip_to_drm_tdata      (uip_to_drm_tdata               ),
       .uip_to_drm_tvalid     (uip_to_drm_tvalid              ),
       .ip_core_aclk          (clk                            ),
-      .ip_core_arstn         (rst_n                          ),
-      .drm_event             (usage_unit_event               ),
-      .drm_arst              (areset                         ),
-      .activation_code_ready (s_activation_code_ready        ),
-      .demo_mode             (                               ),
+      .metering_event        (usage_unit_event               ),
       .activation_code       (s_drm_activation_code          )
     );
 

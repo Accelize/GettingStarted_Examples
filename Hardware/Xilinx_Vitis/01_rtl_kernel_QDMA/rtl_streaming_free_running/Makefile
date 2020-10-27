@@ -1,11 +1,11 @@
 #
 # Accelize DRM Reference Design Makefile
 #
-VTS_PLATFORM=/opt/xilinx/platforms/xilinx_u200_qdma_201920_1/xilinx_u200_qdma_201920_1.xpfm
-#VTS_PLATFORM=/opt/xilinx/platforms/xilinx_u250_qdma_201920_1/xilinx_u250_qdma_201920_1.xpfm
+VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u200_qdma_201920_1/xilinx_u200_qdma_201920_1.xpfm
+#VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u250_qdma_201920_1/xilinx_u250_qdma_201920_1.xpfm
 OUTPUT_DIR=xclbin
 DRM_XO=${OUTPUT_DIR}/drm.xo
-DESIGN_OBJ=${OUTPUT_DIR}/rtl_streaming_free_running_u200_qdma_201920_1.xclbin
+DESIGN_OBJ=${OUTPUT_DIR}/rtl_streaming_free_running_u200_qdma_201920_1_hdk_v4.2.1.xclbin
 VTS_KERNELS = myadder1
 VTS_KERNELS_OBJS = $(VTS_KERNELS:%=${OUTPUT_DIR}/%.xo)
 KERNEL_FREQ_MHZ = 100
