@@ -1,0 +1,114 @@
+
+// drm controller wrapper component for 2 IPs
+module drm_controller_wrapper #(
+      parameter sys_bus_adr_begin = 0,
+      parameter sys_bus_adr_size  = 16
+  ) (
+    // axi4 lite slave clock and reset
+    input  wire                        sys_axi4_aclk,
+    input  wire                        sys_axi4_arstn,
+    // axi4 lite slave address write channel
+    input  wire                        sys_axi4_bus_slave_i_aw_valid,
+    input  wire [sys_bus_adr_size-1:0] sys_axi4_bus_slave_i_aw_addr,
+    input  wire [2:0]                  sys_axi4_bus_slave_i_aw_prot,
+    output wire                        sys_axi4_bus_slave_o_aw_ready,
+    // axi4 lite slave address read channel
+    input  wire                        sys_axi4_bus_slave_i_ar_valid,
+    input  wire [sys_bus_adr_size-1:0] sys_axi4_bus_slave_i_ar_addr,
+    input  wire [2:0]                  sys_axi4_bus_slave_i_ar_prot,
+    output wire                        sys_axi4_bus_slave_o_ar_ready,
+    // axi4 lite slave data write channel
+    input  wire                        sys_axi4_bus_slave_i_w_valid,
+    input  wire [31:0]                 sys_axi4_bus_slave_i_w_data,
+    input  wire [3:0]                  sys_axi4_bus_slave_i_w_strb,
+    output wire                        sys_axi4_bus_slave_o_w_ready,
+    // axi4 lite slave data read channel
+    input  wire                        sys_axi4_bus_slave_i_r_ready,
+    output wire                        sys_axi4_bus_slave_o_r_valid,
+    output wire [31:0]                 sys_axi4_bus_slave_o_r_data,
+    output wire [1:0]                  sys_axi4_bus_slave_o_r_resp,
+    // axi4 lite slave write response channel
+    input  wire                        sys_axi4_bus_slave_i_b_ready,
+    output wire                        sys_axi4_bus_slave_o_b_valid,
+    output wire [1:0]                  sys_axi4_bus_slave_o_b_resp,
+    // chip dna bus
+    output wire                        chip_dna_valid,
+    output wire [63:0]                 chip_dna,
+    // drm bus clock and reset
+    input wire                         drm_aclk,
+    input wire                         drm_arstn,
+    // drm bus master common socket
+    output wire                        drm_bus_master_o_cyc,
+    output wire                        drm_bus_master_o_we,
+    output wire [1:0]                  drm_bus_master_o_adr,
+    output wire                        drm_bus_master_o_dat,
+    // drm bus master ip 0 socket
+    output wire                        drm_bus_master_o_cs_0,
+    input  wire                        drm_bus_master_i_ack_0,
+    input  wire                        drm_bus_master_i_sta_0,
+    input  wire                        drm_bus_master_i_intr_0,
+    input  wire                        drm_bus_master_i_dat_0,
+    // drm bus master ip 1 socket
+    output wire                        drm_bus_master_o_cs_1,
+    input  wire                        drm_bus_master_i_ack_1,
+    input  wire                        drm_bus_master_i_sta_1,
+    input  wire                        drm_bus_master_i_intr_1,
+    input  wire                        drm_bus_master_i_dat_1,
+    // drm bus master ip 2 socket
+    output wire                        drm_bus_master_o_cs_2,
+    input  wire                        drm_bus_master_i_ack_2,
+    input  wire                        drm_bus_master_i_sta_2,
+    input  wire                        drm_bus_master_i_intr_2,
+    input  wire                        drm_bus_master_i_dat_2
+  );
+
+// drm ip activator component
+module drm_activator_0x2222222233333333_wrapper (
+  // drm bus clock and reset
+  input  wire         drm_aclk,
+  input  wire         drm_arstn,
+  // drm bus slave interface
+  input  wire         drm_bus_slave_i_cs,
+  input  wire         drm_bus_slave_i_cyc,
+  input  wire         drm_bus_slave_i_we,
+  input  wire [1:0]   drm_bus_slave_i_adr,
+  input  wire         drm_bus_slave_i_dat,
+  output wire         drm_bus_slave_o_ack,
+  output wire         drm_bus_slave_o_sta,
+  output wire         drm_bus_slave_o_intr,
+  output wire         drm_bus_slave_o_dat,
+  // ip core clock and reset
+  input  wire         ip_core_aclk,
+  input  wire         ip_core_arstn,
+  // ip core interface
+  input  wire         drm_event,
+  input  wire         drm_arst,
+  output wire         activation_code_ready,
+  output wire         demo_mode,
+  output wire [127:0] activation_code
+);
+
+// drm controller bfm component
+module drm_controller_bfm_wrapper #(
+    parameter license_file           = "", // license file path
+    parameter license_timer          = "", // license timer
+    parameter enable_message_display = 1   // enable the display of messages by setting this parameter to true
+  ) (
+    // drm clock and reset
+    input  wire       drm_aclk,
+    input  wire       drm_arstn,
+    // drm bus master i/f
+    output wire       drm_bus_master_o_cyc,
+    output wire       drm_bus_master_o_we,
+    output wire [1:0] drm_bus_master_o_adr,
+    output wire       drm_bus_master_o_dat,
+    output wire       drm_bus_master_o_cs,
+    input  wire       drm_bus_master_i_ack,
+    input  wire       drm_bus_master_i_sta,
+    input  wire       drm_bus_master_i_intr,
+    input  wire       drm_bus_master_i_dat,
+    // bfm status
+    output wire       license_file_loaded,    // license file has been loaded into hardware
+    output wire       activation_cycle_done,  // the first activation cycle is done
+    output wire [7:0] error_code              // error code
+  );

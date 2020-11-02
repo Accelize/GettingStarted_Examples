@@ -56,5 +56,4 @@ set_property supported_families { } [ipx::current_core]
 set_property auto_family_support_level level_2 [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
 ipx::save_core [ipx::current_core]
-ipx::archive_core accelize.com_drm_ips_top_drm_controller_1.0.zip [ipx::current_core]
 close_project -delete

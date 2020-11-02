@@ -13,7 +13,9 @@ CXXFLAGS := -Wall -std=c++11 -Wno-unused-variable
 COMMON_REPO = /home/labo/Vitis_Accel_Examples
 ABS_COMMON_REPO = $(shell readlink -f $(COMMON_REPO))
 include $(ABS_COMMON_REPO)/common/includes/opencl/opencl.mk
-include $(ABS_COMMON_REPO)/common/includes/xcl2/xcl2.mk
+xcl2_SRCS:=${COMMON_REPO}/common/includes/xcl2/xcl2.cpp
+xcl2_HDRS:=${COMMON_REPO}/common/includes/xcl2/xcl2.hpp
+xcl2_CXXFLAGS:=-I${COMMON_REPO}/common/includes/xcl2
 CXXFLAGS += $(xcl2_CXXFLAGS)
 LDFLAGS += $(xcl2_LDFLAGS)
 
