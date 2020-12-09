@@ -12,9 +12,8 @@ DRM_XO=${OUTPUT_DIR}/drm.xo
 DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_hdk_4.1.0_vitis_2019.2_u250_xdma_201830_3.xclbin
 VTS_KERNELS = adder input output
 VTS_KERNELS_OBJS = $(VTS_KERNELS:%=${OUTPUT_DIR}/%.xo)
-KERNEL_FREQ_MHZ = 100
+KERNEL_FREQ_MHZ = "0:200|1:100"
 VTS_CFG_FILE=connectivity.cfg
-#AZURE_EXTRA_PARAMETERS = "--advanced.param compiler.acceleratorBinaryContent=dcp"
 
 $(DRM_XO):
 	@echo -e "\n\n===> Generating [$@] Kernel ..."

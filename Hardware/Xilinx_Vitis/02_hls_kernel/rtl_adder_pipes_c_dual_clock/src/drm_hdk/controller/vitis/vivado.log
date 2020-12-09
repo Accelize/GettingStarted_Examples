@@ -1,0 +1,92 @@
+#-----------------------------------------------------------
+# Vivado v2019.2.1 (64-bit)
+# SW Build 2729669 on Thu Dec  5 04:48:12 MST 2019
+# IP Build 2729494 on Thu Dec  5 07:38:25 MST 2019
+# Start of session at: Tue Nov 17 08:26:56 2020
+# Process ID: 17575
+# Current directory: /accelize_share/home/gdufourcq/gitWS/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo/src/drm_hdk/controller/vitis
+# Command line: vivado -mode batch -source scripts/gen_drmctrl_xo.tcl -tclargs kernel_drm_controller.xo
+# Log file: /accelize_share/home/gdufourcq/gitWS/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo/src/drm_hdk/controller/vitis/vivado.log
+# Journal file: /accelize_share/home/gdufourcq/gitWS/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo/src/drm_hdk/controller/vitis/vivado.jou
+#-----------------------------------------------------------
+Sourcing tcl script '/home/centos/.Xilinx/Vivado/Vivado_init.tcl'
+35 Beta devices matching pattern found, 27 enabled.
+enable_beta_device: Time (s): cpu = 00:00:02 ; elapsed = 00:00:15 . Memory (MB): peak = 1602.961 ; gain = 65.027 ; free physical = 25136 ; free virtual = 50208
+source scripts/gen_drmctrl_xo.tcl
+# set script_path [ file dirname [ file normalize [ info script ] ] ]
+# if { $::argc != 1 } {
+#     puts "ERROR: Program \"$::argv0\" requires 1 argument!\n"
+#     puts "Usage: $::argv0 <xoname>\n"
+#     exit
+# }
+# set xoname    [lindex $::argv 0]
+# source [file join $script_path package_drmctrl_stage.tcl]
+## set script_path [ file dirname [ file normalize [ info script ] ] ]
+## set path_to_hdl [file join $script_path .. .. ..]
+## set path_to_packaged "./packaged_kernel/kernel_drm_controller"
+## set path_to_tmp_project "./tmp_kernel_drm_controller"
+## create_project -force kernel_pack $path_to_tmp_project
+create_project: Time (s): cpu = 00:00:00.19 ; elapsed = 00:00:14 . Memory (MB): peak = 1606.961 ; gain = 4.000 ; free physical = 25132 ; free virtual = 50204
+## read_vhdl [ glob $path_to_hdl/common/vhdl/xilinx/*.vhdl ] -library drm_library
+## read_vhdl [ glob $path_to_hdl/controller/rtl/core/drm_ip_controller.vhdl ] -library drm_library
+## read_verilog [glob $path_to_hdl/controller/rtl/syn/*.sv]
+## read_verilog [glob $path_to_hdl/controller/vitis/src/kernel_drm_controller.v]
+## set_property top kernel_drm_controller [current_fileset]
+## update_compile_order -fileset sources_1
+update_compile_order: Time (s): cpu = 00:00:02 ; elapsed = 00:00:06 . Memory (MB): peak = 1607.090 ; gain = 0.129 ; free physical = 25129 ; free virtual = 50203
+## update_compile_order -fileset sim_1
+update_compile_order: Time (s): cpu = 00:00:02 ; elapsed = 00:00:05 . Memory (MB): peak = 1607.953 ; gain = 0.863 ; free physical = 25131 ; free virtual = 50203
+## ipx::package_project -root_dir $path_to_packaged -vendor accelize.com -library drm -taxonomy /KernelIP -import_files -set_current false
+INFO: [IP_Flow 19-5169] Module 'kernel_drm_controller' uses SystemVerilog sources with a Verilog top file. These SystemVerilog files will not be analysed by the packager.
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/tools/xilinx/vitis_2019.2.2/Vivado/2019.2/data/ip'.
+INFO: [IP_Flow 19-5107] Inferred bus interface 'drm_to_uip0' of definition 'xilinx.com:interface:axis:1.0' (from Xilinx Repository).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'uip0_to_drm' of definition 'xilinx.com:interface:axis:1.0' (from Xilinx Repository).
+INFO: [IP_Flow 19-5107] Inferred bus interface 's_axi_control' of definition 'xilinx.com:interface:aximm:1.0' (from Xilinx Repository).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'ap_rst_n' of definition 'xilinx.com:signal:reset:1.0' (from Xilinx Repository).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'ap_clk' of definition 'xilinx.com:signal:clock:1.0' (from Xilinx Repository).
+INFO: [IP_Flow 19-4728] Bus Interface 'ap_rst_n': Added interface parameter 'POLARITY' with value 'ACTIVE_LOW'.
+INFO: [IP_Flow 19-4728] Bus Interface 'ap_clk': Added interface parameter 'ASSOCIATED_RESET' with value 'ap_rst_n'.
+WARNING: [IP_Flow 19-3158] Bus Interface 'drm_to_uip0': FREQ_HZ bus parameter missing from AXI interface when interface is not associated to a clock.
+WARNING: [IP_Flow 19-3158] Bus Interface 'uip0_to_drm': FREQ_HZ bus parameter missing from AXI interface when interface is not associated to a clock.
+WARNING: [IP_Flow 19-3158] Bus Interface 's_axi_control': FREQ_HZ bus parameter missing from AXI interface when interface is not associated to a clock.
+WARNING: [IP_Flow 19-3157] Bus Interface 'ap_rst_n': Bus parameter POLARITY is ACTIVE_LOW but port 'ap_rst_n' is not *resetn - please double check the POLARITY setting.
+WARNING: [IP_Flow 19-3153] Bus Interface 'ap_clk': ASSOCIATED_BUSIF bus parameter is missing.
+INFO: [IP_Flow 19-2181] Payment Required is not set for this core.
+INFO: [IP_Flow 19-2187] The Product Guide file is missing.
+ipx::package_project: Time (s): cpu = 00:00:00.84 ; elapsed = 00:00:11 . Memory (MB): peak = 1667.645 ; gain = 0.004 ; free physical = 25115 ; free virtual = 50189
+## ipx::unload_core $path_to_packaged/component.xml
+## ipx::edit_ip_in_project -upgrade true -name tmp_edit_project -directory $path_to_packaged $path_to_packaged/component.xml
+create_project: Time (s): cpu = 00:00:00.16 ; elapsed = 00:00:11 . Memory (MB): peak = 1667.645 ; gain = 0.000 ; free physical = 25114 ; free virtual = 50188
+INFO: [IP_Flow 19-795] Syncing license key meta-data
+WARNING: [filemgmt 56-99] Vivado Synthesis ignores library specification for Verilog or SystemVerilog files. [/accelize_share/home/gdufourcq/gitWS/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo/src/drm_hdk/controller/vitis/packaged_kernel/kernel_drm_controller/src/top_drm_controller.sv:]
+WARNING: [filemgmt 56-99] Vivado Synthesis ignores library specification for Verilog or SystemVerilog files. [/accelize_share/home/gdufourcq/gitWS/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo/src/drm_hdk/controller/vitis/packaged_kernel/kernel_drm_controller/src/kernel_drm_controller.v:]
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/tools/xilinx/vitis_2019.2.2/Vivado/2019.2/data/ip'.
+ipx::edit_ip_in_project: Time (s): cpu = 00:00:00.49 ; elapsed = 00:00:15 . Memory (MB): peak = 1702.102 ; gain = 34.457 ; free physical = 25098 ; free virtual = 50174
+## set_property core_revision 2 [ipx::current_core]
+## foreach up [ipx::get_user_parameters] {
+##   ipx::remove_user_parameter [get_property NAME $up] [ipx::current_core]
+## }
+## set_property sdx_kernel true [ipx::current_core]
+## set_property sdx_kernel_type rtl [ipx::current_core]
+## ipx::create_xgui_files [ipx::current_core]
+## ipx::associate_bus_interfaces -busif s_axi_control -clock ap_clk [ipx::current_core]
+INFO: [IP_Flow 19-4728] Bus Interface 'ap_clk': Added interface parameter 'ASSOCIATED_BUSIF' with value 's_axi_control'.
+## ipx::associate_bus_interfaces -busif drm_to_uip0 -clock ap_clk [ipx::current_core]
+## ipx::associate_bus_interfaces -busif uip0_to_drm -clock ap_clk [ipx::current_core]
+## set_property xpm_libraries {XPM_CDC XPM_MEMORY XPM_FIFO} [ipx::current_core]
+## set_property supported_families { } [ipx::current_core]
+## set_property auto_family_support_level level_2 [ipx::current_core]
+## ipx::update_checksums [ipx::current_core]
+## ipx::save_core [ipx::current_core]
+## ipx::archive_core accelize.com_drm_ips_top_drm_controller_1.0.zip [ipx::current_core]
+## close_project -delete
+# if {[file exists "${xoname}"]} {
+#     file delete -force "${xoname}"
+# }
+# package_xo -xo_path ${xoname} -kernel_name kernel_drm_controller -ip_directory ./packaged_kernel/kernel_drm_controller -kernel_xml [file join $script_path .. src kernel_drm_controller.xml]
+WARNING: [Vivado 12-4404] The CPU emulation flow in v++ is only supported when using a packaged XO file that contains C-model files, none were found.
+INFO: [Common 17-206] Exiting Vivado at Tue Nov 17 08:29:00 2020...

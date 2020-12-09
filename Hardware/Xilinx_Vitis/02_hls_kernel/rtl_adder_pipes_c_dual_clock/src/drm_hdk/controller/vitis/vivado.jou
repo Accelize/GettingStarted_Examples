@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Vivado v2019.2.1 (64-bit)
+# SW Build 2729669 on Thu Dec  5 04:48:12 MST 2019
+# IP Build 2729494 on Thu Dec  5 07:38:25 MST 2019
+# Start of session at: Tue Nov 17 08:26:56 2020
+# Process ID: 17575
+# Current directory: /accelize_share/home/gdufourcq/gitWS/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo/src/drm_hdk/controller/vitis
+# Command line: vivado -mode batch -source scripts/gen_drmctrl_xo.tcl -tclargs kernel_drm_controller.xo
+# Log file: /accelize_share/home/gdufourcq/gitWS/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo/src/drm_hdk/controller/vitis/vivado.log
+# Journal file: /accelize_share/home/gdufourcq/gitWS/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo/src/drm_hdk/controller/vitis/vivado.jou
+#-----------------------------------------------------------
+source scripts/gen_drmctrl_xo.tcl
