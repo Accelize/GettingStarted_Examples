@@ -73,5 +73,6 @@ set_property xpm_libraries {XPM_CDC XPM_MEMORY XPM_FIFO} [ipx::current_core]
 set_property supported_families { } [ipx::current_core]
 set_property auto_family_support_level level_2 [ipx::current_core]
 ipx::update_checksums [ipx::current_core]
+ipx::check_integrity [ipx::current_core]
 ipx::save_core [ipx::current_core]
 close_project -delete
