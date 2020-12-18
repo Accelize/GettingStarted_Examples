@@ -18,18 +18,27 @@ https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/manage-
 ### 1.3. Create a Virtual Network
 https://docs.microsoft.com/en-us/azure/virtual-network/quick-create-portal
 
-### 1.4. Create a Storage Account
+### 1.4. Create network Security Group
+https://docs.microsoft.com/en-us/azure/virtual-network/manage-network-security-group
+** Note: The Network Security Group needs to be created in the Virtual Network created at the previous step
+
+### 1.5. Create a Storage Account
 https://docs.microsoft.com/en-us/azure/storage/common/storage-account-create?toc=%2Fazure%2Fstorage%2Fblobs%2Ftoc.json&tabs=azure-portal
 
-### 1.5. Create a "Blob" container
+### 1.6. Create a "Blob" container
 https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-portal
 
-### 1.6. Create a ssh key
+### 1.7. Create a ssh key
 https://docs.microsoft.com/en-us/azure/virtual-machines/linux/mac-create-ssh-keys
 
 ## 2. Install Azure Command-line interface (CLI)
 You can find a detailled description of the installation process on Azure Documentation website:
 [Install the Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli)
+
+To use the Azure CLI, you need to login with
+```bash
+az login
+```
 
 ## 3. Create FPGA Instance
 ### 3.1. List Available Xilinx Instance Images
