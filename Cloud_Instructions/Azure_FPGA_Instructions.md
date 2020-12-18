@@ -20,6 +20,7 @@ https://docs.microsoft.com/en-us/azure/virtual-network/quick-create-portal
 
 ### 1.4. Create network Security Group
 https://docs.microsoft.com/en-us/azure/virtual-network/manage-network-security-group
+
 ** Note: The Network Security Group needs to be created in the Virtual Network created at the previous step
 
 ### 1.5. Create a Storage Account
