@@ -91,11 +91,15 @@ In another termianl, run the following command:
   * Select "Add Xilinx Virtual Cable (XVC)" and enter configuration:
     * Hostname=localhost
     * Port=10200
+    
 ![09](assets/ila/09.png)
 
-  * Select "Next" and then "Finish" 
+  * Select "Next" and then "Finish" .
+  
 You should see both your board and the debug bridge in the "hardware" window
+
 ![10](assets/ila/10.png)
+
 * Select the debug bridge and in the "Hardware Device Properties" load the probes file (LTX)
 * Configure the probes trigger
 
