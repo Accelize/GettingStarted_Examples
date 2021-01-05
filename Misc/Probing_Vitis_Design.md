@@ -23,11 +23,12 @@ You need first to generate the ILA Core to be added in your design.
 ![03](assets/ila/03.png)
 
 * Customize the IP. The minimal changes to apply are: 
-
-  * Change the number of Probes in the "General Options" tab
+  * Change the number of Probes in the "General Options" tab:
+  
 ![04](assets/ila/04.png)
 
-  * For each probe, set the signal width (in bits)
+  * For each probe, set the signal width (in bits):
+  
 ![05](assets/ila/05.png)
 
 * Once the configuration is done, click on "OK" and then click "Generate" in the "Generate Output Products" window that will appear.
