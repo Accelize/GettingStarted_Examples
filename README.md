@@ -7,6 +7,7 @@ This repository contains examples designs and application example to get you sta
 1. **Hardware** - DRM Integration in your ip or design
 2. **Software** - Execute the DRM Library anywhere
 3. **Cloud_Instructions** - Step-by-step setup instructions for FPGA Could (AWS, Azure, Nimbix, ...)
+4. **Misc** - Some interessting guides on various topics
 
 
 
@@ -18,6 +19,9 @@ A collection of example applications demonstrating how to use the DRM Library in
 
 ### 3. Cloud Instructions
 For each Cloud Service Provider (CSP) offering FPGA-based instances the detailled instructions to create and configure an account, synthesize and run an example design.
+
+### 4. Cloud Instructions
+A collection of guides that doesn't deserve a sepecific section but that can be interessting anyway.
 
 
 ### Support
