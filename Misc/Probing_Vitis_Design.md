@@ -73,15 +73,15 @@ In a terminal run the following command:
 ## 2.3. Start Xilinx Virtual Cable (XVC):
 In a terminal run the following command:
 
-**/tools/Xilinx/Vivado_Lab/<VERSION>/bin/xvc_pcie -d <BOARD_DRIVER_FILE>**
+**/tools/Xilinx/Vivado_Lab/{VERSION}/bin/xvc_pcie -d {BOARD_DRIVER_FILE}**
 
 ## 2.4. Start Hardware Server
 In another termianl, run the following command:
 
-**/tools/Xilinx/Vivado_Lab/2020.2/bin/hw_server -e "set auto-open-servers xilinx-xvc:localhost:10201" -e "set always-open-jtag 1"**
+**/tools/Xilinx/Vivado_Lab/{VERSION}/bin/hw_server -e "set auto-open-servers xilinx-xvc:localhost:10201" -e "set always-open-jtag 1"**
 
 ## 2.5. Start Vivado Lab GUI
-**sudo /tools/Xilinx/Vivado_Lab/<VERSION>/bin/vivado_lab**
+**sudo /tools/Xilinx/Vivado_Lab/{VERSION}/bin/vivado_lab**
 
 * Select "Open Hardware Manager"
 
@@ -113,12 +113,12 @@ In the Waveform window, select the icon "Export ILA waveform data"
 
 **Note:** You can also use the TCL command:
 
-**write_hw_ila_data <FILENAME>.ila [upload_hw_ila_data hw_ila_1]**
+**write_hw_ila_data {FILENAME}.ila [upload_hw_ila_data hw_ila_1]**
 
 ## 2.8. [OPTIONAL] Display Saved ILA Waveforms
 To restore previously saved ILA waveform data, you can use the TCL command:
 
-**display_hw_ila_data [read_hw_ila_data <FILENAME>.ila]**
+**display_hw_ila_data [read_hw_ila_data {FILENAME}.ila]**
 
 # 3. AWS Probing
 coming soon...
