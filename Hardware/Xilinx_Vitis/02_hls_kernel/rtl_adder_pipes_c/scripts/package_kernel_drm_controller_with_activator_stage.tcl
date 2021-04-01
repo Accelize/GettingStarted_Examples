@@ -33,12 +33,11 @@ create_project -force kernel_pack $path_to_tmp_project
 
 read_vhdl [ glob $path_to_drm_components/*.vhdl ] -library drm_library
 read_vhdl [ glob $path_to_hdl/core/*.vhdl ] -library drm_library
-read_verilog [glob $path_to_hdl/core/*.v]
+read_verilog [glob $path_to_hdl/core/*.sv]
 read_vhdl [ glob $path_to_hdl/syn/*.vhdl ] -library drm_library
 read_verilog [glob $path_to_hdl/syn/*.sv]
 read_vhdl [ glob $path_to_activator0/core/*.vhdl ] -library drm_library
 read_vhdl [ glob $path_to_activator0/syn/*.vhdl ] -library drm_library
-read_verilog [ glob $path_to_activator0/core/*.v ] 
 read_verilog [ glob $path_to_activator0/syn/*.sv ]
  
 read_verilog src/drm_controller_with_activator.v

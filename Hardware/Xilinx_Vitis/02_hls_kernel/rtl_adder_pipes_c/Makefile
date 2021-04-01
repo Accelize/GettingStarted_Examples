@@ -2,9 +2,9 @@
 # Accelize DRM Reference Design Makefile
 #
 #
-VTS_PLATFORM=/tools/xilinx/vivado_2019.1/platforms/xilinx_u200_xdma_201830_2/xilinx_u200_xdma_201830_2.xpfm
+VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u250_xdma_201830_2/xilinx_u250_xdma_201830_2.xpfm
 OUTPUT_DIR=xclbin
-DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_drm_c_hdk_v4.1.0.0.xclbin
+DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_drm_c_hdk_v4.2.1.11.xclbin
 VTS_KERNELS = input output drm_controller_with_activator
 VTS_KERNELS_OBJS = $(VTS_KERNELS:%=${OUTPUT_DIR}/%.xo)
 VTS_HLS_KERNELS = adder
