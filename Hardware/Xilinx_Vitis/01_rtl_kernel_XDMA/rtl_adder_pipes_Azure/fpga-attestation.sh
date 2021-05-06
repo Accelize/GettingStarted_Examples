@@ -8,7 +8,10 @@ blob_container=
 netlist_filename=$1
 netlist_bname="$(basename -- $netlist_filename)"
 expiration_date=$(date +'%Y-%m-%dT%H:%MZ' -d "$(date) + 1 day")
+attxclbin=${1##*/}
+attxclbin=${attxclbin%.*}
 
+echo "attxclbin         = $attxclbin"
 echo "storage_acct_name = $storage_acct_name"
 echo "blob_container    = $blob_container"
 echo "netlist_filename  = $netlist_filename"
@@ -23,3 +26,5 @@ sas_token=`az storage container generate-sas --account-name $storage_acct_name -
 
 ./validate-fpgaimage.sh  --storage-account $storage_acct_name --container  $blob_container  --netlist-name $netlist_bname --blob-container-sas $sas_token
 
+echo "Downloading attested xclbin $attxclbin"
+az storage blob download-batch --account-name $storage_acct_name -s $blob_container -d . --pattern ${attxclbin}.azure.xclbin

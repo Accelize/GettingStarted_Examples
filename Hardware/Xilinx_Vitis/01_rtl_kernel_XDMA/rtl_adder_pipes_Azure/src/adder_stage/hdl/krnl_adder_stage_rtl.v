@@ -49,6 +49,8 @@ module krnl_adder_stage_rtl #(
   // System signals
   input  wire                                    ap_clk,
   input  wire                                    ap_rst_n,
+  input  wire                                    ap_clk_2,
+  input  wire                                    ap_rst_n_2,
   // AXI4 master interface                        
   input  wire [C_DATA_WIDTH-1:0]                 p0_TDATA,
   input  wire                                    p0_TVALID,
@@ -146,8 +148,8 @@ begin
 end
     
 top_drm_activator_0x1003000e00010001 top_drm_activator_0x1003000e00010001_inst (
-      .drm_aclk              (ap_clk                            ),
-      .drm_arstn             (ap_rst_n                          ),       
+      .drm_aclk              (ap_clk_2                          ),
+      .drm_arstn             (ap_rst_n_2                        ),       
       .drm_to_uip_tdata      (drm_to_uip_tdata                  ),
       .drm_to_uip_tvalid     (drm_to_uip_tvalid                 ),
       .drm_to_uip_tready     (drm_to_uip_tready                 ),

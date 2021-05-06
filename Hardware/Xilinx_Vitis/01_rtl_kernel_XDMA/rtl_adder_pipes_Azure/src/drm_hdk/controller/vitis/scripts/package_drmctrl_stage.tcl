@@ -33,6 +33,7 @@ create_project -force kernel_pack $path_to_tmp_project
 
 read_vhdl [ glob $path_to_hdl/common/vhdl/xilinx/*.vhdl ] -library drm_library
 read_vhdl [ glob $path_to_hdl/controller/rtl/core/drm_ip_controller.vhdl ] -library drm_library
+read_verilog [ glob $path_to_hdl/controller/rtl/core/*.sv ]
 read_verilog [glob $path_to_hdl/controller/rtl/syn/*.sv]
 read_verilog [glob $path_to_hdl/controller/vitis/src/kernel_drm_controller.v]
 set_property top kernel_drm_controller [current_fileset]
@@ -48,9 +49,13 @@ foreach up [ipx::get_user_parameters] {
 set_property sdx_kernel true [ipx::current_core]
 set_property sdx_kernel_type rtl [ipx::current_core]
 ipx::create_xgui_files [ipx::current_core]
+ipx::infer_bus_interface ap_clk xilinx.com:signal:clock_rtl:1.0 [ipx::current_core]
+ipx::infer_bus_interface ap_rst_n xilinx.com:signal:reset_rtl:1.0 [ipx::current_core]
+ipx::infer_bus_interface ap_clk_2 xilinx.com:signal:clock_rtl:1.0 [ipx::current_core]
+ipx::infer_bus_interface ap_rst_n_2 xilinx.com:signal:reset_rtl:1.0 [ipx::current_core]
 ipx::associate_bus_interfaces -busif s_axi_control -clock ap_clk [ipx::current_core]
-ipx::associate_bus_interfaces -busif drm_to_uip0 -clock ap_clk [ipx::current_core]
-ipx::associate_bus_interfaces -busif uip0_to_drm -clock ap_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif drm_to_uip0 -clock ap_clk_2 [ipx::current_core]
+ipx::associate_bus_interfaces -busif uip0_to_drm -clock ap_clk_2 [ipx::current_core]
 set_property xpm_libraries {XPM_CDC XPM_MEMORY XPM_FIFO} [ipx::current_core]
 set_property supported_families { } [ipx::current_core]
 set_property auto_family_support_level level_2 [ipx::current_core]

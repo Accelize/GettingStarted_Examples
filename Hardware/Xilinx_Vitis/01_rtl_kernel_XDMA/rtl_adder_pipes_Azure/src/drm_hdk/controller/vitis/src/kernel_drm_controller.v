@@ -11,41 +11,47 @@
 
 
 module kernel_drm_controller #(
-  parameter integer  C_S_AXI_CONTROL_DATA_WIDTH = 32,
-  parameter integer  C_S_AXI_CONTROL_ADDR_WIDTH = 16,
-  parameter integer  C_DATA_WIDTH               = 32
+  parameter integer  C_S_AXI_CONTROL_DATA_WIDTH  = 32,
+  parameter integer  C_S_AXI_CONTROL_ADDR_WIDTH  = 16,
+  parameter integer  C_DATA_WIDTH                = 32
 )(
   // AXI4-Stream Clock and Reset
-  input  wire                                   ap_clk,
-  input  wire                                   ap_rst_n,
+  input  wire                                    ap_clk,
+  input  wire                                    ap_rst_n,
+  input  wire                                    ap_clk_2,
+  input  wire                                    ap_rst_n_2,
   // AXI4-Stream Bus to/from User IP0
-  input  wire                                   drm_to_uip0_tready,
-  output wire                                   drm_to_uip0_tvalid,
-  output wire [C_DATA_WIDTH-1:0]                drm_to_uip0_tdata,
-  output wire                                   uip0_to_drm_tready,
-  input  wire                                   uip0_to_drm_tvalid,
-  input  wire [C_DATA_WIDTH-1:0]                uip0_to_drm_tdata,
+  input  wire                                    drm_to_uip0_tready,
+  output wire                                    drm_to_uip0_tvalid,
+  output wire [C_DATA_WIDTH-1:0]                 drm_to_uip0_tdata,
+  output wire                                    uip0_to_drm_tready,
+  input  wire                                    uip0_to_drm_tvalid,
+  input  wire [C_DATA_WIDTH-1:0]                 uip0_to_drm_tdata,
   // AXI4-Lite Register Access
-  output wire                                   s_axi_control_awready,
-  input  wire                                   s_axi_control_awvalid,
-  input  wire [C_S_AXI_CONTROL_ADDR_WIDTH-1:0]  s_axi_control_awaddr,
-  input  wire [3-1 :0]                          s_axi_control_awprot,
-  output wire                                   s_axi_control_wready,
-  input  wire                                   s_axi_control_wvalid,
-  input  wire [C_S_AXI_CONTROL_DATA_WIDTH-1:0]  s_axi_control_wdata,
-  input  wire [32/8-1:0]                        s_axi_control_wstrb,
-  input  wire                                   s_axi_control_bready,
-  output wire                                   s_axi_control_bvalid,
-  output wire [2-1:0]                           s_axi_control_bresp,
-  output wire                                   s_axi_control_arready,
-  input  wire                                   s_axi_control_arvalid,
-  input  wire [C_S_AXI_CONTROL_ADDR_WIDTH-1:0]  s_axi_control_araddr,
-  input  wire [3-1 :0]                          s_axi_control_arprot,
-  input  wire                                   s_axi_control_rready,
-  output wire                                   s_axi_control_rvalid,
-  output wire [C_S_AXI_CONTROL_DATA_WIDTH-1:0]  s_axi_control_rdata,
-  output wire [2-1:0]                           s_axi_control_rresp
+  input  wire                                    s_axi_control_awvalid,
+  output wire                                    s_axi_control_awready,
+  input  wire [C_S_AXI_CONTROL_ADDR_WIDTH-1:0]   s_axi_control_awaddr,
+  input  wire                                    s_axi_control_wvalid,
+  output wire                                    s_axi_control_wready,
+  input  wire [C_S_AXI_CONTROL_DATA_WIDTH-1:0]   s_axi_control_wdata,
+  input  wire [C_S_AXI_CONTROL_DATA_WIDTH/8-1:0] s_axi_control_wstrb,
+  output wire                                    s_axi_control_bvalid,
+  input  wire                                    s_axi_control_bready,
+  output wire [2-1:0]                            s_axi_control_bresp,
+  input  wire                                    s_axi_control_arvalid,
+  output wire                                    s_axi_control_arready,
+  input  wire [C_S_AXI_CONTROL_ADDR_WIDTH-1:0]   s_axi_control_araddr,
+  output wire                                    s_axi_control_rvalid,
+  input  wire                                    s_axi_control_rready,
+  output wire [C_S_AXI_CONTROL_DATA_WIDTH-1:0]   s_axi_control_rdata,
+  output wire [2-1:0]                            s_axi_control_rresp
 );
+
+  wire [2:0] s_axi_control_awprot;
+  wire [2:0] s_axi_control_arprot;
+
+  assign s_axi_control_awprot = 3'b0;
+  assign s_axi_control_arprot = 3'b0;
 
 
   //-----------------
@@ -55,8 +61,8 @@ module kernel_drm_controller #(
 
   top_drm_controller top_drm_controller_inst (
     // AXI4-Stream Clock and Reset
-    .drm_aclk             ( ap_clk                ),
-    .drm_arstn            ( ap_rst_n              ),
+    .drm_aclk             ( ap_clk_2              ),
+    .drm_arstn            ( ap_rst_n_2            ),
     // AXI4-Stream Bus to/from User IP0
     .drm_to_uip0_tready   ( drm_to_uip0_tready    ),
     .drm_to_uip0_tvalid   ( drm_to_uip0_tvalid    ),

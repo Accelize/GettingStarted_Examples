@@ -1,6 +1,6 @@
 /////////////////////////////////////////////////////////////////////
 ////
-//// Accelize 2019
+//// Accelize 2021
 ////
 //// This is a generated file. Use and modify at your own risk.
 /////////////////////////////////////////////////////////////////////
@@ -10,7 +10,8 @@
 `timescale 1 ns / 1 ps
 
 
-module top_drm_controller (
+module top_drm_controller
+(
   // AXI4-Stream Clock and Reset
   input  wire                      drm_aclk           ,
   input  wire                      drm_arstn          ,
@@ -49,53 +50,78 @@ module top_drm_controller (
 );
 
 
-  localparam FREQ_CNT_VERSION = 32'h60DC0DE0;
+  localparam FREQ_CNT_VERSION = 32'h60DC0DE1;
+
+  localparam LOCAL_REG_OFFSET = 4;
+  localparam LOCAL_REG_LENGTH = 16 - LOCAL_REG_OFFSET;
+
+  localparam NUM_CDC_STAGE    = 2;
+
+  localparam FSM_ADDR   = 3'd0,
+             FSM_DATA   = 3'd1,
+             FSM_RESP   = 3'd2;
+
+  reg  [2:0]  wr_fsm;
+  reg  [2:0]  rd_fsm;
 
   wire        drm_bus_master_o_cyc;
   wire        drm_bus_master_o_we;
   wire [1:0]  drm_bus_master_o_adr;
   wire        drm_bus_master_o_dat;
 
-  reg  [1:0]  rd_select_s1;
-  reg  [1:0]  wr_select_s1;
+  reg [1:0]   rd_select;
+  reg [1:0]   wr_select;
 
   wire        s0_axi_awvalid;
   wire        s0_axi_awready;
   wire        s0_axi_wvalid;
   wire        s0_axi_wready;
-  wire        s0_axi_bvalid;
+  reg         s0_axi_bvalid;
   wire        s0_axi_bready;
   wire [1:0]  s0_axi_bresp;
   wire        s0_axi_arvalid;
-  wire        s0_axi_arready;
-  wire        s0_axi_rvalid;
+  reg         s0_axi_arready;
+  reg         s0_axi_rvalid;
   wire        s0_axi_rready;
   wire [31:0] s0_axi_rdata;
   wire [1:0]  s0_axi_rresp;
 
   wire        s1_axi_awvalid;
-  wire        s1_axi_awready;
+  reg         s1_axi_awready;
   wire        s1_axi_wvalid;
-  wire        s1_axi_wready;
+  reg         s1_axi_wready;
   reg         s1_axi_bvalid;
   wire        s1_axi_bready;
   wire [1:0]  s1_axi_bresp;
   wire        s1_axi_arvalid;
-  wire        s1_axi_arready;
-  wire        s1_axi_rvalid;
+  reg         s1_axi_arready;
+  reg         s1_axi_rvalid;
   wire        s1_axi_rready;
-  wire [31:0] s1_axi_rdata;
+  reg  [31:0] s1_axi_rdata;
   wire [1:0]  s1_axi_rresp;
 
-  reg  [31:0] counter;
-  reg         wr_active;
-  reg         rd_active;
-  reg  [15:0] rd_addr;
+  reg  [LOCAL_REG_OFFSET-3:0] rd_addr;
 
-  wire [95:0] chip_dna_i;
+  reg  [31:0] counter_c1;
+  reg  [31:0] counter_c2_r_c1;
+  reg  [31:0] counter_c2;
+  reg  [31:0] counter_c2_r;
+
+  wire        cnt_rst_rdy_c1;
+  reg         cnt_rst_c1;
+  wire        cnt_rst_c2;
+
+  reg         cnt_rd_c1;
+  wire        cnt_rd_c2;
+  wire        cnt_rd_rdy_c1;
+
+  wire        i_s_axi_bvalid;
+  wire        i_s_axi_rvalid;
+
+  wire [95:0] i_chip_dna;
 
 
-  assign chip_dna = chip_dna_i;
+  assign chip_dna = i_chip_dna;
 
 
   //-------------------------------------
@@ -123,145 +149,192 @@ module top_drm_controller (
   // AXI4-Lite Switch between DRM Controller (m0) and 32-bit counter for frequency detection (m1)
   //----------------------------------------------------------------------------------------------
 
+  assign s_axi_bvalid = i_s_axi_bvalid;
+
   // Write selecter
   always@(posedge s_axi_aclk) begin
-    if (!s_axi_arstn)
-      wr_select_s1 <= 0;
-    else if (wr_select_s1==0 && s_axi_awvalid)
-      wr_select_s1 <= { &s_axi_awaddr[15:3], 1'b1 };
-    else if (s_axi_bvalid && s_axi_bready)
-      wr_select_s1 <= 0;
+    if (~s_axi_arstn) begin
+      wr_select <= 2'b00;
+    end else if (wr_select==2'b00 && s_axi_awvalid) begin
+      wr_select[0] <= ~&s_axi_awaddr[LOCAL_REG_OFFSET +: LOCAL_REG_LENGTH];
+      wr_select[1] <=  &s_axi_awaddr[LOCAL_REG_OFFSET +: LOCAL_REG_LENGTH];
+    end else if (i_s_axi_bvalid && s_axi_bready) begin
+      wr_select <= 2'b00;
+    end
   end
 
   // Write request
-  assign s0_axi_awvalid = wr_select_s1==1 ? s_axi_awvalid : 1'b0;
-  assign s1_axi_awvalid = wr_select_s1==3 ? s_axi_awvalid : 1'b0;
+  assign s0_axi_awvalid = (wr_select==2'b01)? s_axi_awvalid : 1'b0;
+  assign s1_axi_awvalid = (wr_select==2'b10)? s_axi_awvalid : 1'b0;
 
-  assign s_axi_awready  = wr_select_s1==1 ? s0_axi_awready :
-                          wr_select_s1==3 ? s1_axi_awready :
-                                            1'b0           ;
+  assign s_axi_awready  = (wr_select==2'b01)? s0_axi_awready :
+                          (wr_select==2'b10)? s1_axi_awready :
+                                              1'b0           ;
 
   // Write data
-  assign s0_axi_wvalid  = wr_select_s1==1 ? s_axi_wvalid : 1'b0;
-  assign s1_axi_wvalid  = wr_select_s1==3 ? s_axi_wvalid : 1'b0;
+  assign s0_axi_wvalid  = (wr_select==2'b01)? s_axi_wvalid : 1'b0;
+  assign s1_axi_wvalid  = (wr_select==2'b10)? s_axi_wvalid : 1'b0;
 
-  assign s_axi_wready   = wr_select_s1==1 ? s0_axi_wready :
-                          wr_select_s1==3 ? s1_axi_wready :
-                                            1'b0          ;
+  assign s_axi_wready   = (wr_select==2'b01)? s0_axi_wready :
+                          (wr_select==2'b10)? s1_axi_wready :
+                                              1'b0          ;
 
   // Write response
-  assign s_axi_bvalid   = wr_select_s1==1 ? s0_axi_bvalid :
-                          wr_select_s1==3 ? s1_axi_bvalid :
-                                            1'b0          ;
+  assign i_s_axi_bvalid = (wr_select==2'b01)? s0_axi_bvalid :
+                          (wr_select==2'b10)? s1_axi_bvalid :
+                                              1'b0          ;
 
-  assign s0_axi_bready  = wr_select_s1==1 ? s_axi_bready : 1'b0;
-  assign s1_axi_bready  = wr_select_s1==3 ? s_axi_bready : 1'b0;
+  assign s0_axi_bready  = (wr_select==2'b01)? s_axi_bready : 1'b0;
+  assign s1_axi_bready  = (wr_select==2'b10)? s_axi_bready : 1'b0;
 
-  assign s_axi_bresp    = wr_select_s1==1 ? s0_axi_bresp :
-                          wr_select_s1==3 ? s1_axi_bresp :
-                                            2'b00        ;
+  assign s_axi_bresp    = (wr_select==2'b01)? s0_axi_bresp :
+                          (wr_select==2'b10)? s1_axi_bresp :
+                                              2'b00        ;
 
+
+  assign s_axi_rvalid = i_s_axi_rvalid;
 
   // Read selecter
   always@(posedge s_axi_aclk) begin
-    if (!s_axi_arstn)
-      rd_select_s1 <= 0;
-    else if (rd_select_s1==0 && s_axi_arvalid)
-      rd_select_s1 <= { &s_axi_araddr[15:3], 1'b1 };
-    else if (s_axi_rvalid && s_axi_rready)
-      rd_select_s1 <= 0;
+    if (~s_axi_arstn) begin
+      rd_select <= 2'b00;
+    end else if (rd_select==2'b00 && s_axi_arvalid) begin
+      rd_select[0] <= ~&s_axi_araddr[LOCAL_REG_OFFSET +: LOCAL_REG_LENGTH];
+      rd_select[1] <=  &s_axi_araddr[LOCAL_REG_OFFSET +: LOCAL_REG_LENGTH];
+    end else if (i_s_axi_rvalid && s_axi_rready) begin
+      rd_select <= 2'b00;
+    end
   end
 
   // Read request
-  assign s0_axi_arvalid = rd_select_s1==1 ? s_axi_arvalid : 1'b0;
-  assign s1_axi_arvalid = rd_select_s1==3 ? s_axi_arvalid : 1'b0;
+  assign s0_axi_arvalid = (rd_select==2'b01)? s_axi_arvalid : 1'b0;
+  assign s1_axi_arvalid = (rd_select==2'b10)? s_axi_arvalid : 1'b0;
 
-  assign s_axi_arready  = rd_select_s1==1 ? s0_axi_arready :
-                          rd_select_s1==3 ? s1_axi_arready :
-                                            1'b0           ;
+  assign s_axi_arready  = (rd_select==2'b01)? s0_axi_arready :
+                          (rd_select==2'b10)? s1_axi_arready :
+                                              1'b0           ;
 
   // Read data
-  assign s_axi_rvalid   = rd_select_s1==1 ? s0_axi_rvalid :
-                          rd_select_s1==3 ? s1_axi_rvalid :
-                                            1'b0          ;
+  assign i_s_axi_rvalid = (rd_select==2'b01)? s0_axi_rvalid :
+                          (rd_select==2'b10)? s1_axi_rvalid :
+                                              1'b0          ;
 
-  assign s0_axi_rready  = rd_select_s1==1 ? s_axi_rready : 1'b0;
-  assign s1_axi_rready  = rd_select_s1==3 ? s_axi_rready : 1'b0;
+  assign s0_axi_rready  = (rd_select==2'b01)? s_axi_rready : 1'b0;
+  assign s1_axi_rready  = (rd_select==2'b10)? s_axi_rready : 1'b0;
 
-  assign s_axi_rdata    = rd_select_s1==1 ? s0_axi_rdata :
-                          rd_select_s1==3 ? s1_axi_rdata :
-                                            0            ;
+  assign s_axi_rdata    = (rd_select==2'b01)? s0_axi_rdata :
+                          (rd_select==2'b10)? s1_axi_rdata :
+                                              0            ;
 
-  assign s_axi_rresp    = rd_select_s1==1 ? s0_axi_rresp :
-                          rd_select_s1==3 ? s1_axi_rresp :
-                                            2'b00        ;
+  assign s_axi_rresp    = (rd_select==2'b01)? s0_axi_rresp :
+                          (rd_select==2'b10)? s1_axi_rresp :
+                                              2'b00        ;
 
 
   //-------------------------------
-  // PCIe AXI-Lite Slave Accesses
+  // AXI-Lite Slave Write Accesses
   //-------------------------------
-  // Only supports single-beat accesses.
-
-  // Write Request
-  always@(posedge s_axi_aclk) begin
-    if (!s_axi_arstn)
-      wr_active <= 1'b0;
-    else if (~wr_active && s1_axi_awvalid)
-      wr_active <= 1'b1;
-    else if (wr_active && s1_axi_bvalid && s1_axi_bready)
-      wr_active <= 1'b0;
-  end
-
-  assign s1_axi_awready = ~wr_active & s_axi_arstn;
-  assign s1_axi_wready  =  wr_active && s1_axi_wvalid;
-
-  // Write Response
-  always@(posedge s_axi_aclk) begin
-    if (!s_axi_arstn)
-      s1_axi_bvalid <= 1'b0;
-    else if (~s1_axi_bvalid && s1_axi_wready)
-      s1_axi_bvalid <= 1'b1;
-    else if (s1_axi_bvalid && s1_axi_bready)
-      s1_axi_bvalid <= 1'b0;
-  end
 
   assign s1_axi_bresp = 2'b00;
 
-  // Read Request
+  // Write Request
   always@(posedge s_axi_aclk) begin
-    if (!s_axi_arstn) begin
-      rd_active <= 1'b0;
-      rd_addr   <= 0;
-    end else if (~rd_active && s1_axi_arvalid) begin
-      rd_active <= 1'b1;
-      rd_addr   <= s_axi_araddr;
-    end else if (rd_active && s1_axi_rvalid && s1_axi_rready)
-      rd_active <= 1'b0;
+    if (~s_axi_arstn) begin
+      cnt_rst_c1     <= 1'b0;
+      s1_axi_awready <= 1'b0;
+      s1_axi_wready  <= 1'b0;
+      s1_axi_bvalid  <= 1'b0;
+      wr_fsm         <= FSM_ADDR;
+    end else begin
+      cnt_rst_c1 <= 1'b0;
+      case (wr_fsm)
+        FSM_ADDR: begin
+          s1_axi_awready <= cnt_rst_rdy_c1;
+          if (s1_axi_awready && s1_axi_awvalid) begin
+            s1_axi_awready <= 1'b0;
+            cnt_rst_c1     <= 1'b1;
+            wr_fsm         <= FSM_DATA;
+          end
+        end
+        FSM_DATA: begin
+          s1_axi_wready <= 1'b1;
+          if (s1_axi_wready && s1_axi_wvalid) begin
+            s1_axi_wready <= 1'b0;
+            wr_fsm        <= FSM_RESP;
+          end
+        end
+        FSM_RESP: begin
+          s1_axi_bvalid <= 1'b1;
+          if (s1_axi_bready && s1_axi_bvalid) begin
+            s1_axi_bvalid <= 1'b0;
+            wr_fsm        <= FSM_ADDR;
+          end
+        end
+        default: begin
+          wr_fsm <= FSM_ADDR;
+        end
+      endcase
+    end
   end
 
-  assign s1_axi_arready = ~rd_active & s_axi_arstn;
+
+  //-------------------------------
+  // AXI-Lite Slave Read Accesses
+  //-------------------------------
 
   // Read Data
-  assign s1_axi_rvalid  = rd_active;
-  assign s1_axi_rdata   = rd_addr[2] ? counter : FREQ_CNT_VERSION;
-  assign s1_axi_rresp   = 0;
+  assign s1_axi_rresp = 2'b00;
 
-
-  // Counter used to estimate DRM Controller frequency
+  // Read Request
   always@(posedge s_axi_aclk) begin
-    if (!s_axi_arstn)
-      counter <= 32'hFFFFFFFF;
-    else if (wr_active)
-      counter <= 0;
-    else if (~&counter)
-      counter <= counter + 1'b1;
+    if (~s_axi_arstn) begin
+      rd_addr         <= {(LOCAL_REG_OFFSET-2){1'b0}};
+      cnt_rd_c1       <= 1'b0;
+      s1_axi_arready  <= 1'b0;
+      s1_axi_rvalid   <= 1'b0;
+      s1_axi_rdata    <= 32'b0;
+      counter_c2_r_c1 <= 32'b0;
+      rd_fsm          <= FSM_ADDR;
+    end else begin
+      counter_c2_r_c1 <= counter_c2_r;
+      cnt_rd_c1       <= 1'b0;
+      case (rd_fsm)
+        FSM_ADDR: begin
+          s1_axi_arready <= cnt_rd_rdy_c1;
+          if (s1_axi_arready && s1_axi_arvalid) begin
+            rd_addr        <= s_axi_araddr[LOCAL_REG_OFFSET-1:2];
+            s1_axi_arready <= 1'b0;
+            cnt_rd_c1      <= s_axi_araddr[2];
+            rd_fsm         <= FSM_RESP;
+          end
+        end
+        FSM_RESP: begin
+          s1_axi_rvalid <= cnt_rd_rdy_c1;
+          if (s1_axi_rready && s1_axi_rvalid) begin
+            s1_axi_rvalid <= 1'b0;
+            rd_fsm        <= FSM_ADDR;
+          end
+        end
+        default: begin
+          rd_fsm <= FSM_ADDR;
+        end
+      endcase
+      if (rd_addr[0]) begin
+        s1_axi_rdata <= counter_c2_r_c1;
+      end else if (rd_addr[1]) begin
+        s1_axi_rdata <= counter_c1;
+      end else begin
+        s1_axi_rdata <= FREQ_CNT_VERSION;
+      end
+    end
   end
 
 
   //----------------
   // DRM Controller
   //----------------
-  // A DRM must be instanciated and must be connected at least to one activator block (that will be inside the loopback example).
+  // A DRM must be instanciated and must be connected at least to
+  // one activator block (that will be inside the loopback example).
 
   drm_ip_controller drm_ip_controller_inst (
     // AXI4-Lite Register Access
@@ -287,7 +360,7 @@ module top_drm_controller (
     .sys_axi4_bus_slave_o_r_data      ( s0_axi_rdata           ),
     .sys_axi4_bus_slave_o_r_resp      ( s0_axi_rresp           ),
     .chip_dna_valid                   ( chip_dna_valid         ),
-    .chip_dna                         ( chip_dna_i             ),
+    .chip_dna                         ( i_chip_dna             ),
     // DRM Bus Clock and Reset
     .drm_aclk                         ( drm_aclk               ),
     .drm_arstn                        ( drm_arstn              ),
@@ -303,6 +376,61 @@ module top_drm_controller (
     .drm_bus_master_o_adr             ( drm_bus_master_o_adr   ),
     .drm_bus_master_o_dat             ( drm_bus_master_o_dat   )
   );
+
+
+  //----------
+  // CDC
+  // ---------
+
+  // CDC for cnt_rst_c1 from s_axi_aclk to drm_aclk
+  cdc_bridge #(.NUM_CDC_STAGE(NUM_CDC_STAGE), .BIT_IS_PULSE(1), .DISABLE_READY(0)) cdc_rst_inst (
+  .src_aclk(s_axi_aclk), .src_arstn(s_axi_arstn), .src_bit(cnt_rst_c1), .src_ready(cnt_rst_rdy_c1),
+  .dst_aclk(drm_aclk), .dst_arstn(drm_arstn), .dst_bit(cnt_rst_c2));
+
+  // CDC for cnt_rd_c1 from s_axi_aclk to drm_aclk
+  cdc_bridge #(.NUM_CDC_STAGE(NUM_CDC_STAGE), .BIT_IS_PULSE(1), .DISABLE_READY(0)) cdc_rd_inst (
+  .src_aclk(s_axi_aclk), .src_arstn(s_axi_arstn), .src_bit(cnt_rd_c1), .src_ready(cnt_rd_rdy_c1),
+  .dst_aclk(drm_aclk), .dst_arstn(drm_arstn), .dst_bit(cnt_rd_c2));
+
+
+  //------------------
+  // drm_aclk counter
+  //------------------
+  // Counter used to estimate DRM Controller frequency
+
+  always@(posedge drm_aclk) begin
+    if (~drm_arstn) begin
+      counter_c2   <= {32{1'b1}};
+      counter_c2_r <= {32{1'b1}};
+    end else begin
+      if (cnt_rst_c2) begin
+        counter_c2 <= 0;
+      end else if (~&counter_c2) begin
+        counter_c2 <= counter_c2 + 1'b1;
+      end
+      if (cnt_rd_c2) begin
+        counter_c2_r <= counter_c2;
+      end
+    end
+  end
+
+
+  //------------------
+  // s_axi_aclk counter
+  //------------------
+  // Counter used to estimate DRM Controller frequency
+
+  always@(posedge s_axi_aclk) begin
+    if (~s_axi_arstn) begin
+      counter_c1 <= {32{1'b1}};
+    end else begin
+      if (cnt_rst_c1) begin
+        counter_c1 <= 0;
+      end else if (~&counter_c1) begin
+        counter_c1 <= counter_c1 + 1'b1;
+      end
+    end
+  end
 
 
 endmodule

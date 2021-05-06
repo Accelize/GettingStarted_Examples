@@ -7,8 +7,9 @@
 
 package drm_activator_0x1003000e00010001_sim_pkg;
 
-  /** Indicate to use or not the BFM.
-  * For synthesis it MUST be set to false
+  /** Enable/Disable the BFM usage.
+  * For synthesis and co-simulation it MUST be set to 0
+  * For RTL simulation it MUST be set to 1
   */
   parameter USE_BFM = 1;
 
@@ -18,7 +19,7 @@ package drm_activator_0x1003000e00010001_sim_pkg;
   parameter DRM_LICENSE_FILE = "absolute/path/to/drm_hdk/activator/sim/drm_activator_0x1003000e00010001_license_file.xml";
 
   /** Enable/disable the DRM messaging system of the Controller BFM
-  * Xilinx Vivado Simulator does NOT support messaging: it must be set to 0.
+  * Only supported on questasim/modelsim, otherwise keep it to 0.
   */
   parameter ENABLE_DRM_MESSAGE = 0;
 
