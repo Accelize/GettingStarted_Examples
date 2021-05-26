@@ -72,7 +72,7 @@ petalinux-config -c rootfs
 ```
 + In "user packages": select all
 
-Build PetaLinux:
+### Build PetaLinux:
 ```bash
 petalinux-build
 ```
@@ -104,6 +104,7 @@ mkdir -p drm/build
 ```
 
 Edit drm/CMakeLists.txt:
+
 After line "**## libaccelize_drm**", add:
 ```bash
 target_include_directories(accelize_drm PUBLIC "<PATH_TO_DRMLIB_XCOMPILE>/jsoncpp/include")
