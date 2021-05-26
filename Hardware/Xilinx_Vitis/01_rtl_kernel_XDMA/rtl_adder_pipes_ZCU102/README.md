@@ -100,7 +100,6 @@ make
 ```bash
 cd drmlib_xcompile
 git clone https://github.com/Accelize/drm.git --recursive --depth 1
-mkdir -p drm/build
 ```
 
 Edit drm/CMakeLists.txt:
@@ -124,7 +123,10 @@ make -j
 
 Edit Makefile with JSONCPP and DRMLIB build folder (if needed):
 ```bash
-DRMLIB_XCOMPILE_DIR=drmlib_xcompile
+DRMLIB_XCOMPILE_DIR = drmlib_xcompile
+JSONCPP_INCDIR      = ${DRMLIB_XCOMPILE_DIR}/jsoncpp/include
+JSONCPP_LIBDIR      = ${DRMLIB_XCOMPILE_DIR}/jsoncpp/build/debug/lib
+XLZDRMLIB_BUILDDIR  = ${DRMLIB_XCOMPILE_DIR}/drm/build
 ```
 
 Then cross-compile the Application for ARM CPU:
@@ -133,7 +135,7 @@ make app
 ```
 
 # 3. Prepare the SDCard with bitstream and software
-Copy your cred.json in the "app" folder
+Copy your Access Key (cred.json) in the "app" folder
 
 Generate the "package" folder using the command:
 ```bash
@@ -145,7 +147,8 @@ The "package" contains all files that file sto be copie don the SD card.
 Install Win32 Disk Imager and write the file "package/sd_card.img" on the SD Card
 
 ## 3.2 [Linux] Copy files to SD card
-On linus you can directly partition and copy files from "package/sd_card" folder
+On linux you can directly partition and copy files from "package/sd_card" folder.
+
 SD Card formatting instuctions can be found here:
 https://www.xilinx.com/support/documentation/sw_manuals/xilinx2020_2/ug1144-petalinux-tools-reference-guide.pdf
 
