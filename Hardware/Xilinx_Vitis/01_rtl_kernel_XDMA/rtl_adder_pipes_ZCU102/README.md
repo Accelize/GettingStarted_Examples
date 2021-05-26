@@ -54,8 +54,8 @@ cd <GENERATED_PROJECT_FOLDER>
 ```bash 
 petalinux-config --get-hw-description <PATH_TO_ZCU102_XSA_FILE>
 ```
-=> In "Image packaging Configuration", "Root filesystem type": select EXT4
-=> In "Image packaging Configuration", "Root filesystem formats": add "ext4"
++ In "Image packaging Configuration", "Root filesystem type": select EXT4
++ In "Image packaging Configuration", "Root filesystem formats": add "ext4"
 
 ### PetaLinux rootfs Configuration:
 Open the file "project-spec/meta-user/conf/user-rootfsconfig", and add the following:
@@ -70,7 +70,7 @@ Run the following command to configure the PetaLinux rootfs:
 ```bash
 petalinux-config -c rootfs
 ```
-=> In "user packages": select all
++ In "user packages": select all
 
 Build PetaLinux:
 ```bash
