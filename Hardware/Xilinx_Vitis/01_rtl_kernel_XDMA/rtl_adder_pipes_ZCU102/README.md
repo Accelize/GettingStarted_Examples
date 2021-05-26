@@ -1,6 +1,6 @@
 Adder With Pipes (RTL)
 ======================
-This example shows an adder with pipes using 3 RTL kernels an dprotected with Accelize DRM Solution.
+This example shows an adder with pipes using 3 RTL kernels and protected with Accelize DRM Solution.
 
 ## SUPPORTED PLATFORMS
 Board | Software Version
