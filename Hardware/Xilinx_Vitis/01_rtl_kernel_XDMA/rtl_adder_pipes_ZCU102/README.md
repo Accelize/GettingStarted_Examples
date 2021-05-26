@@ -150,16 +150,16 @@ Install Win32 Disk Imager and write the file "package/sd_card.img" on the SD Car
 On linux you can directly partition and copy files from "package/sd_card" folder.
 
 SD Card formatting instuctions can be found here:
+
 https://www.xilinx.com/support/documentation/sw_manuals/xilinx2020_2/ug1144-petalinux-tools-reference-guide.pdf
 
 # 4. Run the FPGA application
 Insert the SD Card in the ZCU102 slot and power-on the board.
+
 In the USB-UART terminal, use the following commands to run the application:
 ```bash
 cd /media/sd-mmcblk0p1/
 ./run_app.sh
-make
-../app <PATH_TO_ATTESTED_BITSTREAM>
 ```
 
 On success, the output should look like:
