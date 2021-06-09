@@ -6,6 +6,7 @@ This example shows an adder with pipes using 3 RTL kernels and protected with Ac
 Board | Software Version
 ------|-----------------
 Xilinx Kria Starter Kit KV260|Vitis 2020.2.2
+
 &#x26a0;&#xfe0f; WARNING: Kria Platform require Vitis 2020.2.2. Any prior version will not work!
 
 # 1.Run Synthesis
