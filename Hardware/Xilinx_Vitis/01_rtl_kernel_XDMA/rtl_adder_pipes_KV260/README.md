@@ -31,7 +31,7 @@ xhub::install [xhub::get_xitems *som240*]
 set_param board.repoPaths [get_property LOCAL_ROOT_DIR [xhub::get_xstores xilinx_board_store]]
 ```
 
-## 1.3. Synthesize bitsream
+## 1.3. Synthesize bitstream
 ```bash
 cd GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_KV260
 ```
@@ -105,7 +105,7 @@ Then cross-compile the Application for ARM CPU:
 make app
 ```
 
-# 3. Build Petalinux with Application Package (Bitsream + App) for KV260
+# 3. Build Petalinux with Application Package (Bitstream + App) for KV260
 ## 3.1. Prerequisites:
 + Download & Install PetaLinux Tools Installer 2020.2.2 ("Kria K26 Special release"):
 https://www.xilinx.com/member/forms/download/xef.html?filename=petalinux-v2020.2.2-final-installer.run
