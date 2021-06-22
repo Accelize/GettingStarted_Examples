@@ -15,7 +15,7 @@ APP_DIR=app
 APP=${APP_DIR}/app
 
 # Accelize DRMLib Cross-compilation
-DRMLIB_XCOMPILE_DIR = ../rtl_adder_pipes_ZCU102/drmlib_xcompile
+DRMLIB_XCOMPILE_DIR = drmlib_xcompile
 JSONCPP_INCDIR      = ${DRMLIB_XCOMPILE_DIR}/jsoncpp/include
 JSONCPP_LIBDIR      = ${DRMLIB_XCOMPILE_DIR}/jsoncpp/build/debug/lib
 XLZDRMLIB_BUILDDIR  = ${DRMLIB_XCOMPILE_DIR}/drm/build
