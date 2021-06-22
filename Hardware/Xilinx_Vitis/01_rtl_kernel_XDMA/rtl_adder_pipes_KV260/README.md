@@ -136,7 +136,8 @@ echo 'CONFIG_packagegroup-kv260-defect-detect' >> project-spec/meta-user/conf/us
 ```
 
 Configure the ROOTFS content:
-Enter the following command and exit (no chnages required)
+
+Enter the following command and exit (no changes required)
 ```bash
 petalinux-config -c rootfs
 ```
