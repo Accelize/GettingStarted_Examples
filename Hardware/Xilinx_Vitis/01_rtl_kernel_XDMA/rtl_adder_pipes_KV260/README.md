@@ -123,6 +123,7 @@ https://www.xilinx.com/member/forms/download/xef.html?filename=xilinx-k26-starte
 + Copy your Access Key (cred.json) in "<PATH_TO_rtl_adder_pipes_KV260>/app/cred.json"
 
 ## 3.2. Create PetaLinux project for FPGA Bitstream:
+In a new terminal (fresh environment - not contaminated by the previous steps):
 ```bash
 mkdir petalnx-prj
 cd petalnx-prj
