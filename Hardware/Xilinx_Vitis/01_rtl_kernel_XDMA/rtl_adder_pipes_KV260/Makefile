@@ -3,7 +3,7 @@
 #
 ndef = $(if $(value $(1)),,$(error $(1) must be set prior to running))
 
-VTS_PLATFORM=kv260_vcuDecode_vmixDP.xpfm
+VTS_PLATFORM=kv260_vcuDecode_vmixDP
 
 OUTPUT_DIR=xclbin
 DRM_XO=${OUTPUT_DIR}/drm.xo

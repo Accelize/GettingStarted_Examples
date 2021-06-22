@@ -53,9 +53,12 @@ Once synthesis is complete, the bitstream will be located in the *xclbin* folder
 ## 2.1. Environment Setup
 In a new terminal window:
 ```bash
-mkdir drmlib_xcompile
 unset LD_LIBRARY_PATH
-source <PATH_TO_ZYNQMP_COMMON_IMAGES>/y/environment-setup-aarch64-xilinx-linux
+cd <PATH_TO_ZYNQMP_COMMON_IMAGES>
+./sdk.sh
+source /opt/petalinux/2020.2/environment-setup-aarch64-xilinx-linux
+cd <PATH_TO_rtl_adder_pipes_KV260>
+mkdir drmlib_xcompile
 ```
 ## 2.2. Cross-compile JsonCpp Lib for K26 ARM CPU
 ```bash
@@ -81,6 +84,11 @@ After line "**## libaccelize_drm**", add:
 target_include_directories(accelize_drm PUBLIC "<PATH_TO_DRMLIB_XCOMPILE>/jsoncpp/include")
 find_library(accelize_drm PUBLIC  "<PATH_TO_DRMLIB_XCOMPILE>/jsoncpp/build/debug/lib")
 target_link_libraries(accelize_drm "<PATH_TO_DRMLIB_XCOMPILE>/jsoncpp/build/debug/lib/libjsoncpp.so")
+```
+
+And remove line:
+```bash
+target_link_libraries(accelize_drm jsoncpp)
 ```
 
 Then cross-compile the DRMLib for ARM CPU:
@@ -131,7 +139,7 @@ petalinux-build -s
 
 ## 3.3. Create PetaLinux Recipe for FPGA Bitstream:
 ```bash
-petalinux-create -t apps --template fpgamanager -n kv260-drm-adder-demo-fpga --enable --srcuri "<PATH_TO_rtl_adder_pipes_KV260>/peta_linux_recipes/kv260-drm-adder-demo-fpga/kv260-aibox-reid.dtsi <PATH_TO_rtl_adder_pipes_KV260>/_x/link/int/system.bit <PATH_TO_rtl_adder_pipes_KV260>/xclbin/rtl_adder_pipes_hdk_4.2.1.12_vitis_2020.2_xilinx_kv260.xclbin"
+petalinux-create -t apps --template fpgamanager -n kv260-drm-adder-demo-fpga --enable --srcuri "<PATH_TO_rtl_adder_pipes_KV260>/petalinux_recipes/kv260-drm-adder-demo-fpga/kv260-aibox-reid.dtsi <PATH_TO_rtl_adder_pipes_KV260>/_x/link/int/system.bit <PATH_TO_rtl_adder_pipes_KV260>/xclbin/rtl_adder_pipes_hdk_4.2.1.12_vitis_2020.2_xilinx_kv260.xclbin"
 ```
 ## 3.4. Create PetaLinux Recipe for FPGA App:
 ```bash
