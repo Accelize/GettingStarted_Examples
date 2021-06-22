@@ -38,7 +38,7 @@ cd GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pi
 ```
 
 Configure environment for KV260 board:
-+ Download & install ZYNQMP "Common images for Embedded Vitis platforms":
++ Download & extract ZYNQMP "Common images for Embedded Vitis platforms":
 https://www.xilinx.com/member/forms/download/xef.html?filename=xilinx-zynqmp-common-v2020.2.tar.gz
 
 Run the synthesis:
