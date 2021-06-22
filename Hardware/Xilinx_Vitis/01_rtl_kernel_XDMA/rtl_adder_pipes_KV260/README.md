@@ -125,6 +125,7 @@ https://www.xilinx.com/member/forms/download/xef.html?filename=xilinx-k26-starte
 ## 3.2. Create PetaLinux project for FPGA Bitstream:
 ```bash
 mkdir petalnx-prj
+cd petalnx-prj
 source <path-to-installed-PetaLinux>/settings.sh
 petalinux-create -t project -s <PATH_TO_KV260_BSP>
 cd xilinx-k26-starterkit-2020.2.2
