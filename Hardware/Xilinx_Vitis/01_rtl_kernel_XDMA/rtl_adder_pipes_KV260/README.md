@@ -133,7 +133,16 @@ echo 'BOARD_VARIANT = "kv"' >>  project-spec/meta-user/conf/petalinuxbsp.conf
 echo 'CONFIG_packagegroup-kv260-smartcam' >> project-spec/meta-user/conf/user-rootfsconfig
 echo 'CONFIG_packagegroup-kv260-aibox-reid' >> project-spec/meta-user/conf/user-rootfsconfig
 echo 'CONFIG_packagegroup-kv260-defect-detect' >> project-spec/meta-user/conf/user-rootfsconfig
+```
+
+Configure the ROOTFS content:
+Enter the following command and exit (no chnages required)
+```bash
 petalinux-config -c rootfs
+```
+
+Build the ROOTFS:
+```bash
 petalinux-build -s
 ```
 
