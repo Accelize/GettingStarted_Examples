@@ -226,3 +226,12 @@ There's many possible root cause but the first thing to try is to clean the peta
 ```bash
 petalinux-build -x mrproper
 ```
+
+> [    5.682875] Run /init as init process
+> No contents to exec in /exec.d. Starting shell ...
+> sh: can't access tty; job control turned off
+If you face this boot error when running the application on the starter kit, copy the folder '<PATH_TO_rtl_adder_pipes_KV260>/petalinux_recipes/som-carrier-autoload' in the following directory of your Petalinux project: 'project-spec/meta-user/recipes-apps/'
+
+```bash
+petalinux-build -x mrproper
+```
