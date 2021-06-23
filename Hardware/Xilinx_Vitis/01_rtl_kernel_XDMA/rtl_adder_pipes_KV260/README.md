@@ -221,8 +221,8 @@ Add more RAM to fix the issue
 
 > Kernel Panic: no sync
 
-This issue can happen when run a Petalinux image on the KV260.
-There's many possible root cause but the first thing to try is to clean the petalinux build environment with the following command and run a full build again:
+This issue can happen when running a Petalinux image on the KV260.
+There's many possible root cause but the first thing to try is to clean the petalinux build environment with the following command and run 'petalinux-build' again:
 ```bash
 petalinux-build -x mrproper
 ```
@@ -231,4 +231,4 @@ petalinux-build -x mrproper
  No contents to exec in /exec.d. Starting shell ... \
  sh: can't access tty; job control turned off 
 
-If you face this boot error when running the application on the starter kit, copy the folder '<PATH_TO_rtl_adder_pipes_KV260>/petalinux_recipes/som-carrier-autoload' in the following directory of your Petalinux project: 'project-spec/meta-user/recipes-apps/'
+If you face this boot error when running the application on the starter kit, copy the folder '<PATH_TO_rtl_adder_pipes_KV260>/petalinux_recipes/som-carrier-autoload' in the following directory of your Petalinux project: 'project-spec/meta-user/recipes-apps/' an run 'petalinux-build' command again.
