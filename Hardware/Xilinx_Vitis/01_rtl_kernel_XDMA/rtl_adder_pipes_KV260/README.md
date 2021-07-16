@@ -169,7 +169,7 @@ echo 'IMAGE_INSTALL_append = " packagegroup-kv260-drm-adder-demo"' >> project-sp
 petalinux-build
 ```
 Output files are generated in "xilinx-k26-starterkit-2020.2.2/images/linux"
-vim 
+
 RPM packages are generated in "xilinx-k26-starterkit-2020.2.2/build/tmp/deploy/rpm"
 
 ## 3.7. Generate SDCard Image:
