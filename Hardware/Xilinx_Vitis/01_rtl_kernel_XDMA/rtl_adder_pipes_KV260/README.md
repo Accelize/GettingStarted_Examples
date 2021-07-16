@@ -134,15 +134,11 @@ cd petalnx-prj
 source <path-to-installed-PetaLinux>/settings.sh
 petalinux-create -t project -s <PATH_TO_KV260_BSP>
 cd xilinx-k26-starterkit-2020.2.2
-
-echo 'BOARD_VARIANT = "kv"' >>  project-spec/meta-user/conf/petalinuxbsp.conf
-echo 'CONFIG_packagegroup-kv260-smartcam' >> project-spec/meta-user/conf/user-rootfsconfig
-echo 'CONFIG_packagegroup-kv260-aibox-reid' >> project-spec/meta-user/conf/user-rootfsconfig
-echo 'CONFIG_packagegroup-kv260-defect-detect' >> project-spec/meta-user/conf/user-rootfsconfig
 ```
 
 Build the ROOTFS:
 ```bash
+echo 'BOARD_VARIANT = "kv"' >>  project-spec/meta-user/conf/petalinuxbsp.conf
 petalinux-config -c rootfs --silentconfig
 petalinux-build -s
 ```
@@ -165,7 +161,7 @@ cp $PATH_TO_KV260_PRJ/petalinux_recipes/kv260-drm-adder-demo-app/kv260-drm-adder
 ```bash
 mkdir -p project-spec/meta-user/recipes-core/packagegroups
 cp -f $PATH_TO_KV260_PRJ/petalinux_recipes/packagegroups/packagegroup-kv260-drm-adder-demo.bb project-spec/meta-user/recipes-core/packagegroups/packagegroup-kv260-drm-adder-demo.bb
-echo "IMAGE_INSTALL_append = \" packagegroup-kv260-drm-adder-demo\"" >> project-spec/meta-user/conf/petalinuxbsp.conf
+echo 'IMAGE_INSTALL_append = " packagegroup-kv260-drm-adder-demo"' >> project-spec/meta-user/conf/petalinuxbsp.conf
 ```
 
 ## 3.6. Build PetaLinux:
@@ -173,6 +169,7 @@ echo "IMAGE_INSTALL_append = \" packagegroup-kv260-drm-adder-demo\"" >> project-
 petalinux-build
 ```
 Output files are generated in "xilinx-k26-starterkit-2020.2.2/images/linux"
+vim 
 RPM packages are generated in "xilinx-k26-starterkit-2020.2.2/build/tmp/deploy/rpm"
 
 ## 3.7. Generate SDCard Image:
@@ -230,6 +227,7 @@ TEST PASSED
 ## 4.2. Using the vanilla SDCard image provided by Xilinx
 ### 4.2.1. Prepare the SDCard
 Download the [Kria KV260 Starter Kit 2020.2.2 SD Card Image](https://www.xilinx.com/member/forms/download/xef.html?filename=petalinux-sdimage.wic.gz)
+
 Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on the SD Card
 
 ### 4.2.2. Run the application
