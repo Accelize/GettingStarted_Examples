@@ -7,7 +7,7 @@ VTS_PLATFORM=kv260_vcuDecode_vmixDP
 
 OUTPUT_DIR=xclbin
 DRM_XO=${OUTPUT_DIR}/drm.xo
-DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_hdk_4.2.1.12_vitis_2020.2_xilinx_kv260.xclbin
+DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_hdk_4.2.1.12_vitis_2021.1_xilinx_kv260.xclbin
 VTS_KERNELS = adder input output
 VTS_KERNELS_OBJS = $(VTS_KERNELS:%=${OUTPUT_DIR}/%.xo)
 VTS_CFG_FILE=connectivity.cfg
