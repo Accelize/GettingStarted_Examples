@@ -225,12 +225,18 @@ TEST PASSED
 ```
 
 ## 4.2. Using the vanilla SDCard image provided by Xilinx
-### 4.2.1. Prepare the SDCard
+### 4.2.1. Upload your RPMs on the Accelize Repository
++ Log into your vendor portal
++ On the upper-right, click on your name and select "RPM Upload"
++ Upload each RPM package generated at previous steps
+
+
+### 4.2.2. Prepare the SDCard
 Download the [Kria KV260 Starter Kit 2020.2.2 SD Card Image](https://www.xilinx.com/member/forms/download/xef.html?filename=petalinux-sdimage.wic.gz)
 
 Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on the SD Card
 
-### 4.2.2. Run the application
+### 4.2.3. Run the application
 Insert the SD Card in the KV260 slot and power-on the board.
 
 Add your cred.json file in "/usr/bin/cred.json"
