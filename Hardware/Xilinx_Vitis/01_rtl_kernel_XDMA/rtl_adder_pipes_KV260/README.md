@@ -234,12 +234,14 @@ TEST PASSED
 **<vendor>-<package_name>-<version>-<release>.<dist><basearch>.rpm**
 example : xilinx-helloworld-1.0-1.pl2021_1.aarch64.rpm
 
-+ **vendor**: Provided by Accelize, basically the name of company generating the package
-+ **package_name**: Name describing the packaged software.String without special char or "." can include "-"
-+ **version**: The version of the packaged software. You cannot use a dash in the version number suggested 1.1.1
-+ **release**: The number of times this version of the software has been packaged. Constrain : integer >0
-+ **dist**: Always starting with "pl" for petalinux and the distribution version () without dot example 2021_1
-+ **basearch**: Refers to the base architecture of the system.
+|Field            |Description                                                   |
+|-----------------|-------------------------------------------------------|
+| **vendor**       | Provided by Accelize, basically the name of company generating the package|
+| **package_name** | Name describing the packaged software.String without special char or "." can include "-"|
+| **version**      | The version of the packaged software. You cannot use a dash in the version number suggested 1.1.1|
+| **release**      | The number of times this version of the software has been packaged. Constraint : integer >0|
+| **dist**         | Always starting with "pl" for petalinux and the distribution version without dot: example 2021_1|
+| **basearch**     | Refers to the base architecture of the system.|
 
 
 ### 4.2.2. Prepare the SDCard
