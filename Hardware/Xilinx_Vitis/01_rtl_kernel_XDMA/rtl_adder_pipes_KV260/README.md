@@ -231,7 +231,9 @@ TEST PASSED
 + Upload each RPM package generated at previous steps
 
 &#x26a0;&#xfe0f; RPM naming convention :
+
 **<vendor>-<package_name>-<version>-<release>.<dist><basearch>.rpm**
+
 example : xilinx-helloworld-1.0-1.pl2021_1.aarch64.rpm
 
 |Field            |Description                                                   |
