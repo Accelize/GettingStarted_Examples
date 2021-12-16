@@ -1,0 +1,21 @@
+set_global_assignment -name MISC_FILE "../../hw/rtl/hello_afu.json"
+set_global_assignment -name SYSTEMVERILOG_FILE "../../hw/rtl/common/sv/altera/altchip_id_arria10.sv"
+set_global_assignment -name VHDL_FILE "../../hw/rtl/common/vhdl/altera/drm_all_components.vhd" -library drm_library
+set_global_assignment -name VHDL_FILE "../../hw/rtl/common/vhdl/altera/online_test_package.vhd" -library drm_library
+set_global_assignment -name VHDL_FILE "../../hw/rtl/common/vhdl/altera/xip8001b_arria10_stratix10.vhd" -library drm_library
+
+set_global_assignment -name SYSTEMVERILOG_FILE "../../hw/rtl/controller/rtl/syn/top_drm_controller.sv"
+set_global_assignment -name VERILOG_FILE "../../hw/rtl/controller/rtl/core/drm_ip_controller.v"
+set_global_assignment -name VHDL_FILE "../../hw/rtl/controller/rtl/core/drm_ip_controller.vhd" -library drm_library
+
+set_global_assignment -name VHDL_FILE "../../hw/rtl/User_IP/rtl/activator/core/drm_ip_activator_package_0x1003000e00010001.vhd" -library drm_library
+set_global_assignment -name VHDL_FILE "../../hw/rtl/User_IP/rtl/activator/core/drm_ip_activator_0x1003000e00010001.vhd" -library drm_0x1003000e00010001_library
+set_global_assignment -name VHDL_FILE "../../hw/rtl/User_IP/rtl/activator/syn/top_drm_activator_0x1003000e00010001.vhd" -library drm_0x1003000e00010001_library
+set_global_assignment -name VERILOG_FILE "../../hw/rtl/User_IP/rtl/activator/core/drm_ip_activator_0x1003000e00010001.v"
+set_global_assignment -name SYSTEMVERILOG_FILE "../../hw/rtl/User_IP/rtl/activator/syn/top_drm_activator_0x1003000e00010001.sv"
+
+set_global_assignment -name VERILOG_FILE "../../hw/rtl/User_IP/rtl/user_ip.v"
+set_global_assignment -name VERILOG_FILE "../../hw/rtl/ccip_axi4lite_bridge.v"
+set_global_assignment -name SYSTEMVERILOG_FILE "../../hw/rtl/afu.sv"
+set_global_assignment -name SYSTEMVERILOG_FILE "../../hw/rtl/ccip_interface_reg.sv"
+set_global_assignment -name SYSTEMVERILOG_FILE "../../hw/rtl/ccip_std_afu.sv"

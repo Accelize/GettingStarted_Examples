@@ -1,0 +1,19 @@
+{
+  "design": {
+    "boardType": "AWS_F1"
+  },
+  "licensing": {
+    "url": "https://master.metering.accelize.com"
+  },
+  "drm": { 
+    "frequency_mhz": 125,
+    "mode": "metering", 
+    "license_dir": "." 
+  }, 
+  "settings": {
+    "log_verbosity": 2,
+    "log_file_type": 1,
+    "log_file_verbosity":0
+  }
+}
+

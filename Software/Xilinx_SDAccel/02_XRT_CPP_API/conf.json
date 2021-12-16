@@ -1,0 +1,17 @@
+{
+  "design": {
+    "boardType": "Alveo_U200"
+  },
+  "licensing": {
+    "url": "https://master.metering.accelize.com"
+  },
+  "drm": { 
+    "frequency_mhz": 100,
+    "mode": "metering", 
+    "license_dir": "." 
+  }, 
+  "settings": {
+    "log_verbosity": 2
+  }
+}
+

@@ -1,0 +1,116 @@
+
+-- drm controller component for 2 IPs
+entity DRM_CONTROLLER_2_IP is
+  generic (
+    SYS_BUS_ADR_BEGIN : natural := 0;
+    SYS_BUS_ADR_SIZE  : natural := 16
+  );
+  port (
+    -- AXI4 LITE Slave clock and reset
+    SYS_AXI4_ACLK                 : in  std_logic;
+    SYS_AXI4_ARSTN                : in  std_logic;
+    -- AXI4 LITE Slave address write channel
+    SYS_AXI4_BUS_SLAVE_I_AW_VALID : in  std_logic;
+    SYS_AXI4_BUS_SLAVE_I_AW_ADDR  : in  std_logic_vector(SYS_BUS_ADR_SIZE-1 downto 0);
+    SYS_AXI4_BUS_SLAVE_I_AW_PROT  : in  std_logic_vector(2 downto 0);
+    SYS_AXI4_BUS_SLAVE_O_AW_READY : out std_logic;
+    -- AXI4 LITE Slave address read channel
+    SYS_AXI4_BUS_SLAVE_I_AR_VALID : in  std_logic;
+    SYS_AXI4_BUS_SLAVE_I_AR_ADDR  : in  std_logic_vector(SYS_BUS_ADR_SIZE-1 downto 0);
+    SYS_AXI4_BUS_SLAVE_I_AR_PROT  : in  std_logic_vector(2 downto 0);
+    SYS_AXI4_BUS_SLAVE_O_AR_READY : out std_logic;
+    -- AXI4 LITE Slave data write channel
+    SYS_AXI4_BUS_SLAVE_I_W_VALID  : in  std_logic;
+    SYS_AXI4_BUS_SLAVE_I_W_DATA   : in  std_logic_vector(31 downto 0);
+    SYS_AXI4_BUS_SLAVE_I_W_STRB   : in  std_logic_vector(3 downto 0);
+    SYS_AXI4_BUS_SLAVE_O_W_READY  : out std_logic;
+    -- AXI4 LITE Slave data read channel
+    SYS_AXI4_BUS_SLAVE_I_R_READY  : in  std_logic;
+    SYS_AXI4_BUS_SLAVE_O_R_VALID  : out std_logic;
+    SYS_AXI4_BUS_SLAVE_O_R_DATA   : out std_logic_vector(31 downto 0);
+    SYS_AXI4_BUS_SLAVE_O_R_RESP   : out std_logic_vector(1 downto 0);
+    -- AXI4 LITE Slave write response channel
+    SYS_AXI4_BUS_SLAVE_I_B_READY  : in  std_logic;
+    SYS_AXI4_BUS_SLAVE_O_B_VALID  : out std_logic;
+    SYS_AXI4_BUS_SLAVE_O_B_RESP   : out std_logic_vector(1 downto 0);
+    -- Chip dna bus
+    CHIP_DNA_VALID                : out std_logic;
+    CHIP_DNA                      : out std_logic_vector(63 downto 0);
+    -- DRM Bus clock and reset
+    DRM_ACLK                      : in  std_logic;
+    DRM_ARSTN                     : in  std_logic;
+    -- DRM Bus master common socket
+    DRM_BUS_MASTER_O_CYC          : out std_logic;
+    DRM_BUS_MASTER_O_WE           : out std_logic;
+    DRM_BUS_MASTER_O_ADR          : out std_logic_vector(1 downto 0);
+    DRM_BUS_MASTER_O_DAT          : out std_logic_vector(0 downto 0);
+    -- DRM Bus master ip 0 socket
+    DRM_BUS_MASTER_O_CS_0         : out std_logic;
+    DRM_BUS_MASTER_I_ACK_0        : in  std_logic;
+    DRM_BUS_MASTER_I_STA_0        : in  std_logic;
+    DRM_BUS_MASTER_I_INTR_0       : in  std_logic;
+    DRM_BUS_MASTER_I_DAT_0        : in  std_logic_vector(0 downto 0);
+    -- DRM Bus master ip 1 socket
+    DRM_BUS_MASTER_O_CS_1         : out std_logic;
+    DRM_BUS_MASTER_I_ACK_1        : in  std_logic;
+    DRM_BUS_MASTER_I_STA_1        : in  std_logic;
+    DRM_BUS_MASTER_I_INTR_1       : in  std_logic;
+    DRM_BUS_MASTER_I_DAT_1        : in  std_logic_vector(0 downto 0)
+  );
+end entity DRM_CONTROLLER_2_IP;
+
+-- drm ip activator component
+entity DRM_IP_ACTIVATOR_0x2222222233333333 is
+  port (
+    -- drm bus clock and reset
+    DRM_ACLK              : in  std_logic;
+    DRM_ARSTN             : in  std_logic;
+    -- drm bus slave interface
+    DRM_BUS_SLAVE_I_CS    : in  std_logic;
+    DRM_BUS_SLAVE_I_CYC   : in  std_logic;
+    DRM_BUS_SLAVE_I_WE    : in  std_logic;
+    DRM_BUS_SLAVE_I_ADR   : in  std_logic_vector(1 downto 0);
+    DRM_BUS_SLAVE_I_DAT   : in  std_logic_vector(0 downto 0);
+    DRM_BUS_SLAVE_O_ACK   : out std_logic;
+    DRM_BUS_SLAVE_O_STA   : out std_logic;
+    DRM_BUS_SLAVE_O_INTR  : out std_logic;
+    DRM_BUS_SLAVE_O_DAT   : out std_logic_vector(0 downto 0);
+    -- ip core clock and reset
+    IP_CORE_ACLK          : in  std_logic;
+    IP_CORE_ARSTN         : in  std_logic;
+    -- ip core interface
+    DRM_EVENT             : in  std_logic;
+    DRM_ARST              : in  std_logic;
+    ACTIVATION_CODE_READY : out std_logic;
+    DEMO_MODE             : out std_logic;
+    ACTIVATION_CODE       : out std_logic_vector(127 downto 0)
+  );
+end entity DRM_IP_ACTIVATOR_0x2222222233333333;
+
+-- drm controller bfm component
+entity DRM_CONTROLLER_BFM is
+  generic (
+    LICENSE_FILE           : string  := "";   -- license file path
+    LICENSE_TIMER          : string  := "";   -- license timer
+    ENABLE_MESSAGE_DISPLAY : boolean := true  -- enable the display of messages by setting this parameter to true
+  );
+  port (
+    -- drm clock and reset
+    DRM_ACLK              : in std_logic;
+    DRM_ARSTN             : in std_logic;
+    -- drm bus master i/f
+    DRM_BUS_MASTER_O_CYC  : out std_logic;
+    DRM_BUS_MASTER_O_WE   : out std_logic;
+    DRM_BUS_MASTER_O_ADR  : out std_logic_vector(1 downto 0);
+    DRM_BUS_MASTER_O_DAT  : out std_logic_vector(0 downto 0);
+    DRM_BUS_MASTER_O_CS   : out std_logic;
+    DRM_BUS_MASTER_I_ACK  : in std_logic;
+    DRM_BUS_MASTER_I_STA  : in std_logic;
+    DRM_BUS_MASTER_I_INTR : in std_logic;
+    DRM_BUS_MASTER_I_DAT  : in std_logic_vector(0 downto 0);
+    -- bfm statuses
+    LICENSE_FILE_LOADED   : out std_logic; -- license file has been loaded into hardware
+    ACTIVATION_CYCLE_DONE : out std_logic; -- the first activation cycle is done
+    ERROR_CODE            : out std_logic_vector(7 downto 0) -- error code
+  );
+end entity DRM_CONTROLLER_BFM;

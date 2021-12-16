@@ -1,0 +1,16 @@
+.Xil
+.ipcache
+00_Archive
+00_Archives
+synth_azure.sh
+synth_azure_in_situ.sh
+archive_xclbin.sh
+cred.json
+_x
+*.jou
+*.log
+*.xo
+output_autosyn*
+drm_hdk
+drm_all_components.vhdl
+altchip_id_arria10.sv
