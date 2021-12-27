@@ -20,7 +20,7 @@ A collection of example applications demonstrating how to use the DRM Library in
 ### 3. Cloud Instructions
 For each Cloud Service Provider (CSP) offering FPGA-based instances the detailled instructions to create and configure an account, synthesize and run an example design.
 
-### 4. Cloud Instructions
+### 4. Misc.
 A collection of guides that doesn't deserve a sepecific section but that can be interessting anyway.
 
 
