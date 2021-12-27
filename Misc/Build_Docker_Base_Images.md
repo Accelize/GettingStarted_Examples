@@ -12,6 +12,4 @@ You can find the Dockerfiles on [Xilinx Base Runtime GitHub](https://github.com/
 
 Xilinx does not provids th Dockerfiles on their GitHub.
 
-You can find them here:
-
-[AWS F1 - Docker Files](docker_base_images/aws_f1)
+You can find them here: [AWS F1 - Docker Files](docker_base_images/aws_f1)
