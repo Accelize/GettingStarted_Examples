@@ -21,7 +21,7 @@ COPY software/Makefile Makefile
 COPY software/main.cpp main.cpp
 COPY software/conf.json conf.json
 RUN yum -y install yum-utils epel-release redhat-lsb-core gcc gcc-c++ make kernel-devel && \
-    yum-config-manager --add-repo https://accelize.s3.amazonaws.com/rpm/accelize_stable.repo && \
+    yum-config-manager --add-repo https://tech.accelize.com/rpm/accelize_stable.repo && \
     yum install -y sudo git gcc gcc-c++ libstdc++-devel libaccelize-drm libaccelize-drm-devel && \
     git clone https://github.com/aws/aws-fpga.git aws-fpga &&\
     source /aws-fpga/sdk_setup.sh &&\

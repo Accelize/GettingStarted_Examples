@@ -26,7 +26,7 @@ ENV VIVADO_TOOL_VERSION 2021.1
 ENV XILINX_VITIS /opt/Xilinx/Vitis/2021.1
 ENV AWS_FPGA_REPO_DIR /aws-fpga
 RUN yum -y install yum-utils epel-release redhat-lsb-core gcc gcc-c++ make kernel-devel && \
-    yum-config-manager --add-repo https://accelize.s3.amazonaws.com/rpm/accelize_stable.repo && \
+    yum-config-manager --add-repo https://tech.accelize.com/rpm/accelize_stable.repo && \
     yum install -y sudo git gcc gcc-c++ libstdc++-devel libaccelize-drm libaccelize-drm-devel centos-release-scl && \
     yum install -y devtoolset-9-gcc* && \
     source scl_source enable devtoolset-9 &&\
@@ -43,7 +43,7 @@ RUN yum -y install yum-utils epel-release redhat-lsb-core gcc gcc-c++ make kerne
 # Build the container image
 FROM xilinx/xilinx_runtime_base:aws_f1-2021-1-centos
 RUN yum -y install yum-utils epel-release redhat-lsb-core && \
-    yum-config-manager --add-repo https://accelize.s3.amazonaws.com/rpm/accelize_stable.repo && \
+    yum-config-manager --add-repo https://tech.accelize.com/rpm/accelize_stable.repo && \
     yum install -y sudo libaccelize-drm && \
     curl -s https://aws-fpga-developer-ami.s3.amazonaws.com/1.11.0/Patches/XRT_2021_1/xrt_202110.2.11.0_7.9.2009-x86_64-xrt.rpm -o xrt.rpm &&\
     curl -s https://aws-fpga-developer-ami.s3.amazonaws.com/1.11.0/Patches/XRT_2021_1/xrt_202110.2.11.0_7.9.2009-x86_64-aws.rpm -o xrt-aws.rpm &&\

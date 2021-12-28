@@ -27,8 +27,8 @@ apt-get install -y --no-install-recommends \
     curl \
     g++ \
     software-properties-common && \
-curl -fsSL https://accelize.s3.amazonaws.com/gpg | apt-key add - && \
-add-apt-repository "deb https://accelize.s3.amazonaws.com/deb $(lsb_release -cs) stable" && \
+curl -fsSL https://tech.accelize.com/gpg | apt-key add - && \
+add-apt-repository "deb https://tech.accelize.com/deb $(lsb_release -cs) stable" && \
 add-apt-repository universe && \
 apt-get update && \
 apt-get install -y --no-install-recommends \
@@ -47,8 +47,8 @@ apt-get install -y --no-install-recommends \
     apt-transport-https \
     curl \
     software-properties-common && \
-curl -fsSL https://accelize.s3.amazonaws.com/gpg | apt-key add - && \
-add-apt-repository "deb https://accelize.s3.amazonaws.com/deb $(lsb_release -cs) stable" && \
+curl -fsSL https://tech.accelize.com/gpg | apt-key add - && \
+add-apt-repository "deb https://tech.accelize.com/deb $(lsb_release -cs) stable" && \
 add-apt-repository universe && \
 apt-get update && \
 apt-get install -y --no-install-recommends \
