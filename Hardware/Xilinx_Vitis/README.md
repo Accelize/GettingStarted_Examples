@@ -33,7 +33,7 @@ Each of them shows a different context in which one could integrate the Accelize
   * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
   * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
   * Install [Accelize DRM Library](https://tech.accelize.com/documentation/stable/drm_library_installation.html#installation-from-packages) version 2.3 or higher
-  * Replace "app/{your-exec-env}/cred.json" with your Access Key
+  * Create "app/{your-exec-env}/cred.json" with your Access Key
   * Edit "app/{your-exec-env}/conf.json" to change "boardType" and "frequency" parameters [Optional]
 
 * **Alveo Boards (On-Premise Execution):**

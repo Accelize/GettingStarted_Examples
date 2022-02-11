@@ -39,7 +39,7 @@ Each of them shows a different context in which one could integrate the Accelize
  * Get an Entitlement to execute the application:
    * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
    * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
-   * Replace "sw/cred.json" with your Access Key
+   * Create "sw/cred.json" with your Access Key
 * Run the application: 
   * cd sw
   * Edit "conf.json" to change "boardType" and "frequency" parameters [Optional]

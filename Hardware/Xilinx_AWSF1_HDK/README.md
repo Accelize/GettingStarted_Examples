@@ -33,7 +33,7 @@ Follow the instructions form [AWS FPGA GitHub](https://github.com/aws/aws-fpga/t
 * **Prerequisites**:
   * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
   * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
-  * Replace "software/cred.json" with your Access Key
+  * Create "software/cred.json" with your Access Key
   * Edit "software/conf.json" to change "boardType" and "frequency" parameters [Optional]
   * [Install the DRM library](https://tech.accelize.com/documentation/stable/drm_library_installation.html)
 

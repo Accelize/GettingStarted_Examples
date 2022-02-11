@@ -6,7 +6,6 @@
 #VTS_PLATFORM=/tools/xilinx/vivado_2019.1/platforms/xilinx_u250_xdma_201830_1/xilinx_u250_xdma_201830_1.xpfm
 #VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u250_xdma_201830_2/xilinx_u250_xdma_201830_2.xpfm
 #VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u50_gen3x4_xdma_2_202010_1/xilinx_u50_gen3x4_xdma_2_202010_1.xpfm
-#VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u250_xdma_201830_3/xilinx_u250_xdma_201830_3.xpfm
 VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u200_gen3x16_xdma_1_202110_1/xilinx_u200_gen3x16_xdma_1_202110_1.xpfm
 
 OUTPUT_DIR=xclbin

@@ -7,7 +7,7 @@ The following API is meant to be used with Accelie example ["hello_afu_rtl"](htt
  * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
  * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
  * Program the FPGA with your FPGA ID
- * Replace "app/cred.json" with your Access Key
+ * Create "app/cred.json" with your Access Key
  * Edit "conf.json" to change "boardType" and "frequency" parameters [Optional]
  * In a terminal:
    * cd app/

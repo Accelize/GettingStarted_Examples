@@ -119,8 +119,8 @@ read_ip [glob $path_to_drm_hdk/common/ila_0/ila_0.xci]
     ```
 
 
-**How to generate a DCP of the Protected IP using the Vitis Flow**
-Edit the packahe kernel script as follows:
+## **How to generate a DCP of the Protected IP using the Vitis Flow**
+Edit the package kernel script as follows:
 ```tcl
 set kernel_vendor xilinx.com
 set kernel_library RTLKernel
@@ -200,6 +200,24 @@ az vm image terms accept --urn xilinx:xilinx_alveo_u250_deployment_vm_ubuntu1804
 This issue can happens if:
 + Running on Kria (or MPSoC) and teh Petalinux configuration is incorrect
 + Running in Mainland China and the Accelize DRM Web Service URL in the conf.json is not the chinese URL. [More details here](https://tech.accelize.com/documentation/stable/drm_configuration.html?highlight=conf%20json#library-configuration-file)
+
+## **[XRT] ERROR: xclRegRW: can't map CU.' error:**
+
+This is a known issue from XRT 2021.1 version if you are using `xclRegRead(...)` or `xclRegWrite(...)` function (cf. [Xilinx Support](https://support.xilinx.com/s/question/0D52E00006zJLOOSA4/xclregrw-cant-map-cu-since-update-to-xrt-20211?language=en_US)). To fix it:
+* Create a xrt.ini file with:
+  ```ini
+  [Runtime]
+  rw_shared=true
+  ```
+* or type the command line:
+  ```bash
+  echo -e "[Runtime]\nrw_shared=true" >> ./xrt.ini
+  ```  
+* Update the line `xclOpenContext(boardHandler, xclbinId, cuidx, `**false**`)` with `xclOpenContext(boardHandler, xclbinId, cuidx,`**true**`)`
+
+  in: 
+  
+  `drm_read_callback` and `drm_write_callback` functions
 
 
 # 3. Vendor & User Portals
