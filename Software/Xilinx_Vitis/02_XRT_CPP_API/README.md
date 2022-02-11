@@ -1,0 +1,42 @@
+# Accelize Getting Started
+## Xilinx XRT C-API
+
+The following API is meant to be used with Accelize Vitis examples ["01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo"](https://github.com/Accelize/GettingStarted_Examples/tree/master/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo)
+
+From 2020.2 release XRT provides a new C++ API
+
+### Folder Structure
+* **Makefile**
+* **main.cpp**
+  * XRT_API-equivalent to "main.cpp" source file  of the original design.
+  * Uses the Xilinx XRT-API
+* **conf.json** and **cred.json**
+  * Configuration files for the DRM Library
+
+
+### How to compile & run application
+* **Prerequisites**:
+  * XRT version must be 2020.2 or newer. To check XRT version: 
+  ```bash
+  cat /opt/xilinx/xrt/version.json
+  ```
+  * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
+  * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
+  * Install [Accelize DRM Library](https://tech.accelize.com/documentation/stable/drm_library_installation.html#installation-from-packages) version 2.2 or higher
+  * Replace "app/{your-exec-env}/cred.json" with your Access Key
+  * Edit "app/{your-exec-env}/conf.json" to change "boardType" and "frequency" parameters [Optional]
+* **Setup Environment:**
+  * source XRT setup script
+  * Update the Makefile CXXFLAGS variable. Uncomment the line according to gcc version from your system
+  ```Makefile
+  #XRT API
+  #For gcc version newer than 4.9.0 use c++14
+  #CXXFLAGS := -Wall -std=c++14 -Wno-unused-variable
+  #For gcc version older than 4.9.0 use c++1y
+  #CXXFLAGS := -Wall -std=c++1y -Wno-unused-variable
+  ```
+* **Execution** 
+  ```bash
+  make clean all
+  ./app \<path-to-xclbin-file>
+  ```
