@@ -20,7 +20,7 @@ XRT_INC_DIR := -I$(XRT_ROOT)/include
 XRT_LIBDIR  := -L$(XRT_ROOT)/lib
 
 #for xrt api
-XRT_LIB := -lxrt_coreutil -pthread -lxilinxopencl -lOpenCL -luuid
+XRT_LIB := -lxrt_coreutil -pthread -lxilinxopencl -luuid
 
 # Accelize DRMLib
 XLZDRM_LIB = -laccelize_drm

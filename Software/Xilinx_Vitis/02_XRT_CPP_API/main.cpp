@@ -41,11 +41,10 @@ Description: SDx Vector Addition using Blocking Pipes Operation
 #include <cstdlib>
 
 #include <CL/cl2.hpp>
-#include <xrt/xrt_device.h>
-#include <xrt/xrt_bo.h>
-#include <xrt/xrt_kernel.h>
+#include <experimental/xrt_device.h>
+#include <experimental/xrt_bo.h>
+#include <experimental/xrt_kernel.h>
 #include <experimental/xrt_xclbin.h>
-#include <experimental/xrt_ip.h>
 using namespace std;
 
 // Accelize DRMLib
@@ -81,7 +80,7 @@ int main(int argc, char** argv)
    int source_sw_results[size];
 
     // Create the test data and Software Result 
-    for(int i = 0 ; i < DATA_SIZE ; i++){
+    for(int i = 0 ; i < size ; i++){
         source_input[i] = i;
         source_sw_results[i] = i + INCR_VALUE;
         source_hw_results[i] = 0;
@@ -123,18 +122,18 @@ int main(int argc, char** argv)
 //ACCELIZE DRMLIB CODE AREA START      
     
     // Create ip drm_controller (Particular Kernel for register access)
-    xrt::ip     ip_drm_ctrl(device,xclbinId,"kernel_drm_controller");
+    xrt::kernel krnl_drm_ctrl(device,xclbinId,"kernel_drm_controller",true);
     
     // Create drm manager
     DrmManager *pDrmManag = new DrmManager(
         std::string("conf.json"),
         std::string("cred.json"),
         [&]( uint32_t  offset, uint32_t * value) {      /*Read DRM register*/
-            *value = ip_drm_ctrl.read_register(offset);
+            *value = krnl_drm_ctrl.read_register(offset);
             return  0;
         },
         [&]( uint32_t  offset, uint32_t value) {        /*Write DRM register*/
-            ip_drm_ctrl.write_register(offset, value);
+            krnl_drm_ctrl.write_register(offset, value);
             return 0;
         },
         [&]( const  std::string & err_msg) {
