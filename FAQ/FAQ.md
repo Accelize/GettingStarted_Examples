@@ -219,6 +219,23 @@ This is a known issue from XRT 2021.1 version if you are using `xclRegRead(...)`
   
   `drm_read_callback` and `drm_write_callback` functions
 
+## modprobe: ERROR: could not insert 'xclmgmt': Unknown symbol in module, or unknown parameter (see dmesg)
+
+The error can happen when trying to install XRT on Ubuntu O/S.
+
+the 'dmesg' command gives:
+```bash
+[  374.980198] xclmgmt: Unknown symbol fpga_mgr_unregister (err 0)
+[  374.980263] xclmgmt: Unknown symbol fpga_mgr_register (err 0)
+``` 
+
+To fix this issue, you need:
+- To install the "linux-module" package for your kernel version:
+```bash
+sudo apt install linux-generic
+```
+- Reboot the server
+
 
 # 3. Vendor & User Portals
 
