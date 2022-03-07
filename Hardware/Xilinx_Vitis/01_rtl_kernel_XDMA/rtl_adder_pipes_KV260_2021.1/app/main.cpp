@@ -170,7 +170,7 @@ int main(int argc, char** argv)
     
 //ACCELIZE DRMLIB CODE AREA START      
     DrmManager *pDrmManag = new DrmManager(
-        std::string("conf.json"),
+        std::string("/usr/bin/conf.json"),
         std::string("cred.json"),
         [&]( uint32_t  offset, uint32_t * value) {      /*Read DRM register*/
             return  drm_read_callback(offset, value);
