@@ -1,16 +1,18 @@
 #
 # Accelize DRM Reference Design Makefile
 #
-#VTS_PLATFORM=/opt/xilinx/platforms/xilinx_u50_gen3x16_xdma_201920_3/xilinx_u50_gen3x16_xdma_201920_3.xpfm
+VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u50_gen3x16_xdma_201920_3/xilinx_u50_gen3x16_xdma_201920_3.xpfm
 #VTS_PLATFORM=/tools/xilinx/vivado_2019.1/platforms/xilinx_u200_xdma_201830_2/xilinx_u200_xdma_201830_2.xpfm
 #VTS_PLATFORM=/tools/xilinx/vivado_2019.1/platforms/xilinx_u250_xdma_201830_1/xilinx_u250_xdma_201830_1.xpfm
 #VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u250_xdma_201830_2/xilinx_u250_xdma_201830_2.xpfm
 #VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u50_gen3x4_xdma_2_202010_1/xilinx_u50_gen3x4_xdma_2_202010_1.xpfm
-VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u200_gen3x16_xdma_1_202110_1/xilinx_u200_gen3x16_xdma_1_202110_1.xpfm
+#VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u200_gen3x16_xdma_1_202110_1/xilinx_u200_gen3x16_xdma_1_202110_1.xpfm
+
+
 
 OUTPUT_DIR=xclbin
 DRM_XO=${OUTPUT_DIR}/drm.xo
-DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_hdk_6.0_vitis_2021.1_xilinx_u200_gen3x16_xdma_1_202110_1.xclbin
+DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_hdk_6.0_vitis_2021.1_xilinx_u50_gen3x16_xdma_201920_3.xclbin
 VTS_KERNELS = adder input output
 VTS_KERNELS_OBJS = $(VTS_KERNELS:%=${OUTPUT_DIR}/%.xo)
 KERNEL_FREQ_MHZ = 100

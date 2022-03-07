@@ -143,7 +143,7 @@ Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on th
 ### 3.1.3. Run the application
 Insert the SD Card in the KV260 slot and power-on the board.
 
-Add your Access Key (cred.json) file in "/usr/bin/cred.json"
+Add your Access Key (cred.json) file in "$HOME/cred.json"
 
 In the USB-UART terminal, use the following commands to run the application:
 ```bash
@@ -214,7 +214,7 @@ Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on th
 ### 3.2.4. Run the application
 Insert the SD Card in the KV260 slot and power-on the board.
 
-Add your Access Key (cred.json) file in "/usr/bin/cred.json"
+Add your Access Key (cred.json) file in "$HOME/cred.json"
 
 In the USB-UART terminal, use the following commands to run the application:
 
