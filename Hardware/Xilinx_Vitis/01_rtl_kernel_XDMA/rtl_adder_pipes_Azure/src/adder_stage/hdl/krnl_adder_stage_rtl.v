@@ -81,12 +81,14 @@ module krnl_adder_stage_rtl #(
   // AXI4-ST Common Bus from DRM Controller          
   input wire [C_DATA_WIDTH-1:0]                  drm_to_uip_tdata,
   input wire                                     drm_to_uip_tvalid,
+  input wire                                     drm_to_uip_tlast,
   output wire                                    drm_to_uip_tready,
   
   // AXI4-ST Bus to DRM Controller                                 
   input wire                                     uip_to_drm_tready,
   output wire [C_DATA_WIDTH-1:0]                 uip_to_drm_tdata,
-  output wire                                    uip_to_drm_tvalid           
+  output wire                                    uip_to_drm_tlast, 
+  output wire                                    uip_to_drm_tvalid 
 );
 
 krnl_adder_stage_rtl_int #(
@@ -153,9 +155,11 @@ top_drm_activator_0x1003000e00010001 top_drm_activator_0x1003000e00010001_inst (
       .drm_to_uip_tdata      (drm_to_uip_tdata                  ),
       .drm_to_uip_tvalid     (drm_to_uip_tvalid                 ),
       .drm_to_uip_tready     (drm_to_uip_tready                 ),
+      .drm_to_uip_tlast      (drm_to_uip_tlast                  ),
       .uip_to_drm_tready     (uip_to_drm_tready                 ),
       .uip_to_drm_tdata      (uip_to_drm_tdata                  ),
       .uip_to_drm_tvalid     (uip_to_drm_tvalid                 ),
+      .uip_to_drm_tlast      (uip_to_drm_tlast                  ),
       .ip_core_aclk          (ap_clk                            ),
       .metering_event        (usage_unit_event                  ),
       .activation_code       (s_drm_activation_code             )

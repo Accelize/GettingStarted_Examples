@@ -29,11 +29,13 @@ module user_ip
   // AXI4-ST Common Bus from DRM Controller          
   input wire [32-1:0]                drm_to_uip_tdata           ,
   input wire                         drm_to_uip_tvalid          ,
+  input wire                         drm_to_uip_tlast           ,
   output wire                        drm_to_uip_tready          ,
   // AXI4-ST Bus to DRM Controller                               
   input wire                         uip_to_drm_tready          ,
   output wire [32-1:0]               uip_to_drm_tdata           ,
-  output wire                        uip_to_drm_tvalid
+  output wire                        uip_to_drm_tvalid          ,
+  output wire                        uip_to_drm_tlast
 );
 
     localparam  EXP_ACT_CODE = 128'h7E745E528F0CF2F36C304A2F18DB0CE0;
@@ -187,9 +189,11 @@ module user_ip
       .drm_to_uip_tdata      (drm_to_uip_tdata                  ),
       .drm_to_uip_tvalid     (drm_to_uip_tvalid                 ),
       .drm_to_uip_tready     (drm_to_uip_tready                 ),
+      .drm_to_uip_tlast      (drm_to_uip_tlast                  ),
       .uip_to_drm_tready     (uip_to_drm_tready                 ),
       .uip_to_drm_tdata      (uip_to_drm_tdata                  ),
       .uip_to_drm_tvalid     (uip_to_drm_tvalid                 ),
+      .uip_to_drm_tlast      (uip_to_drm_tlast                  ),
       .metering_event        (metering_event                    ),
       .activation_code       (s_drm_activation_code             )
     );

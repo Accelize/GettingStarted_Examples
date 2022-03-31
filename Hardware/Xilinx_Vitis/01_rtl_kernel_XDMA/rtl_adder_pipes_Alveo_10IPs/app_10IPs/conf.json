@@ -3,7 +3,7 @@
     "boardType": "Alveo_U200"
   },
   "licensing": {
-    "url": "https://master.devmetering.accelize.com"
+    "url": "https://master.metering.accelize.com"
   },
   "drm": { 
     "frequency_mhz": 100,

@@ -185,9 +185,11 @@ axi_crossbar_0 axi_crossbar_0_inst (
 wire [C_DATA_WIDTH-1:0]                 drm_to_uip_tdata;
 wire                                    drm_to_uip_tvalid;
 wire                                    drm_to_uip_tready;
+wire                                    drm_to_uip_tlast;
 wire                                    uip_to_drm_tready;
 wire [C_DATA_WIDTH-1:0]                 uip_to_drm_tdata;
 wire                                    uip_to_drm_tvalid;  
+wire                                    uip_to_drm_tlast;  
 
 // User Protected IP
 user_ip user_ip_inst
@@ -214,8 +216,10 @@ user_ip user_ip_inst
   .drm_to_uip_tdata           ( drm_to_uip_tdata      ),
   .drm_to_uip_tvalid          ( drm_to_uip_tvalid     ),
   .drm_to_uip_tready          ( drm_to_uip_tready     ),
+  .drm_to_uip_tlast           ( drm_to_uip_tlast      ),
   .uip_to_drm_tready          ( uip_to_drm_tready     ),
   .uip_to_drm_tdata           ( uip_to_drm_tdata      ),
+  .uip_to_drm_tlast           ( uip_to_drm_tlast      ),
   .uip_to_drm_tvalid          ( uip_to_drm_tvalid     )
 );
 
@@ -227,9 +231,11 @@ top_drm_controller top_drm_controller_inst (
     .drm_to_uip0_tready   ( drm_to_uip_tready     ),
     .drm_to_uip0_tvalid   ( drm_to_uip_tvalid     ),
     .drm_to_uip0_tdata    ( drm_to_uip_tdata      ),
+    .drm_to_uip0_tlast    ( drm_to_uip_tlast      ),
     .uip0_to_drm_tready   ( uip_to_drm_tready     ),
     .uip0_to_drm_tvalid   ( uip_to_drm_tvalid     ),
     .uip0_to_drm_tdata    ( uip_to_drm_tdata      ),
+    .uip0_to_drm_tlast    ( uip_to_drm_tlast      ),
     .s_axi_awready        ( m_axi_drm_awready     ),
     .s_axi_awvalid        ( m_axi_drm_awvalid     ),
     .s_axi_awaddr         ( m_axi_drm_awaddr & 16'h3FFF ),

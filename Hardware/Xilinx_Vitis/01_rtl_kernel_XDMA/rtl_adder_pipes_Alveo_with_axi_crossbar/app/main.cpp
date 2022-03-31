@@ -44,8 +44,8 @@ Description: SDx Vector Addition using Blocking Pipes Operation
 #define DATA_SIZE 4
 #define INCR_VALUE 1
 
-#define DRM_BASE_ADDRESS        (0x1020000 + 0x4000)
-#define USER_IP_0_BASE_ADDRESS  (0x1020000)
+#define DRM_BASE_ADDRESS        (0x1810000 + 0x4000)
+#define USER_IP_0_BASE_ADDRESS  (0x1810000)
 
 #include <vector>
 #include <CL/cl2.hpp>

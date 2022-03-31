@@ -43,7 +43,7 @@ Description: SDx Vector Addition using Blocking Pipes Operation
 
 #define DATA_SIZE 4096
 #define INCR_VALUE 10
-#define DRM_BASE_ADDRESS 0x0C40000
+#define DRM_BASE_ADDRESS 0x1830000
 
 #include <vector>
 #include <CL/cl2.hpp>
