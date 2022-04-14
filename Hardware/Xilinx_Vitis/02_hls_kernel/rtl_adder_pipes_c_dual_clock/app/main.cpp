@@ -44,7 +44,7 @@ Description: SDx Vector Addition using Blocking Pipes Operation
 #define LOOP 10
 #define DATA_SIZE 256
 #define INCR_VALUE 10
-#define DRM_BASE_ADDRESS 0x1800000
+#define DRM_BASE_ADDRESS 0x0
 
 #include <vector>
 #include <CL/cl2.hpp>
@@ -180,7 +180,24 @@ int main(int argc, char** argv)
     
     std::vector<cl::Device> devices;
     err = platform.getDevices(CL_DEVICE_TYPE_ACCELERATOR, &devices);
+    // Accelize
+	// Choose device if multiple available
     cl::Device device = devices[0];
+    uint32_t device_id=0;    
+    if(devices.size() > 1){
+		std::cout << "Found " << devices.size() << " Boards" << std::endl;
+		for(uint32_t i=0; i<devices.size(); i++) {
+			device = devices[i];
+			std::string device_name = device.getInfo<CL_DEVICE_NAME>();
+			std::cout << "\t[" << i << "] " <<  device_name << std::endl;
+		}
+		std::cout << "Please select the targeted board:" << std::endl;
+		std::cin >> device_id;
+	}
+	device = devices[device_id];
+	std::vector<cl::Device> chosen_device;
+	chosen_device.push_back(device);
+	std::cout << "Selected board: " << device_id << std::endl;
 
     OCL_CHECK(err, cl::Context context(device, NULL, NULL, NULL, &err));
     OCL_CHECK(err, cl::CommandQueue q(context, device,
@@ -190,14 +207,14 @@ int main(int argc, char** argv)
     char* fileBuf = read_binary_file(binaryFile, fileBufSize);
     cl::Program::Binaries bins{{fileBuf, fileBufSize}};
     devices.resize(1);
-    OCL_CHECK(err, cl::Program program(context, devices, bins, NULL, &err));
+    OCL_CHECK(err, cl::Program program(context, chosen_device, bins, NULL, &err));
     
     // Init xclhal2 library
     if(xclProbe() < 1) {
         std::cout << "[ERROR] xclProbe failed ..." << std::endl;
         return -1;
     }
-    boardHandler = xclOpen(0, "xclhal2_logfile.log", XCL_ERROR);
+    boardHandler = xclOpen(device_id, "xclhal2_logfile.log", XCL_ERROR);
     if(boardHandler == NULL) {
         std::cout << "[ERROR] xclOpen failed ..." << std::endl;
         return -1;

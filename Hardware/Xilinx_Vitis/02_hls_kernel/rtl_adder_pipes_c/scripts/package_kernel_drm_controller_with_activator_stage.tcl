@@ -32,14 +32,12 @@ set path_to_activator0 "./src/drm_hdk/activator0"
 create_project -force kernel_pack $path_to_tmp_project 
 
 read_vhdl [ glob $path_to_drm_components/*.vhdl ] -library drm_library
+read_verilog [ glob $path_to_hdl/core/*.sv ] -library drm_library
 read_vhdl [ glob $path_to_hdl/core/*.vhdl ] -library drm_library
-read_verilog [glob $path_to_hdl/core/*.sv]
-read_vhdl [ glob $path_to_hdl/syn/*.vhdl ] -library drm_library
 read_verilog [glob $path_to_hdl/syn/*.sv]
 read_vhdl [ glob $path_to_activator0/core/*.vhdl ] -library drm_library
 read_vhdl [ glob $path_to_activator0/syn/*.vhdl ] -library drm_library
 read_verilog [ glob $path_to_activator0/syn/*.sv ]
- 
 read_verilog src/drm_controller_with_activator.v
 set_property top drm_controller_with_activator [current_fileset]
 
@@ -55,12 +53,15 @@ foreach up [ipx::get_user_parameters] {
 set_property sdx_kernel true [ipx::current_core]
 set_property sdx_kernel_type rtl [ipx::current_core]
 ipx::create_xgui_files [ipx::current_core]
+ipx::infer_bus_interface ap_clk xilinx.com:signal:clock_rtl:1.0 [ipx::current_core]
+ipx::infer_bus_interface ap_rst_n xilinx.com:signal:reset_rtl:1.0 [ipx::current_core]
 ipx::associate_bus_interfaces -busif s_axi_control -clock ap_clk [ipx::current_core]
-ipx::associate_bus_interfaces -busif activation_code0 -clock ap_clk [ipx::current_core]
-ipx::associate_bus_interfaces -busif activation_code1 -clock ap_clk [ipx::current_core]
-ipx::associate_bus_interfaces -busif activation_code2 -clock ap_clk [ipx::current_core]
-ipx::associate_bus_interfaces -busif activation_code3 -clock ap_clk [ipx::current_core]
-ipx::associate_bus_interfaces -busif metering_event -clock ap_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif activation_code0_uip0 -clock ap_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif activation_code1_uip0 -clock ap_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif activation_code2_uip0 -clock ap_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif activation_code3_uip0 -clock ap_clk [ipx::current_core]
+ipx::associate_bus_interfaces -busif metering_event_uip0 -clock ap_clk [ipx::current_core]
+
 set_property xpm_libraries {XPM_CDC XPM_MEMORY XPM_FIFO} [ipx::current_core]
 set_property supported_families { } [ipx::current_core]
 set_property auto_family_support_level level_2 [ipx::current_core]

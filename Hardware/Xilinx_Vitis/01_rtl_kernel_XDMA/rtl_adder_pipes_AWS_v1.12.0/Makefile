@@ -2,7 +2,7 @@
 # Accelize DRM Reference Design Makefile
 #
 #
-VTS_PLATFORM=/home/centos/src/project_data/aws-fpga/Vitis/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_3/xilinx_aws-vu9p-f1_shell-v04261818_201920_3.xpfm
+VTS_PLATFORM=/home/centos/aws-fpga/Vitis/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_3/xilinx_aws-vu9p-f1_shell-v04261818_201920_3.xpfm
 OUTPUT_DIR=xclbin
 DRM_XO=${OUTPUT_DIR}/drm.xo
 DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_HDKv7p0_xilinx_aws-vu9p-f1_shell-v04261818_201920_3.xclbin

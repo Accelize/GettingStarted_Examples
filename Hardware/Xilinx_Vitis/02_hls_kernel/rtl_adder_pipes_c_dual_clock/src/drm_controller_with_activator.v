@@ -34,6 +34,7 @@ module drm_controller_with_activator
   input wire                        s_axi_control_awvalid      ,
   output  wire                      s_axi_control_awready      ,
   input wire [16-1:0]               s_axi_control_awaddr       ,
+  input  wire [3-1 :0]              s_axi_control_awprot       ,
   input wire                        s_axi_control_wvalid       ,
   output  wire                      s_axi_control_wready       ,
   input wire [32-1:0]               s_axi_control_wdata        ,
@@ -44,6 +45,7 @@ module drm_controller_with_activator
   input wire                        s_axi_control_arvalid      ,
   output  wire                      s_axi_control_arready      ,
   input wire [16-1:0]               s_axi_control_araddr       ,
+  input  wire [3-1 :0]              s_axi_control_arprot       ,
   output  wire                      s_axi_control_rvalid       ,
   input wire                        s_axi_control_rready       ,
   output  wire [32-1:0]             s_axi_control_rdata        ,
@@ -53,9 +55,11 @@ module drm_controller_with_activator
  wire [32-1:0]  drm_to_uip0_tdata   ;
  wire           drm_to_uip0_tvalid  ;
  wire           drm_to_uip0_tready  ;
+ wire           drm_to_uip0_tlast   ;
  wire           uip0_to_drm_tready  ;
  wire [32-1:0]  uip0_to_drm_tdata   ;
  wire           uip0_to_drm_tvalid  ;
+ wire           uip0_to_drm_tlast   ;
 
 
   // DRM Controller
@@ -67,9 +71,11 @@ module drm_controller_with_activator
     .drm_to_uip0_tready   ( drm_to_uip0_tready    ),
     .drm_to_uip0_tvalid   ( drm_to_uip0_tvalid    ),
     .drm_to_uip0_tdata    ( drm_to_uip0_tdata     ),
+    .drm_to_uip0_tlast    ( drm_to_uip0_tlast     ),
     .uip0_to_drm_tready   ( uip0_to_drm_tready    ),
     .uip0_to_drm_tvalid   ( uip0_to_drm_tvalid    ),
     .uip0_to_drm_tdata    ( uip0_to_drm_tdata     ),
+    .uip0_to_drm_tlast    ( uip0_to_drm_tlast     ),
 
     // AXI4-Lite Register Access
     .s_axi_aclk           ( ap_clk                ),
@@ -77,7 +83,7 @@ module drm_controller_with_activator
     .s_axi_awready        ( s_axi_control_awready ),
     .s_axi_awvalid        ( s_axi_control_awvalid ),
     .s_axi_awaddr         ( s_axi_control_awaddr  ),
-    .s_axi_awprot         ( 3'b000  ),
+    .s_axi_awprot         ( s_axi_control_awprot  ),
     .s_axi_wready         ( s_axi_control_wready  ),
     .s_axi_wvalid         ( s_axi_control_wvalid  ),
     .s_axi_wdata          ( s_axi_control_wdata   ),
@@ -88,7 +94,7 @@ module drm_controller_with_activator
     .s_axi_arready        ( s_axi_control_arready ),
     .s_axi_arvalid        ( s_axi_control_arvalid ),
     .s_axi_araddr         ( s_axi_control_araddr  ),
-    .s_axi_arprot         ( 3'b000  ),
+    .s_axi_arprot         ( s_axi_control_arprot  ),
     .s_axi_rready         ( s_axi_control_rready  ),
     .s_axi_rvalid         ( s_axi_control_rvalid  ),
     .s_axi_rdata          ( s_axi_control_rdata   ),
@@ -158,15 +164,17 @@ module drm_controller_with_activator
  end
  
 top_drm_activator_0x1003000e00010001 top_drm_activator_0x1003000e00010001_uip0 (
-       .drm_aclk              (ap_clk_2                          ),
-       .drm_arstn             (ap_rst_n_2                        ),
+       .drm_aclk              (ap_clk_2                                 ),
+       .drm_arstn             (ap_rst_n_2                               ),
        .drm_to_uip_tdata      (drm_to_uip0_tdata                 ),
        .drm_to_uip_tvalid     (drm_to_uip0_tvalid                ),
+       .drm_to_uip_tlast      (drm_to_uip0_tlast                 ),
        .drm_to_uip_tready     (drm_to_uip0_tready                ),
        .uip_to_drm_tready     (uip0_to_drm_tready                ),
        .uip_to_drm_tdata      (uip0_to_drm_tdata                 ),
        .uip_to_drm_tvalid     (uip0_to_drm_tvalid                ),
-       .ip_core_aclk          (ap_clk                            ),
+       .uip_to_drm_tlast      (uip0_to_drm_tlast                 ),
+       .ip_core_aclk          (ap_clk                                   ),
        .metering_event        (s_metering_event_uip0             ),
        .activation_code       (s_drm_activation_code_uip0        )
      );

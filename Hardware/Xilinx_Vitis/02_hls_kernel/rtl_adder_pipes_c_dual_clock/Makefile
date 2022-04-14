@@ -2,9 +2,9 @@
 # Accelize DRM Reference Design Makefile
 #
 #
-VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u250_gen3x16_xdma_3_1_202020_1/xilinx_u250_gen3x16_xdma_3_1_202020_1.xpfm
+VTS_PLATFORM=/home/centos/aws-fpga/Vitis/aws_platform/xilinx_aws-vu9p-f1_shell-v04261818_201920_3/xilinx_aws-vu9p-f1_shell-v04261818_201920_3.xpfm
 OUTPUT_DIR=xclbin
-DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_drm_c_dual_clock_hdk_v6.0_v2021.1_u250.xclbin
+DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_drm_c_dualclk.xclbin
 VTS_KERNELS = input output drm_controller_with_activator
 VTS_KERNELS_OBJS = $(VTS_KERNELS:%=${OUTPUT_DIR}/%.xo)
 VTS_HLS_KERNELS = adder

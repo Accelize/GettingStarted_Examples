@@ -40,34 +40,30 @@ void adder(  int inc,
     datap temp_ac2 = activation_code2.read();
     datap temp_ac3 = activation_code3.read();
     
-    // Check Activation Code Value
-    int temp_inc;
-    if( (temp_ac0.data==expected_ac0) && 
-        (temp_ac1.data==expected_ac1) && 
-        (temp_ac2.data==expected_ac2) && 
-        (temp_ac3.data==expected_ac3)) {
-          temp_inc = inc;
-          temp_metering.data=1;
-    }
-    else {
-        temp_inc = 0;
-        temp_metering.data=0;
-    }
-
+    
     for(int i=0; i <size ; i++) {
-
-        // Read input data
-        datap temp_in = in.read();
-
-        // Add INC value
-        temp_in.data = temp_in.data + temp_inc;
         
-        // Write output data
-        out.write(temp_in);
+        // Read source Data
+        datap temp_src = in.read();
         
+        // Check Activation Code
+        if( (temp_ac0.data==expected_ac0) && 
+            (temp_ac1.data==expected_ac1) && 
+            (temp_ac2.data==expected_ac2) && 
+            (temp_ac3.data==expected_ac3)) {
+          temp_src.data = temp_src.data + inc;
+          temp_metering.data=1;
+        }
+        else {
+            temp_src.data = 0;
+            temp_metering.data=0;
+        }
+
+        // Stream Write
+        out.write(temp_src);
     }
     
-    // Increment metering counter
+    // Update metering counter
     metering_event.write(temp_metering);
 }
 }

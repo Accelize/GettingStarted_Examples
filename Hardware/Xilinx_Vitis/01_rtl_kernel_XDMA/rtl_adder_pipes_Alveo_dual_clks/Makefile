@@ -1,12 +1,17 @@
 #
 # Accelize DRM Reference Design Makefile
 #
-VTS_PLATFORM=/tools/xilinx/vivado_2019.1/platforms/xilinx_u200_xdma_201830_2/xilinx_u200_xdma_201830_2.xpfm
+#VTS_PLATFORM=/tools/xilinx/vivado_2019.1/platforms/xilinx_u200_xdma_201830_2/xilinx_u200_xdma_201830_2.xpfm
 #VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u250_gen3x16_xdma_3_1_202020_1/xilinx_u250_gen3x16_xdma_3_1_202020_1.xpfm
+VTS_PLATFORM=/tools/xilinx/platforms/xilinx_u50_gen3x16_xdma_201920_3/xilinx_u50_gen3x16_xdma_201920_3.xpfm
 
 OUTPUT_DIR=xclbin
 DRM_XO=${OUTPUT_DIR}/drm.xo
+<<<<<<< Updated upstream
 DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_hdk_7.0.0_vitis_2021.2_xilinx_u200_xdma_201830_2.xclbin
+=======
+DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_dualclk_hdk_6.0_vitis_2021.1_xilinx_u50_gen3x16_xdma_201920_3.xclbin
+>>>>>>> Stashed changes
 VTS_KERNELS = adder input output
 VTS_KERNELS_OBJS = $(VTS_KERNELS:%=${OUTPUT_DIR}/%.xo)
 VTS_CFG_FILE=connectivity.cfg

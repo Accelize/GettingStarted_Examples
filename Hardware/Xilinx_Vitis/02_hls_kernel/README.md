@@ -4,8 +4,8 @@
 
 | Name                       | Description                                                      | Status      |
 | -------------------------- |----------------------------------------------------------------- |:----------: |
-| rtl_adder_pipes_c | Same design as Xilinx RTL adder but with HLS adder and DRM IPs | Tested OK with Xilinx Vitis 2021.1     |
-| rtl_adder_pipes_c_dual_clock | Same design as rtl_adder_pipes_c but with dual clocks | Tested OK with Xilinx Vitis 2020.1     |
+| rtl_adder_pipes_c | Same design as Xilinx RTL adder but with HLS adder and DRM IPs | Tested OK with Xilinx Vitis 2021.2/HDK v7     |
+| rtl_adder_pipes_c_dual_clock | Same design as rtl_adder_pipes_c but with dual clocks | Tested OK with Xilinx Vitis 2021.2/HDK v7     |
 
 # rtl_adder_pipes_c
 ![rtl_adder_pipes_c](rtl_adder_pipes_c.png)

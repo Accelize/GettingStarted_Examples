@@ -4,6 +4,11 @@ PROJECT_PATH       = $(ROOT)/$(PROJECT_NAME)
 PLNX_INSTALL_PATH  ?= $(HOME)/petalinux-v2021.1-final-installer
 K26_BSP_PATH       ?= $(HOME)/xilinx-k26-starterkit-v2021.1-final.bsp
 PATH_TO_KV260_PRJ  ?= $(HOME)/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_KV260_2021.1
+VERSION            ?= 1.1
+RELEASE            ?= 1
+DIST               ?= pl2021_1
+
+PR = $(RELEASE).$(DIST)
 
 clean: check
 	@petalinux-build -p $(PROJECT_PATH) -x mrproper
@@ -43,21 +48,23 @@ petalinux-add-apps: check
 	@cp $(PATH_TO_KV260_PRJ)/petalinux_recipes/libaccelize-drm/libaccelize-drm_1.0.bb \
 			$(PROJECT_PATH)/project-spec/meta-user/recipes-apps/libaccelize-drm_1.0/libaccelize-drm_1.0.bb
 	@# ============= Add FPGA Bitstream =============
-	@petalinux-create -p $(PROJECT_PATH) --force -t apps --template fpgamanager -n accelize-kv260-drmdemo-fpga_1.0 --enable --srcuri " \
+	@petalinux-create -p $(PROJECT_PATH) --force -t apps --template fpgamanager -n accelize-kv260-drmdemo-fpga_$(VERSION) --enable --srcuri " \
 			$(PATH_TO_KV260_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-fpga/kv260-aibox-reid.dtsi \
 			$(PATH_TO_KV260_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-fpga/shell.json  \
 			$(PATH_TO_KV260_PRJ)/_x/link/int/system.bit  \
 			$(PATH_TO_KV260_PRJ)/xclbin/rtl_adder_pipes_xilinx_kv260.xclbin"
-	@echo 'PR = "1.pl2021_1"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-fpga_1.0/accelize-kv260-drmdemo-fpga_1.0.bb
+	@echo 'PR = "$(PR)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-fpga_$(VERSION)/accelize-kv260-drmdemo-fpga_$(VERSION).bb
 	@# ============= Add FPGA App =============
-	@petalinux-create -p $(PROJECT_PATH) --force -t apps -n accelize-kv260-drmdemo-app_1.0 --enable --srcuri "\
+	@petalinux-create -p $(PROJECT_PATH) --force -t apps -n accelize-kv260-drmdemo-app_$(VERSION) --enable --srcuri "\
 			$(PATH_TO_KV260_PRJ)/app/Makefile \
 			$(PATH_TO_KV260_PRJ)/app/main.cpp \
 			$(PATH_TO_KV260_PRJ)/app/conf.json"
-	@cp $(PATH_TO_KV260_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.0.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app_1.0/accelize-kv260-drmdemo-app_1.0.bb
+	@cp $(PATH_TO_KV260_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app_$(VERSION)/accelize-kv260-drmdemo-app_$(VERSION).bb
+	echo 'PR = "$(PR)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app_$(VERSION)/accelize-kv260-drmdemo-app_$(VERSION).bb
 	@# ============= Add PetaLinux Packagegroup =============
 	@mkdir -p $(PROJECT_PATH)/project-spec/meta-user/recipes-core/packagegroups
-	@cp -f $(PATH_TO_KV260_PRJ)/petalinux_recipes/packagegroups/accelize-packagegroup-kv260-drmdemo_1.0.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-core/packagegroups/.
+	@cp -f $(PATH_TO_KV260_PRJ)/petalinux_recipes/packagegroups/accelize-packagegroup-kv260-drmdemo.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-core/packagegroups/accelize-packagegroup-kv260-drmdemo_$(VERSION).bb
+	@echo 'PR = "$(PR)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-core/packagegroups/accelize-packagegroup-kv260-drmdemo_$(VERSION).bb
 	@echo 'IMAGE_INSTALL_append = " accelize-packagegroup-kv260-drmdemo"' >> $(PROJECT_PATH)/project-spec/meta-user/conf/petalinuxbsp.conf
 
 petalinux-build: check
@@ -73,8 +80,8 @@ petalinux-rpms: check
 	@find $(PROJECT_PATH) -name "*.rpm" | grep "accelize" | xargs -P 0 -I {} cp {} /tmp/kv260-rpms/.
 	@find $(PROJECT_PATH) -name "*.rpm" | grep "libjsoncpp" | xargs -P 0 -I {} cp {} /tmp/kv260-rpms/.
 	@rm -rf /tmp/kv260-rpms/accelize-repo*
-	@tar czf /tmp/kv260-rpms_2021.1.tar.gz /tmp/kv260-rpms
-	@echo "RPM Archive is available here: /tmp/kv260-rpms_2021.1.tar.gz"
+	@tar czf /tmp/kv260-rpms-$(VERSION)-$(PR).tar.gz /tmp/kv260-rpms
+	@echo "RPM Archive is available here: /tmp/kv260-rpms-$(VERSION)-$(PR).tar.gz"
 
 petalinux-jtag: check
 	@cd $(PROJECT_PATH) && petalinux-package --prebuilt --force --fpga project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-fpga_1.0/files/rtl_adder_pipes_xilinx_kv260.xclbin
