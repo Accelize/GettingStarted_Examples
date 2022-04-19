@@ -1,0 +1,6 @@
+Package: accelize-getting-started-demo
+Version: 1.0
+Maintainer: Accelize
+Architecture: arm64
+Description: Accelize drm adder demo app
+Depends: opencl-headers, uuid-dev, libjsoncpp-dev, libaccelize-drm, libaccelize-drm-dev

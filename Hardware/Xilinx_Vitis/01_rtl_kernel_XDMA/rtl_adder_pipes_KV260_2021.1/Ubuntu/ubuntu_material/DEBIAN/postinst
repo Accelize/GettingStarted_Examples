@@ -1,0 +1,3 @@
+cd /tmp/accelize-getting-started-demo && make && cp app /usr/bin/.
+rm -rf /tmp/accelize-getting-started-demo
+sudo xlnx-config -i accelize-getting-started-demo

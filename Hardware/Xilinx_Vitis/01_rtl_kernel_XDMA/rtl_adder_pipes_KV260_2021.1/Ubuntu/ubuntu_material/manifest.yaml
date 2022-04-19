@@ -1,0 +1,5 @@
+name: accelize-getting-started-demo
+description: This example shows an adder with pipes using 3 RTL kernels and protected with Accelize DRM Solution on MPSoC devices, with Ubuntu O/S
+revision: 1.0
+assets:
+    kv260: kv260
