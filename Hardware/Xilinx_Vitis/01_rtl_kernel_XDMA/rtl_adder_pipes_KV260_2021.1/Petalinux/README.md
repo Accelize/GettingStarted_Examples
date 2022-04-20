@@ -7,13 +7,10 @@ Board | Software Version
 ------|-----------------
 Xilinx Kria Starter Kit KV260|Vitis 2021.1
 
-&#x26a0;&#xfe0f; WARNING: Kria Platform require Vitis 2020.2.2 or later. Any prior version will not work!
-
 # 1.Run Synthesis
 Configure environment for Vitis  2021.1:
 ```bash
 source <PATH_TO_VITIS_2021.1_INSTALL>/settings64.sh 
-source /opt/xilinx/xrt/setup.sh
 ```
 
 ## 1.1. Build the platform (XSA & XPFM)

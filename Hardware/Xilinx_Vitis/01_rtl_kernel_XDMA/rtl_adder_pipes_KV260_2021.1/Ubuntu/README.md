@@ -5,15 +5,12 @@ This example shows an adder with pipes using 3 RTL kernels and protected with Ac
 ## SUPPORTED PLATFORMS
 Board | Software Version
 ------|-----------------
-Xilinx Kria Starter Kit KV260|Vitis 2021.1
-
-&#x26a0;&#xfe0f; WARNING: Kria Platform require Vitis 2020.2.2 or later. Any prior version will not work!
+Xilinx Kria Starter Kit KV260|Vitis 2021.1  
 
 # 1.Run Synthesis
 Configure environment for Vitis  2021.1:
 ```bash
 source <PATH_TO_VITIS_2021.1_INSTALL>/settings64.sh 
-source /opt/xilinx/xrt/setup.sh
 ```
 
 ## 1.1. Build the platform (XSA & XPFM)
@@ -207,7 +204,7 @@ sudo snap install xlnx-config --classic
 
 ## 3.2. Manual Installation
 
-+ Copy the PAC folder on the KV20
++ Copy the PAC folder on the KV260 O/S
 
 Use scp, rsync, etc... to copy the PAC folder on the KV260 O/S
 
