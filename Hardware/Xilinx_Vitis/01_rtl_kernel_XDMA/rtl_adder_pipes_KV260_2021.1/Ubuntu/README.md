@@ -196,7 +196,7 @@ You can request this Boot FW Image [here](mailto:support@accelize.com)
 The firmware update process is described on the [Xilinx Kria Confluence Page](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/1641152513/Kria+K26+SOM#Boot-Firmware-Updates)
 
 **Step-by-step Process in Video:**
-https://virtualcloud.accelize.com/s/accelize_kria_gstarted/kria_firsttime_config.mp4
+https://user-images.githubusercontent.com/30148903/164562840-43c72b23-56d0-411d-8e8d-9a7e6c53b105.mp4
 
 ### 3.1.2. DRM Library
 

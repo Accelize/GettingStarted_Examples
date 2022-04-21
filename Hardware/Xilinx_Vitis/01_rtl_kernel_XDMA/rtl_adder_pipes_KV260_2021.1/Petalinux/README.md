@@ -128,14 +128,14 @@ You can run the application either:
 + Generating the SDCard image with petalinux (in which the application is pre-installed )
 + Using the vanilla SDCard image provided by Xilinx and installing the application using RPM
 
-## 3.1. Prerequistes
+## 3.1. Prerequisites
 The starter kit must be configured with a Boot FW Image containing the Trusted Application for DRM operations.
 You can request this Boot FW Image [here](mailto:support@accelize.com)
 
 The firmware update process is described on the [Xilinx Kria Confluence Page](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/1641152513/Kria+K26+SOM#Boot-Firmware-Updates)
 
 **Step-by-step Process in Video:**
-https://virtualcloud.accelize.com/s/accelize_kria_gstarted/kria_firsttime_config.mp4
+https://user-images.githubusercontent.com/30148903/164562840-43c72b23-56d0-411d-8e8d-9a7e6c53b105.mp4
 
 ## 3.2. Generate the SDCard image with petalinux
 
