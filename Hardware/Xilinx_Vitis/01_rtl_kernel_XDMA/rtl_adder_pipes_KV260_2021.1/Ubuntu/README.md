@@ -45,6 +45,12 @@ make
 ```
 Once synthesis is complete, the bitstream will be located in the *xclbin* folder
 
+&#x26a0;&#xfe0f; WARNING: If you're using the Vivado flow instead of the Vitis one, please make sure to set the DRM Controller Bridge Address using the following command at synthesis:
+```tcl
+set ctrl_if_name [get_bd_addr_segs -addressables -of [get_bd_intf_pins kernel_drm_controller_1/s_axi_control]]
+assign_bd_address -offset 0xA0010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces PS_0/Data] [get_bd_addr_segs $ctrl_if_name] -force
+```
+
 
 # 2. Build the Embedded Linux Packages using Ubuntu
 
@@ -182,7 +188,17 @@ You can run the application either by:
 + Installing the application from Debian Repository (Recommended)
 
 ## 3.1. Prerequisites
-### 3.1.1. DRM Library
+
+### 3.1.1. Update KV20 Firmware
+The starter kit must be configured with a Boot FW Image containing the Trusted Application for DRM operations.
+You can request this Boot FW Image [here](mailto:support@accelize.com)
+
+The firmware update process is described on the [Xilinx Kria Confluence Page](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/1641152513/Kria+K26+SOM#Boot-Firmware-Updates)
+
+**Step-by-step Process in Video:**
+https://virtualcloud.accelize.com/s/accelize_kria_gstarted/kria_firsttime_config.mp4
+
+### 3.1.2. DRM Library
 
 &#x26a0;&#xfe0f; Currently the DRMLib packages are not available from the Kria Store package Repository, thus you need to install the packages manually:
 
@@ -194,7 +210,7 @@ You can run the application either by:
 sudo apt install -y ./libaccelize-drm*
 ```
 
-### 3.1.2. xlnx-config tool
+### 3.1.3. xlnx-config tool
 After first boot on Ubuntu install xlnx-config as it provides xmutil  install/load/unload command to manage xclbin on the FPGA:
 
 ```bash

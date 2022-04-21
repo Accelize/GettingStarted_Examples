@@ -46,6 +46,13 @@ make
 Once synthesis is complete, the bitstream will be located in the *xclbin* folder
 
 
+&#x26a0;&#xfe0f; WARNING: If you're using the Vivado flow instead of the Vitis one, please make sure to set the DRM Controller Bridge Address using the following command at synthesis:
+```tcl
+set ctrl_if_name [get_bd_addr_segs -addressables -of [get_bd_intf_pins kernel_drm_controller_1/s_axi_control]]
+assign_bd_address -offset 0xA0010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces PS_0/Data] [get_bd_addr_segs $ctrl_if_name] -force
+```
+
+
 # 2. Build the Embedded Linux Packages using Petalinux
 ## 2.1. Prerequisites:
 + Download & Install PetaLinux Tools Installer 2021.1:
@@ -121,9 +128,18 @@ You can run the application either:
 + Generating the SDCard image with petalinux (in which the application is pre-installed )
 + Using the vanilla SDCard image provided by Xilinx and installing the application using RPM
 
-## 3.1. Generate the SDCard image with petalinux
+## 3.1. Prerequistes
+The starter kit must be configured with a Boot FW Image containing the Trusted Application for DRM operations.
+You can request this Boot FW Image [here](mailto:support@accelize.com)
 
-### 3.1.1. Generate SDCard Image:
+The firmware update process is described on the [Xilinx Kria Confluence Page](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/1641152513/Kria+K26+SOM#Boot-Firmware-Updates)
+
+**Step-by-step Process in Video:**
+https://virtualcloud.accelize.com/s/accelize_kria_gstarted/kria_firsttime_config.mp4
+
+## 3.2. Generate the SDCard image with petalinux
+
+### 3.2.1. Generate SDCard Image:
 ```bash
 petalinux-package --wic --bootfiles "ramdisk.cpio.gz.u-boot boot.scr Image system.dtb"
 ```
@@ -134,10 +150,10 @@ Output ".wic" file is generated in "xilinx-k26-starterkit-2021.1/images/linux"
 gzip images/linux/petalinux-sdimage.wic
 ```
 
-### 3.1.2. Prepare the SDCard
+### 3.2.2. Prepare the SDCard
 Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on the SD Card
 
-### 3.1.3. Run the application
+### 3.2.3. Run the application
 Insert the SD Card in the KV260 slot and power-on the board.
 
 Add your Access Key (cred.json) file in "$HOME/cred.json"
@@ -170,13 +186,13 @@ EXE: /usr/bin/app
 TEST PASSED
 ```
 
-## 3.2. Use the vanilla SDCard image provided by Xilinx
+## 3.3. Use the vanilla SDCard image provided by Xilinx
 You can install the RPM packages manually or upload them tho the Kria Store Repository.
 
-### 32.1 Installing the RPM Packages manually
+### 3.3.1 Installing the RPM Packages manually
 + Copy the RPM packages generated at step "2.7. Build Petalinux" on the Embedded Linux.
 
-### 3.2.2 Upload your RPMs on the Accelize Repository
+### 3.3.2 Upload your RPMs on the Accelize Repository
 + Log into your vendor portal
 + On the upper-right, click on your name and select "RPM Upload"
 + Upload each RPM package generated at previous steps
@@ -203,19 +219,19 @@ and add the following line inside the recipe:
 PR = "1.pl2021_1" # <release>.<dist>
 ```
 
-### 3.2.3. Prepare the SDCard
+### 3.3.3. Prepare the SDCard
 Download the [Kria KV260 Starter Kit 2021.1 SD Card Image](https://www.xilinx.com/member/forms/download/xef.html?filename=petalinux-sdimage-2021.1-update1.wic.xz)
 
 Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on the SD Card
 
-### 3.2.4. Run the application
+### 3.3.4. Run the application
 Insert the SD Card in the KV260 slot and power-on the board.
 
 Add your Access Key (cred.json) file in "$HOME/cred.json"
 
 In the USB-UART terminal, use the following commands to run the application:
 
-#### 3.2.4.1. Install The RPMs Manually
+#### 3.3.4.1. Install The RPMs Manually
 ```bash
 sudo dnf install -y ./libjsoncpp*
 sudo dnf install -y ./libaccelize-drm-*
@@ -223,7 +239,7 @@ sudo dnf install -y ./accelize-kv260-drmdemo-fpga-*
 sudo dnf install -y ./accelize-kv260-drmdemo-app-*
 ```
 
-#### 3.2.4.2. Install The RPMs from the Kria Store Repository
+#### 3.3.4.2. Install The RPMs from the Kria Store Repository
 ```bash
 sudo dnf clean all
 sudo dnf update --refresh
@@ -231,7 +247,7 @@ sudo xmutil getpkgs
 sudo dnf install -y accelize-packagegroup-kv260-drmdemo.noarch
 ```
 
-#### 3.2.4.3. Run the application
+#### 3.3.4.3. Run the application
 ```bash
 sudo xmutil unloadapp
 sudo xmutil loadapp accelize-kv260-drmdemo-fpga
