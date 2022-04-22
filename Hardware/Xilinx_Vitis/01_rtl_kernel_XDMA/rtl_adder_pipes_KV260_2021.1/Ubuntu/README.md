@@ -231,6 +231,20 @@ sudo mkdir -p /usr/local/share/xlnx-config
 sudo cp -r <path_to_pac_dir> /usr/local/share/xlnx-config
 ```
 
++ Install app dependencies
+```bash
+sudo apt install -y opencl-headers uuid-dev libjsoncpp-dev```
+
++ Copy and compile the application
+In manual installation mode, you need to copy the app folder on the KV260 O/S and run compile the app:
+```bash
+cd <path_to_app_folder>
+make
+cp app /usr/bin/.
+cp conf.json /usr/bin/.
+cd -
+```
+
 + Install the PAC:
 ```bash
 sudo xlnx-config -i accelize-getting-started-demo
