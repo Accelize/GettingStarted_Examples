@@ -233,7 +233,7 @@ sudo cp -r <path_to_pac_dir> /usr/local/share/xlnx-config
 
 + Install app dependencies
 ```bash
-sudo apt install -y opencl-headers uuid-dev libjsoncpp-dev```
+sudo apt install -y opencl-headers uuid-dev libjsoncpp-dev
 ```
 
 + Copy and compile the application
