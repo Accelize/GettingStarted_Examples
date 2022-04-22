@@ -234,6 +234,7 @@ sudo cp -r <path_to_pac_dir> /usr/local/share/xlnx-config
 + Install app dependencies
 ```bash
 sudo apt install -y opencl-headers uuid-dev libjsoncpp-dev```
+```
 
 + Copy and compile the application
 In manual installation mode, you need to copy the app folder on the KV260 O/S and run compile the app:
