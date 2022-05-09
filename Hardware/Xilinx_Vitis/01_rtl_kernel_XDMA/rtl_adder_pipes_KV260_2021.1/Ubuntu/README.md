@@ -170,8 +170,10 @@ cp -f app/* /tmp/accelize-getting-started-demo/tmp/accelize-getting-started-demo
 cp app/conf.json /tmp/accelize-getting-started-demo/usr/bin/.
 cp ubuntu_material/DEBIAN/* /tmp/accelize-getting-started-demo/DEBIAN/.
 chmod 555 /tmp/accelize-getting-started-demo/DEBIAN/postinst
-cd /tmp
-dpkg-deb --build accelize-getting-started-demo
+chmod 555 /tmp/accelize-getting-started-demo/DEBIAN/prerm
+cd /tmp/accelize-getting-started-demo
+find ./usr/ ./tmp/ -type f -exec md5sum "{}" + > ./DEBIAN/md5sums
+dpkg-deb --build ../accelize-getting-started-demo
 cd -
 cp /tmp/accelize-getting-started-demo.deb .
 ```
@@ -189,7 +191,7 @@ You can run the application either by:
 
 ## 3.1. Prerequisites
 
-### 3.1.1. Update KV20 Firmware
+### 3.1.1. Update KV260 Firmware
 The starter kit must be configured with a Boot FW Image containing the Trusted Application for DRM operations.
 You can request this Boot FW Image [here](mailto:support@accelize.com)
 

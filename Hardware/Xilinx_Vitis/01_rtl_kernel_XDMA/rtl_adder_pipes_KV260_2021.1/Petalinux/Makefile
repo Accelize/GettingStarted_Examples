@@ -4,12 +4,14 @@
 
 VTS_PLATFORM=kv260_vcuDecode_vmixDP
 
+ROOT_DIR=$(realpath .)
 OUTPUT_DIR=xclbin
 DRM_XO=${OUTPUT_DIR}/drm.xo
 DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_xilinx_kv260.xclbin
 VTS_KERNELS = adder input output
 VTS_KERNELS_OBJS = $(VTS_KERNELS:%=${OUTPUT_DIR}/%.xo)
 VTS_CFG_FILE=connectivity.cfg
+XOCC_OPTS += --xp param:compiler.userPostSysLinkOverlayTcl=${ROOT_DIR}/src/drm_hdk/post_syslink.tcl
 
 $(DRM_XO):
 	@echo -e "\n\n===> Generating [$@] Kernel ..."
@@ -26,7 +28,7 @@ $(VTS_KERNELS_OBJS):
 ${DESIGN_OBJ}: $(DRM_XO) $(VTS_KERNELS_OBJS)
 	@echo -e "\n\n===> Generating ${DESIGN_OBJ} ..."
 	@mkdir -p ${OUTPUT_DIR}
-	@v++ -l --config ${VTS_CFG_FILE} -s -o ${DESIGN_OBJ} -t hw --platform ${VTS_PLATFORM} $(DRM_XO) $(VTS_KERNELS_OBJS)
+	@v++ -l ${XOCC_OPTS} --config ${VTS_CFG_FILE} -s -o ${DESIGN_OBJ} -t hw --platform ${VTS_PLATFORM} $(DRM_XO) $(VTS_KERNELS_OBJS)
 
 clean:
 	@rm -rf tmp* vivado* packaged_kernel *.log _x .Xil .ipcache *.out *.xclbin *.xclbin.*
