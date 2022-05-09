@@ -184,6 +184,7 @@ Connect to your Accelize portal and click your name on the upper right menu.
 Then select "Package Upload" menu
 
 &#x26a0;&#xfe0f;  **Note: Only Vendor Administrator accounts can upload RPM or DEB packages**
+
 &#x26a0;&#xfe0f;  **Note: Make sure to follow the package naming convention for Debian**
 
 
