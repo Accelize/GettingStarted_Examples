@@ -157,7 +157,7 @@ cp ubuntu_material/shell.json accelize-getting-started-demo/hwconfig/accelize-ge
 
 You can find numerous online documentation and tutorial on how to build a debian packages.
 
-Here we'll create the most basic package, using files from "ubuntu_meterial" folder. 
+Here we'll create the most basic package, using files from "ubuntu_material" folder. 
 
 
 ```bash
@@ -180,7 +180,11 @@ cp /tmp/accelize-getting-started-demo.deb .
 
 ## 2.4. Upload Debian package on the Kria Store package Repository
 
-&#x26a0;&#xfe0f;  **COMING SOON ...**
+Connect to your Accelize portal and click your name on the upper right menu.
+Then select "Package Upload" menu
+
+&#x26a0;&#xfe0f;  **Note: Only Vendor Administrator accounts can upload RPM or DEB packages**
+&#x26a0;&#xfe0f;  **Note: Make sure to follow the package naming convention for Debian**
 
 
 # 3. Run the Application on the KV260 Starter Kit
@@ -203,14 +207,15 @@ https://user-images.githubusercontent.com/30148903/164562995-331eef87-3f7a-44cb-
 
 ### 3.1.2. DRM Library
 
-&#x26a0;&#xfe0f; Currently the DRMLib packages are not available from the Kria Store package Repository, thus you need to install the packages manually:
-
-+ Copy the "ubuntu_material/drmlib_deb" packages on the KV260 O/S
-
-+ Install the packages using:
+Install the DRM Library for Kria using teh following commands:
 
 ```bash
-sudo apt install -y ./libaccelize-drm*
+sudo apt update
+sudo apt install -y apt-transport-https software-properties-common lsb-release gnupg curl
+curl -fsSL https://tech.accelize.com/gpg | sudo apt-key add -
+sudo add-apt-repository "deb https://tech.accelize.com/deb $(lsb_release -cs) stable"
+
+sudo apt install -y libaccelize-drm libaccelize-drm-dev
 ```
 
 ### 3.1.3. xlnx-config tool
@@ -269,11 +274,13 @@ sudo apt install -y ./accelize-getting-started-demo.deb
 ```
   
 + Install from Kria Store Debian Package Repository
-  
-&#x26a0;&#xfe0f;  **COMING SOON ...**
+
+```bash
+sudo apt install -y accelize-getting-started-demo
+```
 
 
-## 2.4. Run AA on KV260
+## 3.4. Run AA on KV260
 
 + Load the application:
 ```bash

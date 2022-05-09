@@ -1,6 +1,6 @@
 Package: accelize-getting-started-demo
-Version: 1.0-1+focal
+Version: 1.2-2+focal
 Maintainer: Accelize
 Architecture: arm64
-Description: Accelize drm adder demo app
+Description: Accelize DRM adder demo app
 Depends: opencl-headers, uuid-dev, libjsoncpp-dev, libaccelize-drm, libaccelize-drm-dev
