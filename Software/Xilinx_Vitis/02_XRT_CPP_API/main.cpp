@@ -26,12 +26,6 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Description: SDx Vector Addition using Blocking Pipes Operation
 *******************************************************************************/
 
-#define CL_HPP_CL_1_2_DEFAULT_BUILD
-#define CL_HPP_TARGET_OPENCL_VERSION 120
-#define CL_HPP_MINIMUM_OPENCL_VERSION 120
-#define CL_HPP_ENABLE_PROGRAM_CONSTRUCTION_FROM_ARRAY_COMPATIBILITY 1
-#define CL_USE_DEPRECATED_OPENCL_1_2_APIS
-
 #define DATA_SIZE 4096
 #define INCR_VALUE 10
 
@@ -40,19 +34,17 @@ Description: SDx Vector Addition using Blocking Pipes Operation
 #include <cstdio>
 #include <cstdlib>
 
-#include <CL/cl2.hpp>
 #include <experimental/xrt_device.h>
 #include <experimental/xrt_bo.h>
 #include <experimental/xrt_kernel.h>
 #include <experimental/xrt_xclbin.h>
+#include <experimental/xrt_system.h>
+
 using namespace std;
 
 // Accelize DRMLib
 #include "accelize/drm.h"
 using namespace Accelize::DRM;
-
-xclDeviceHandle boardHandler;
-xrt::uuid xclbinId;
 
 /**
  * Entry point
@@ -89,30 +81,26 @@ int main(int argc, char** argv)
 //XRT HOST CODE AREA START
     
     //Get platform/device information
-    std::vector<cl::Platform> platforms;    
-    cl::Platform::get(&platforms);
-    cl::Platform platform = platforms[0];
-    
-    std::vector<cl::Device> devices;
-    platform.getDevices(CL_DEVICE_TYPE_ACCELERATOR, &devices);
+    unsigned int devices = xrt::system::enumerate_devices();
     uint32_t device_id=0;    
     
     // Accelize Choose device if multiple available - START
-    if(devices.size() > 1){
-	std::cout << "Found " << devices.size() << " Boards" << std::endl;
-	for(uint32_t i=0; i<devices.size(); i++) {
-	    std::string device_name = devices[i].getInfo<CL_DEVICE_NAME>();
-	    std::cout << "\t[" << i << "] " <<  device_name << std::endl;
-	}
-	std::cout << "Please select the targeted board:" << std::endl;
-	std::cin >> device_id;
+    if(devices > 1){
+        std::cout << "Found " << devices << " Boards" << std::endl;
+        for(uint32_t i=0; i<devices; i++) {
+            xrt::device device(i);
+            std::string device_name = device.get_info<xrt::info::device::name>();
+            std::cout << "\t[" << i << "] " <<  device_name << std::endl;
+        }
+        std::cout << "Please select the targeted board:" << std::endl;
+        std::cin >> device_id;
     }
     // Accelize Choose device if multiple available - END
 
     // Program selected device
     xrt::xclbin bin(argv[1]);
     xrt::device device(device_id);
-    xclbinId = device.load_xclbin(bin);
+    xrt::uuid xclbinId = device.load_xclbin(bin);
 
     // Create Kernels
     xrt::kernel krnl_adder_stage(device,xclbinId,"krnl_adder_stage_rtl");
@@ -157,14 +145,14 @@ int main(int argc, char** argv)
     buffer_input.sync(XCL_BO_SYNC_BO_TO_DEVICE);
 
     //Launch the Kernel with their arguments
-    xrt::run input_run 	= krnl_input_stage(buffer_input,size);
-    xrt::run adder_run 	= krnl_adder_stage(inc,size);
+    xrt::run input_run  = krnl_input_stage(buffer_input,size);
+    xrt::run adder_run  = krnl_adder_stage(inc,size);
     xrt::run output_run = krnl_output_stage(buffer_output,size);
 
     //wait for all kernels to finish their operations
-    input_run	.wait();
-    adder_run	.wait();
-    output_run	.wait();
+    input_run   .wait();
+    adder_run   .wait();
+    output_run  .wait();
     
     //Copy Result from Device Global Memory to Host Local Memory
     buffer_output.sync(XCL_BO_SYNC_BO_FROM_DEVICE);
@@ -190,9 +178,11 @@ int main(int argc, char** argv)
             std::cout << "i = " << i << " CPU result = " << source_sw_results[i]
                 << " Device result = 0x" << std::hex << source_hw_results[i] <<  std::dec << std::endl;
             match = 1;
+        break;
         }
     }
 
     std::cout << "TEST " << (match ? "FAILED" : "PASSED") << std::endl; 
     return (match ? EXIT_FAILURE :  EXIT_SUCCESS);
 }
+

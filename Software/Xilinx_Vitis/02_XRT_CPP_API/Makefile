@@ -8,19 +8,15 @@ CURDIR := $(shell pwd)
 CXX_EXT := cpp
 CXX := g++
 
-#XRT API
-#For gcc version newer than 4.9.0 use c++14
-#CXXFLAGS := -Wall -std=c++14 -Wno-unused-variable
-#For gcc version older than 4.9.0 use c++1y
-#CXXFLAGS := -Wall -std=c++1y -Wno-unused-variable
-
 # Xilinx Runtime (XRT)
 XRT_ROOT    := /opt/xilinx/xrt
 XRT_INC_DIR := -I$(XRT_ROOT)/include
 XRT_LIBDIR  := -L$(XRT_ROOT)/lib
+#XRT API
+CXXFLAGS := -Wall -std=c++17 -Wno-unused-variable
 
 #for xrt api
-XRT_LIB := -lxrt_coreutil -pthread -lxilinxopencl -luuid
+XRT_LIB := -lxrt_coreutil -pthread
 
 # Accelize DRMLib
 XLZDRM_LIB = -laccelize_drm
@@ -57,3 +53,4 @@ clean:
 .PHONY: all clean
 
 .DEFAULT_GOAL := all
+

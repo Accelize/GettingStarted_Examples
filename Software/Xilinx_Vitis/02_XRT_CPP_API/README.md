@@ -3,7 +3,7 @@
 
 The following API is meant to be used with Accelize Vitis examples ["01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo"](https://github.com/Accelize/GettingStarted_Examples/tree/master/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_Alveo)
 
-From 2020.2 release XRT provides a new C++ API
+From 2022.1 release XRT provides a new C++ API
 
 ### Folder Structure
 * **Makefile**
@@ -16,9 +16,13 @@ From 2020.2 release XRT provides a new C++ API
 
 ### How to compile & run application
 * **Prerequisites**:
-  * XRT version must be 2020.2 or newer. To check XRT version: 
+  * XRT version must be 2022.1 or newer. To check XRT version: 
   ```bash
   cat /opt/xilinx/xrt/version.json
+  ```
+  * gcc version must be 5 or newer. To check gcc version:
+  ```bash
+  gcc --version
   ```
   * Create an account on [Accelize Portal](https://portal.accelize.com) (free)
   * Create your Access Key  on [Accelize Portal - Access Key](https://portal.accelize.com/front/customer/apicredential)
@@ -27,14 +31,6 @@ From 2020.2 release XRT provides a new C++ API
   * Edit "app/{your-exec-env}/conf.json" to change "boardType" and "frequency" parameters [Optional]
 * **Setup Environment:**
   * source XRT setup script
-  * Update the Makefile CXXFLAGS variable. Uncomment the line according to gcc version from your system
-  ```Makefile
-  #XRT API
-  #For gcc version newer than 4.9.0 use c++14
-  #CXXFLAGS := -Wall -std=c++14 -Wno-unused-variable
-  #For gcc version older than 4.9.0 use c++1y
-  #CXXFLAGS := -Wall -std=c++1y -Wno-unused-variable
-  ```
 * **Execution** 
   ```bash
   make clean all
