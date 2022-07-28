@@ -4,7 +4,6 @@ All rights reserved.
 **********/
 
 #define DATA_SIZE 4096
-#define INCR_VALUE 10
 
 #include <vector>
 #include <iostream>
@@ -27,18 +26,13 @@ using namespace Accelize::DRM;
  */
 int main(int argc, char** argv)
 {
-    if (argc < 2) {
-        std::cout << "Usage: " << argv[0] << "<path_to_xclbin>" << " (optional)  <SIZE>"  << std::endl;
+    if (argc != 3) {
+        std::cout << "Usage: " << argv[0] << " <path_to_xclbin>" << " <increment_value>"  << std::endl;
         return EXIT_FAILURE;
     }
     
-    int inc = INCR_VALUE;
-    int size;
-    if (argc <= 2) { 
-        size = DATA_SIZE;
-    } else {
-        size = atoi(argv[2]);
-    }
+    int inc = atoi(argv[2]);
+    int size = DATA_SIZE;
 
     //Allocate Memory in Host Memory
     size_t vector_size_bytes = sizeof(int) * size;
@@ -50,7 +44,7 @@ int main(int argc, char** argv)
     // Create the test data and Software Result 
     for(int i = 0 ; i < size ; i++){
         source_input[i] = i;
-        source_sw_results[i] = i + INCR_VALUE;
+        source_sw_results[i] = i + inc;
         source_hw_results[i] = 0;
     }
 

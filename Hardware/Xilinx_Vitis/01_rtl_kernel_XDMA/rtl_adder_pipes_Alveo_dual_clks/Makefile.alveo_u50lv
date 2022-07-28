@@ -1,0 +1,80 @@
+#
+# Accelize DRM Reference Design Makefile
+#
+VTS_PLATFORM_PATH=/tools/xilinx/platforms
+VTS_PLATFORM=xilinx_u50lv_gen3x4_xdma_2_202010_1
+
+ROOT_DIR=${PWD}
+OUTPUT_DIR=${ROOT_DIR}/xclbin
+DRM_XO=${OUTPUT_DIR}/drm.xo
+DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_${VTS_PLATFORM}.xclbin
+VTS_KERNELS = adder input output
+VTS_KERNELS_OBJS = $(VTS_KERNELS:%=${OUTPUT_DIR}/%.xo)
+VTS_CFG_FILE=config_files/connectivity_alveo.cfg
+XRT_VERSION=2022.1
+DOCKER_REPO=hubxilinx/accelize_drm_demo
+DOCKER_TAG=alveo_u50lv_xrt_${XRT_VERSION}
+DOCKER_FILE=docker_files/alveo_xrt_${XRT_VERSION}.Dockerfile
+ifeq ($(shell test $(basename ${XRT_VERSION}) -gt 2021; echo $$?),0)
+  APP_FOLDER=apps/app.alveo.xrt_api
+else
+  APP_FOLDER=apps/app.alveo.opencl
+endif
+
+$(DRM_XO):
+	@echo -e "\n\n===> Generating [$@] Kernel ..."
+	@make -C src/drm_hdk/controller/vitis
+	@mkdir -p ${OUTPUT_DIR}
+	@cp -f src/drm_hdk/controller/vitis/kernel_drm_controller.xo ${DRM_XO}
+
+$(VTS_KERNELS_OBJS):
+	@echo -e "\n\n===> Generating [$@] Kernel ..."
+	@mkdir -p ${OUTPUT_DIR}
+	@$(eval KRNL=$(basename $(notdir $@)))
+	@vivado -mode batch -source scripts/gen_${KRNL}_xo.tcl -tclargs $@ krnl_${KRNL}_stage_rtl hw ${VTS_PLATFORM}
+
+${DESIGN_OBJ}: $(DRM_XO) $(VTS_KERNELS_OBJS)
+	@echo -e "\n\n===> Generating ${DESIGN_OBJ} ..."
+	@mkdir -p ${OUTPUT_DIR}
+	@v++ -l --config ${VTS_CFG_FILE} -s -o ${DESIGN_OBJ} -t hw --platform ${VTS_PLATFORM_PATH}/${VTS_PLATFORM}/${VTS_PLATFORM}.xpfm $(DRM_XO) $(VTS_KERNELS_OBJS)
+
+package:
+	@echo -e "\n\n===> Preparing Content w/ XRT=${XRT_VERSION} and XRT=${APP_FOLDER}..."
+	@rm -rf ${VTS_PLATFORM}_package ${VTS_PLATFORM}_package.tar.gz
+	@mkdir ${VTS_PLATFORM}_package
+	@cp -rf ${APP_FOLDER} ${VTS_PLATFORM}_package/app
+	@cp ${DESIGN_OBJ} ${VTS_PLATFORM}_package/.
+	@tar czf ${VTS_PLATFORM}_package.tar.gz ${VTS_PLATFORM}_package
+	@rm -rf ${VTS_PLATFORM}_package
+	@echo -e "Package is available here: ${PWD}/${VTS_PLATFORM}_package.tar.gz"
+
+docker_image:
+	@echo -e "\n\n===> Preparing Content w/ XRT=${XRT_VERSION} and XRT=${APP_FOLDER}..."
+	@$(eval DOCKER_BUILD_DIR=${ROOT_DIR}/${VTS_PLATFORM}_docker_build)
+	@rm -rf ${DOCKER_BUILD_DIR} && mkdir ${DOCKER_BUILD_DIR}
+	@cp ${DOCKER_FILE} ${DOCKER_BUILD_DIR}/Dockerfile
+	@cp ${DESIGN_OBJ} ${DOCKER_BUILD_DIR}/app.xclbin
+	@cp -rf ${APP_FOLDER} ${DOCKER_BUILD_DIR}/app
+	@$(eval DRM_BASE_ADDR=$(shell scripts/get_drm_base_address.sh ${DESIGN_OBJ}))
+	@sed -i 's|<YOUR_BASE_ADDRESS>|${DRM_BASE_ADDR}|g' ${DOCKER_BUILD_DIR}/app/main.cpp
+	@sed -i 's|xclbin/[*].xclbin|app.xclbin|g' ${DOCKER_BUILD_DIR}/Dockerfile
+	@echo -e "\n\n===> Building Docker Image ${DOCKER_REPO}:${DOCKER_TAG} ..."
+	@cd ${DOCKER_BUILD_DIR} && docker build --no-cache -t ${DOCKER_REPO}:${DOCKER_TAG} .
+	@echo -e "\n\n===> Pushing Docker Image ${DOCKER_REPO}:${DOCKER_TAG} ..."
+	@docker push ${DOCKER_REPO}:${DOCKER_TAG}
+	@echo -e "===> Docker Image ${DOCKER_REPO}:${DOCKER_TAG} ready!"
+
+clean:
+	@rm -rf tmp* vivado* packaged_kernel *.log _x .Xil *.out .ipcache ${VTS_PLATFORM}_package ${VTS_PLATFORM}_package.tar.gz
+	@make -C src/drm_hdk/controller/vitis clean
+
+clean_all: clean
+	@rm -rf ${OUTPUT_DIR}
+	@make -C src/drm_hdk/controller/vitis cleanall
+
+all: ${DESIGN_OBJ}
+synthesis: ${DESIGN_OBJ}
+
+.PHONY: all clean clean_all package docker_image synthesis
+
+.DEFAULT_GOAL := all
