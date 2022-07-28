@@ -52,4 +52,4 @@ Device ID (DNA): 37F4CC84B00F000A4D4001784BBDC111
 
 ```
 
-If your board is not supported, you contact send a request at [support@accelize.com](mailto:support@accelize.com)
+If your board is not supported, you can send a request at [support@accelize.com](mailto:support@accelize.com)
