@@ -6,7 +6,7 @@ Each of them shows a different environment in which one could integrate the Acce
 
 ## Supported  Environements and Platform
 
-Environement    | Platform           | XRT/VM Image Name  | DockerHub TAG                                 |
+Environement    | Platform           | XRT                | DockerHub TAG                                 |
 :---------------|:-------------------|:------------------:|:---------------------------------------------:|
 On-Premise      |Xilinx Alveo U50    |2021.1, 2022.1      | alveo_u50_xrt_2021.1, alveo_u50_xrt_2022.1    |
 On-Premise      |Xilinx Alveo U50LV  |2021.1, 2022.1      | alveo_u50lv_xrt_2021.1, alveo_u50lv_xrt_2022.1|
@@ -15,17 +15,18 @@ On-Premise      |Xilinx Alveo U200   |2021.1, 2022.1      | alveo_u200_xrt_2021.
 On-Premise      |Xilinx Alveo U250   |2021.1, 2022.1      | alveo_u250_xrt_2021.1, alveo_u250_xrt_2022.1  |
 On-Premise      |Xilinx Alveo U280   |2021.1, 2022.1      | alveo_u280_xrt_2021.1, alveo_u280_xrt_2022.1  |
 On-Premise      |Xilinx VCK5000      |2021.2              | vck5000_xrt_2021.2                            |
-                |                    |                    |                                               |
+
+
+Environement    | Platform           | VM Image Name      | DockerHub TAG                                 |
+:---------------|:-------------------|:------------------:|:---------------------------------------------:|
 Cloud           |VMAccel U50         |2021.1, 2022.1      | alveo_u50_xrt_2021.1, alveo_u50_xrt_2022.1    |
 Cloud           |VMAccel U55C        |2022.1              | alveo_u55C_xrt_2022.1                         |
 Cloud           |VMAccel U200        |2021.1, 2022.1      | alveo_u200_xrt_2021.1, alveo_u200_xrt_2022.1  |
 Cloud           |VMAccel U250        |2022.1              | alveo_u250_xrt_2022.1                         |
 Cloud           |VMAccel U280        |2021.1, 2022.1      | alveo_u280_xrt_2021.1, alveo_u280_xrt_2022.1  |
 Cloud           |VMAccel VCK5000     |2021.2              | vck5000_xrt_2021.2                            |
-                |                    |                    |                                               |
 Cloud           |AWS F1              |FPGA Dev AMI 1.11.4 / XRT 2021.1 | aws_f1_2021.1                    |
 Cloud           |AWS F1              |FPGA Dev AMI 1.12.1 / XRT 2021.2 | aws_f1_2021.2                    |
-                |                    |                    |                                               |
 Cloud           |Azure NP10s         |xilinx_xrt2021_1_ubuntu1804_deployment_image | azure_np10_2021.1    |
 
 
