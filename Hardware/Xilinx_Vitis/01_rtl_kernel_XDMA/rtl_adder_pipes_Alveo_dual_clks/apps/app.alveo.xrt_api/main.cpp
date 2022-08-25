@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 
 //ACCELIZE DRMLIB CODE AREA START      
     // Create ip drm_controller (Particular Kernel for register access)
-    xrt::kernel krnl_drm_ctrl(device,xclbinId,"kernel_drm_controller",true);
+    xrt::ip krnl_drm_ctrl(device,xclbinId,"kernel_drm_controller",true);
     
     // Create drm manager
     DrmManager *pDrmManag = new DrmManager(
