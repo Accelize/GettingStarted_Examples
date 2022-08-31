@@ -1,0 +1,101 @@
+#
+# Accelize DRM Reference Design Makefile
+#
+SHELL := /bin/bash
+VTS_PLATFORM_PATH=/tools/xilinx/platforms
+VTS_PLATFORM=xilinx_aws-vu9p-f1_shell-v04261818_201920_3
+
+ROOT_DIR=${PWD}
+OUTPUT_DIR=${ROOT_DIR}/xclbin
+DRM_XO=${OUTPUT_DIR}/drm.xo
+DESIGN_OBJ=${OUTPUT_DIR}/rtl_adder_pipes_${VTS_PLATFORM}.xclbin
+VTS_KERNELS = adder input output
+VTS_KERNELS_OBJS = $(VTS_KERNELS:%=${OUTPUT_DIR}/%.xo)
+VTS_CFG_FILE=config_files/connectivity_aws_f1.cfg
+XRT_VERSION=2021.2
+DOCKER_REPO=hubxilinx/accelize_drm_demo
+DOCKER_TAG=aws_f1_${XRT_VERSION}_sc
+DOCKER_FILE=docker_files/aws_f1_${XRT_VERSION}.Dockerfile
+APP_FOLDER=apps/app.aws_f1
+
+setup_env:
+	@git clone https://github.com/aws/aws-fpga.git /tmp/aws-fpga
+	@source /tmp/aws-fpga/vitis_setup.sh
+	@source /opt/xilinx/xrt/setup.sh
+
+$(DRM_XO):
+	@echo -e "\n\n===> Generating [$@] Kernel ..."
+	@make -C src/drm_hdk/controller/vitis
+	@mkdir -p ${OUTPUT_DIR}
+	@cp -f src/drm_hdk/controller/vitis/kernel_drm_controller.xo ${DRM_XO}
+
+$(VTS_KERNELS_OBJS):
+	@echo -e "\n\n===> Generating [$@] Kernel ..."
+	@mkdir -p ${OUTPUT_DIR}
+	@$(eval KRNL=$(basename $(notdir $@)))
+	@vivado -mode batch -source scripts/gen_${KRNL}_xo.tcl -tclargs $@ krnl_${KRNL}_stage_rtl hw ${VTS_PLATFORM}
+
+${DESIGN_OBJ}: $(DRM_XO) $(VTS_KERNELS_OBJS)
+	@echo -e "\n\n===> Generating ${DESIGN_OBJ} ..."
+	@mkdir -p ${OUTPUT_DIR}
+	@source /tmp/aws-fpga/vitis_setup.sh && v++ -l --config ${VTS_CFG_FILE} -s -o ${DESIGN_OBJ} -t hw --platform /tmp/aws-fpga/Vitis/aws_platform/${VTS_PLATFORM}/${VTS_PLATFORM}.xpfm $(DRM_XO) $(VTS_KERNELS_OBJS)
+
+create_afi:
+ifndef VITIS_DIR
+	$(error You need to source aws-fpga/vitis_setup.sh)
+endif
+ifndef S3_BUCKET_NAME
+	$(error You must set the variable S3_BUCKET_NAME (e.g: make S3_BUCKET_NAME=XXXX create_afi))
+endif
+	@cd ${OUTPUT_DIR} && ${VITIS_DIR}/tools/create_vitis_afi.sh -xclbin=$(shell realpath ${DESIGN_OBJ}) -o=$(basename $(notdir ${DESIGN_OBJ})) -s3_bucket=${S3_BUCKET_NAME} -s3_dcp_key=$(basename $(notdir ${DESIGN_OBJ})) -s3_logs_key=logs/
+	@cat ${OUTPUT_DIR}/*_afi_id.txt
+
+wait_for_afi:
+ifndef AFI_ID
+	$(error You must set the variable AFI_ID (e.g: make AFI_ID=afi-XXXX wait_for_afi))
+endif
+	@watch -d "aws ec2 describe-fpga-images --fpga-image-ids ${AFI_ID}"
+
+package:
+	@echo -e "\n\n===> Preparing Content w/ XRT=${XRT_VERSION} and XRT=${APP_FOLDER}..."
+	@rm -rf ${VTS_PLATFORM}_package ${VTS_PLATFORM}_package.tar.gz
+	@mkdir ${VTS_PLATFORM}_package
+	@cp -rf ${APP_FOLDER} ${VTS_PLATFORM}_package/app
+	@cp $(basename ${DESIGN_OBJ}).awsxclbin ${VTS_PLATFORM}_package/.
+	@tar czf ${VTS_PLATFORM}_package.tar.gz ${VTS_PLATFORM}_package
+	@rm -rf ${VTS_PLATFORM}_package
+	@echo -e "Package is available here: ${PWD}/${VTS_PLATFORM}_package.tar.gz"
+
+docker_image:
+	@echo -e "\n\n===> Preparing Content w/ XRT=${XRT_VERSION} and XRT=${APP_FOLDER}..."
+	@$(eval DOCKER_BUILD_DIR=${ROOT_DIR}/${VTS_PLATFORM}_docker_build)
+	@rm -rf ${DOCKER_BUILD_DIR} && mkdir ${DOCKER_BUILD_DIR}
+	@cp ${DOCKER_FILE} ${DOCKER_BUILD_DIR}/Dockerfile
+	@cp $(basename ${DESIGN_OBJ}).awsxclbin ${DOCKER_BUILD_DIR}/app.awsxclbin
+	@cp -rf ${APP_FOLDER} ${DOCKER_BUILD_DIR}/app
+	@$(eval DRM_BASE_ADDR=$(shell scripts/get_drm_base_address.sh ${DESIGN_OBJ}))
+	@sed -i 's|<YOUR_BASE_ADDRESS>|${DRM_BASE_ADDR}|g' ${DOCKER_BUILD_DIR}/app/main.cpp
+	@sed -i 's|xclbin/[*].awsxclbin|app.awsxclbin|g' ${DOCKER_BUILD_DIR}/Dockerfile
+	@echo -e "\n\n===> Building Docker Image ${DOCKER_REPO}:${DOCKER_TAG} ..."
+	@cd ${DOCKER_BUILD_DIR} && docker build --no-cache -t ${DOCKER_REPO}:${DOCKER_TAG} .
+	@echo -e "\n\n===> Pushing Docker Image ${DOCKER_REPO}:${DOCKER_TAG} ..."
+	@docker push ${DOCKER_REPO}:${DOCKER_TAG}
+	@echo -e "===> Docker Image ${DOCKER_REPO}:${DOCKER_TAG} ready!"
+
+clean_afi:
+	@cd ${OUTPUT_DIR} && rm -rf to_aws *afi_id.txt *agfi_id.txt *build.json *clocks.json *Developer_Vitis_Kernel.tar *manifest.txt *SH_CL_routed.dcp
+
+clean:
+	@rm -rf tmp* vivado* packaged_kernel *.log _x .Xil *.out ${VTS_PLATFORM}_package.tar.gz
+	@make -C src/drm_hdk/controller/vitis clean
+
+clean_all: clean_afi clean
+	@rm -rf ${OUTPUT_DIR}
+	@make -C src/drm_hdk/controller/vitis cleanall
+
+all: setup_env ${DESIGN_OBJ}
+synthesis: setup_env ${DESIGN_OBJ}
+
+.PHONY: all clean clean_all create_afi wait_for_afi package docker_image synthesis
+
+.DEFAULT_GOAL := all
