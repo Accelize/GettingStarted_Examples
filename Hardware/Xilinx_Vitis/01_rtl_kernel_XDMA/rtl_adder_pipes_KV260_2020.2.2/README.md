@@ -18,8 +18,9 @@ source /opt/xilinx/xrt/setup.sh
 
 ## 1.1. Build the platform (XSA & XPFM)
 ```bash
-git clone --recursive https://github.com/Xilinx/kv260-vitis
-cd kv260-vitis
+git clone --recursive https://github.com/Xilinx/kria-vitis-platforms
+cd kria-vitis-platforms
+git checkout xilinx-v2020.2.2-k26
 make platform PFM=kv260_vcuDecode_vmixDP
 export PATH_TO_KV260_PLATFORM=$PWD
 ```

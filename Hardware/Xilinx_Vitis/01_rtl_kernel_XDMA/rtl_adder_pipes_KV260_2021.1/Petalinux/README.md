@@ -15,9 +15,9 @@ source <PATH_TO_VITIS_2021.1_INSTALL>/settings64.sh
 
 ## 1.1. Build the platform (XSA & XPFM)
 ```bash
-git clone --recursive https://github.com/Xilinx/kv260-vitis
-cd kv260-vitis
-git checkout remotes/origin/release-2021.1
+git clone --recursive https://github.com/Xilinx/kria-vitis-platforms
+cd kria-vitis-platforms
+git checkout release-2021.1
 make platform PFM=kv260_vcuDecode_vmixDP
 export PATH_TO_KV260_PLATFORM=$PWD
 ```

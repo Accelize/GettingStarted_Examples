@@ -55,21 +55,29 @@ Each of them shows a different context in which one could integrate the Accelize
   * install DockerCE on development and execution hosts 
 * **Alveo Boards (On-Premise Execution)**:
   * **Build:**
-    * docker image build -f alveo_u200.Dockerfile --tag=${YOUR-DOCKERHUB-REPO} . 
-    * docker push ${YOUR-DOCKERHUB-REPO}
+    ```
+    docker image build -f alveo_u200.Dockerfile --tag=${YOUR-DOCKERHUB-REPO} . 
+    docker push ${YOUR-DOCKERHUB-REPO}
+    ```
   * **Run:**
-    * git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git
-    * source Xilinx_Base_Runtime/utilities/xilinx_docker_setup.sh
-    * docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AWS_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
+    ```
+    git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git
+    source Xilinx_Base_Runtime/utilities/xilinx_docker_setup.sh
+    docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AWS_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
+    ```
 * **AWS**:
   * **Build:**
-    * docker image build -f aws_f1.Dockerfile --tag=${YOUR-DOCKERHUB-REPO} . 
-    * docker push ${YOUR-DOCKERHUB-REPO}
+    ```
+    docker image build -f aws_f1.Dockerfile --tag=${YOUR-DOCKERHUB-REPO} . 
+    docker push ${YOUR-DOCKERHUB-REPO}
+    ```
   * **Run:**
-    * git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git
-    * source Xilinx_Base_Runtime/utilities/xilinx_aws_docker_setup.sh
-    * docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AWS_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
-    
+    ```
+    git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git
+    source Xilinx_Base_Runtime/utilities/xilinx_aws_docker_setup.sh
+    docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AWS_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
+    ```
+
 ### Troubleshootings
 
 > [WARNING]: g++ version older. Using g++ provided by the tool : /opt/Xilinx/Vivado/2021.1/tps/lnx64/gcc-6.2.0/bin/g++
