@@ -63,7 +63,7 @@ Each of them shows a different context in which one could integrate the Accelize
     ```
     git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git
     source Xilinx_Base_Runtime/utilities/xilinx_docker_setup.sh
-    docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AWS_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
+    docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
     ```
 * **AWS**:
   * **Build:**
@@ -76,6 +76,18 @@ Each of them shows a different context in which one could integrate the Accelize
     git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git
     source Xilinx_Base_Runtime/utilities/xilinx_aws_docker_setup.sh
     docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AWS_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
+    ```
+* **AZURE**:
+  * **Build:**
+    ```
+    docker image build -f azure_np10_2021.1.Dockerfile --tag=${YOUR-DOCKERHUB-REPO} . 
+    docker push ${YOUR-DOCKERHUB-REPO}
+    ```
+  * **Run:**
+    ```
+    git clone https://github.com/Xilinx/Xilinx_Base_Runtime.git
+    source Xilinx_Base_Runtime/utilities/xilinx_azure_docker_setup.sh
+    docker run -v ${PATH-TO-YOUR-cred.json}:/cred.json $XILINX_AZ_DOCKER_DEVICES ${YOUR-DOCKERHUB-REPO}
     ```
 
 ### Troubleshootings
