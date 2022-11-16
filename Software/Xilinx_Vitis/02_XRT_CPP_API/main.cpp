@@ -37,6 +37,7 @@ Description: SDx Vector Addition using Blocking Pipes Operation
 #include <experimental/xrt_device.h>
 #include <experimental/xrt_bo.h>
 #include <experimental/xrt_kernel.h>
+#include <experimental/xrt_ip.h>
 #include <experimental/xrt_xclbin.h>
 #include <experimental/xrt_system.h>
 

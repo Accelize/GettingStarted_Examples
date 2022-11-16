@@ -17,7 +17,7 @@ source <PATH_TO_VITIS_2022.1_INSTALL>/settings64.sh
 ```bash
 git clone --recursive https://github.com/Xilinx/kria-vitis-platforms
 cd kria-vitis-platforms
-git checkout xilinx_v2022.1_update2
+git checkout xilinx_v2022.1_update3
 cd kv260
 make platform PFM=kv260_vcuDecode_vmixDP
 export PATH_TO_KV260_PLATFORM=$PWD
@@ -63,53 +63,81 @@ https://www.xilinx.com/member/forms/download/xef.html?filename=xilinx-kv260-star
 
 &#x26a0;&#xfe0f; WARNING: Make sure to use the "Starter kit" BSP, not the "Production" one!
 
-&#x26a0;&#xfe0f; WARNING: For SOM, you need to install the "PetaLinux Tools Installer Update 1" as described hre:
-https://www.xilinx.com/content/dam/xilinx/Attachment/petalinux-tool-upgrade-2022-1-update2.txt
-
+&#x26a0;&#xfe0f; WARNING: For SOM, you need to install the "PetaLinux Tools Installer Update 3":
+```bash
+source <path-to-installed-PetaLinux>/settings.sh
+petalinux-upgrade -u http://petalinux.xilinx.com/sswreleases/rel-v2022/sdkupdate/2022.1_update3/ -p "aarch64" --wget-args "--wait 1 -nH --cut-dirs=4"
+```
 
 ## 2.2. Create PetaLinux project for FPGA Bitstream:
 In a new terminal (fresh environment - not contaminated by the previous steps):
-```bash
+```bashproject-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.1.bb
 mkdir petalnx-prj
 cd petalnx-prj
 source <path-to-installed-PetaLinux>/settings.sh
 petalinux-create -t project -s <PATH_TO_KV260_BSP>
-cd xilinx-k26-starterkit-2022.1
+cd xilinx-kv260-starterkit-2022.1 
 ```
 
-Build the ROOTFS:
+Update CMA requirement to support Secure OS:
 ```bash
-echo 'BOARD_VARIANT = "kv"' >>  project-spec/meta-user/conf/petalinuxbsp.conf
-petalinux-config -c rootfs --silentconfig
-petalinux-build -s
+sed -i 's/900/700/g' project-spec/meta-user/recipes-bsp/device-tree/files/system-user.dtsi
 ```
 
-## 2.3. Create PetaLinux Recipe for Accelize DRM Library:
+## 2.3. Add Accelize and Provenrun Meta-Layers: 
 ```bash
-petalinux-create -t apps -n libaccelize-drm_1.0 --enable 
+### Clone meta-layers
+mkdir components/ext_sources
+git clone https://github.com/Accelize/meta-accelize.git -b honister --depth 1 components/ext_sources/meta-accelize
+git clone https://github.com/ProvenRun/meta-provenrun.git -b xilinx-drm-honister --depth 1 components/ext_sources/meta-provenrun
 
-cp $PATH_TO_KV260_PRJ/petalinux_recipes/libaccelize-drm/libaccelize-drm_1.0.bb project-spec/meta-user/recipes-apps/libaccelize-drm_1.0/libaccelize-drm_1.0.bb
+### Add meta-layers to petalinux config
+sed -i /CONFIG_USER_LAYER/d project-spec/configs/config
+echo 'CONFIG_USER_LAYER_0="${PROOT}/components/ext_sources/meta-provenrun"' >> project-spec/configs/config
+echo 'CONFIG_USER_LAYER_1="${PROOT}/components/ext_sources/meta-accelize"' >> project-spec/configs/config
+echo 'CONFIG_USER_LAYER_2=""' >> project-spec/configs/config
+
+### Add meta-layers recipes to the build
+echo 'MACHINE_FEATURES:append = " provencore accelize fpga-overlay"' >> project-spec/meta-user/conf/petalinuxbsp.conf
+
+### Configure base project
+petalinux-config --silentconfig
+
+### [FIX] Rename Provencore and Accelize recipes in Petalinux conf
+sed -i 's/uppercase/provenrun-uppercase/g' components/yocto/layers/meta-petalinux/dynamic-layers/provenrun/recipes-core/images/petalinux-image-common-provencore.inc
+sed -i 's/drmselftest/accelize-drmselftest/g' components/yocto/layers/meta-petalinux/dynamic-layers/accelize/recipes-core/images/petalinux-image-common-accelize.inc
 ```
 
 ## 2.4. Create PetaLinux Recipe for FPGA Bitstream:
 ```bash
-petalinux-create -t apps --template fpgamanager -n accelize-kv260-drmdemo-fpga_1.0 --enable --srcuri "$PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-fpga/kv260-aibox-reid.dtsi $PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-fpga/shell.json $PATH_TO_KV260_PRJ/_x/link/int/system.bit $PATH_TO_KV260_PRJ/xclbin/rtl_adder_pipes_xilinx_kv260.xclbin "
+petalinux-create -t apps --template fpgamanager -n accelize-kv260-drmdemo-firmware --enable --srcuri "$PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-firmware/kv260-aibox-reid.dtsi $PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-firmware/shell.json $PATH_TO_KV260_PRJ/_x/link/int/system.bit $PATH_TO_KV260_PRJ/xclbin/rtl_adder_pipes_xilinx_kv260.xclbin "
 
-echo 'PR = "1.pl2022_1"' >> project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-fpga_1.0/accelize-kv260-drmdemo-fpga_1.0.bb
+### Rename recipe to add version number for the resulting rpm
+mv project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_1.0.bb
+
+### Add rpm version tag
+echo 'PKGR = "1.pl2022.1"' >> project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_1.0.bb
 ```
     
 ## 2.5. Create PetaLinux Recipe for FPGA App:
 ```bash
-petalinux-create -t apps -n accelize-kv260-drmdemo-app_1.0 --enable --srcuri "$PATH_TO_KV260_PRJ/app/Makefile $PATH_TO_KV260_PRJ/app/main.cpp $PATH_TO_KV260_PRJ/app/conf.json"
+petalinux-create -t apps -n accelize-kv260-drmdemo-app --enable --srcuri "$PATH_TO_KV260_PRJ/app/Makefile $PATH_TO_KV260_PRJ/app/main.cpp $PATH_TO_KV260_PRJ/app/conf.json"
 
-cp $PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.0.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app_1.0/accelize-kv260-drmdemo-app_1.0.bb
+### Copy edited app recipe to the project
+cp $PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb
+
+### Rename recipe to add version number for the resulting rpm
+mv project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.0.bb
+
+### Add rpm version tag
+echo 'PKGR = "1.pl2022.1"' >> project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.0.bb
 ```
 
-## 2.6. Create PetaLinux Packagegroup Recipe & Enable it:
+## 2.6. [FIX] XRT version in applications recipe
+For now, XRT versions for petalinux 2022.1 and 2022.2 are mixed in Xilinx dnf repository. To force dnf to install the right version, we need to set runtime dependencies on XRT and ZOCL.
 ```bash
-mkdir -p project-spec/meta-user/recipes-core/packagegroups
-cp -f $PATH_TO_KV260_PRJ/petalinux_recipes/packagegroups/accelize-packagegroup-kv260-drmdemo_1.0.bb project-spec/meta-user/recipes-core/packagegroups/.
-echo 'IMAGE_INSTALL:append = " accelize-packagegroup-kv260-drmdemo"' >> project-spec/meta-user/conf/petalinuxbsp.conf
+echo 'RDEPENDS:${PN} += " zocl (=202210.2.13.479)"' >> project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.1.bb
+echo 'RDEPENDS:${PN} += " xrt  (=202210.2.13.479)"' >> project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.1.bb
 ```
 
 ## 2.7. Build PetaLinux:
@@ -119,6 +147,7 @@ petalinux-build
 Embedded Linux is generated in "xilinx-k26-starterkit-2022.1/images/linux"
 
 RPM packages are generated in "xilinx-k26-starterkit-2022.1/build/tmp/deploy/rpm"
+**Note**: You only need the execution rpms. Rpms with -dev -dbg -lic or -src extensions are not needed.
 
 # 3. Run the Application on the KV260 Starter Kit
 
@@ -156,43 +185,54 @@ Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on th
 ### 3.2.3. Run the application
 Insert the SD Card in the KV260 slot and power-on the board.
 
-Add your Access Key (cred.json) file in "$HOME/cred.json"
+Add your Access Key (cred.json) file in "/etc/xilinx_appstore/cred.json"
 
 In the USB-UART terminal, use the following commands to run the application:
 ```bash
 sudo xmutil unloadapp
-sudo xmutil loadapp accelize-kv260-drmdemo-fpga
+sudo xmutil loadapp accelize-kv260-drmdemo-firmware
 app
 ```
 
 On success, the output should look like:
 ```bash
-INFO: Reading /lib/firmware/xilinx/accelize-kv260-drmdemo-fpga/accelize-kv260-drmdemo-fpga.xclbin
-Loading: '/lib/firmware/xilinx/accelize-kv260-drmdemo-fpga/accelize-kv260-drmdemo-fpga.xclbin'
-INFO: Reading /lib/firmware/xilinx/accelize-kv260-drmdemo-fpga/accelize-kv260-drmdemo-fpga.xclbin done!
 [DRMLIB] Start Session ..
-[  info  ] 1062  , DRM session <SESSION-ID> created.
-XRT build version: 2.11.0
-Build hash: 0dc9f505a3a910dea96166db7b5df8530b9ae38e
-Build date: 2021-06-05 12:31:54
-Git branch: 2021.1
-PID: 1062
-UID: 1000
-[Thu Sep  9 15:50:24 2021 GMT]
-HOST: xilinx-k26-starterkit-2021_1
-EXE: /usr/bin/app
+[  info  ] 1401  , DRM session A2D83A8F43189974 started.
 [DRMLIB] Stop Session ..
-[  info  ] 1062  , DRM session <SESSION-ID> stopped.
+[  info  ] 1401  , DRM session A2D83A8F43189974 stopped.
+Nb data processed: 4096
 TEST PASSED
 ```
 
 ## 3.3. Use the vanilla SDCard image provided by Xilinx
 You can install the RPM packages manually or upload them tho the Kria Store Repository.
 
-### 3.3.1 Installing the RPM Packages manually
+### 3.3.1. Prepare the Kria Starter Kit
+Download the [Kria KV260 Starter Kit 2022.1 SD Card Image](https://www.xilinx.com/member/forms/download/xef.html?filename=petalinux-sdimage_xilinx-k26-starterkit.wic.xz)
+
+Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on the SD Card
+
+Insert the SD Card in the KV260 slot and power-on the board.
+
+In the USB-UART terminal, use the following commands to setup the board:
+```bash
+### For KV260
+sudo dnf install https://tech.accelize.com/rpm/stable/2022_1/xilinx_k26_kv/accelize-repo-1.0-1.pl2022_1.xilinx_k26_kv.rpm
+### For KR260
+sudo dnf install https://tech.accelize.com/rpm/stable/2022_1/xilinx_k26_kr/accelize-repo-1.0-1.pl2022_1.xilinx_k26_kr.rpm
+
+### Update accelize-repo to last version
+sudo dnf update accelize-repo --refresh
+sudo dnf install -y xilinx-appstore
+sudo reboot
+```
+
+Add your Access Key (cred.json) file in "/etc/xilinx_appstore/cred.json"
+
+### 3.3.2 Installing the RPM Packages manually
 + Copy the RPM packages generated at step "2.7. Build Petalinux" on the Embedded Linux.
 
-### 3.3.2 Upload your RPMs on the Accelize Repository
+### 3.3.3 Upload your RPMs on the Accelize Repository
 + Log into your vendor portal
 + On the upper-right, click on your name and select "RPM Upload"
 + Upload each RPM package generated at previous steps
@@ -216,63 +256,38 @@ example : xilinx-helloworld-1.0-1.pl2022_1.aarch64.rpm
 **\<vendor>-\<package_name>_\<version>.bb**
 and add the following line inside the recipe:
 ```bash
-PR = "1.pl2022_1" # <release>.<dist>
+PKGR = "1.pl2022_1" # <release>.<dist>
 ```
 
-### 3.3.3. Prepare the SDCard
-Download the [Kria KV260 Starter Kit 2022.1 SD Card Image](https://www.xilinx.com/member/forms/download/xef.html?filename=petalinux-sdimage_xilinx-k26-starterkit.wic.xz)
-
-Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on the SD Card
-
 ### 3.3.4. Run the application
-Insert the SD Card in the KV260 slot and power-on the board.
-
-Add your Access Key (cred.json) file in "$HOME/cred.json"
-
-In the USB-UART terminal, use the following commands to run the application:
+the USB-UART terminal, use the following commands to run the application:
 
 #### 3.3.4.1. Install The RPMs Manually
 ```bash
-sudo dnf install -y ./libjsoncpp*
-sudo dnf install -y ./libaccelize-drm-*
-sudo dnf install -y ./accelize-kv260-drmdemo-fpga-*
+sudo dnf install -y ./accelize-kv260-drmdemo-firmware-*
 sudo dnf install -y ./accelize-kv260-drmdemo-app-*
 ```
 
 #### 3.3.4.2. Install The RPMs from the Kria Store Repository
 ```bash
-sudo dnf clean all
-sudo dnf update --refresh
-sudo xmutil getpkgs
-sudo dnf install -y accelize-packagegroup-kv260-drmdemo.noarch
+sudo dnf install -y accelize-kv260-drmdemo-app
 ```
 
 #### 3.3.4.3. Run the application
 ```bash
 sudo xmutil unloadapp
-sudo xmutil loadapp accelize-kv260-drmdemo-fpga
+sudo xmutil loadapp accelize-kv260-drmdemo-firmware
 app
 ```
 
 On success, the output should look like:
 
 ```bash
-INFO: Reading /lib/firmware/xilinx/accelize-kv260-drmdemo-fpga/accelize-kv260-drmdemo-fpga.xclbin
-Loading: '/lib/firmware/xilinx/accelize-kv260-drmdemo-fpga/accelize-kv260-drmdemo-fpga.xclbin'
-INFO: Reading /lib/firmware/xilinx/accelize-kv260-drmdemo-fpga/accelize-kv260-drmdemo-fpga.xclbin done!
 [DRMLIB] Start Session ..
-[  info  ] 2201  , DRM session <SESSION-ID> created.
-XRT build version: 2.11.0
-Build hash: 0dc9f505a3a910dea96166db7b5df8530b9ae38e
-Build date: 2021-06-05 12:31:54
-Git branch: 2021.1
-PID: 2201
-UID: 1000
-[Thu Sep  9 16:31:49 2021 GMT]
-HOST: xilinx-k26-starterkit-2021_1
-EXE: /usr/bin/app
+[  info  ] 1401  , DRM session A2D83A8F43189974 started.
 [DRMLIB] Stop Session ..
-[  info  ] 2201  , DRM session <SESSION-ID> stopped.
+[  info  ] 1401  , DRM session A2D83A8F43189974 stopped.
+Nb data processed: 4096
 TEST PASSED
 ```
 
@@ -297,11 +312,11 @@ This issue happens when the the rpm filenames exceed 32 characters.
 Your can fix it easily by shortening the recipe (.bb) filenames.
 
 
-> DFX-MGRD> daemon loading accel accelize-kv260-drmdemo-fpga
+> DFX-MGRD> daemon loading accel accelize-kv260-drmdemo-firmware
 > dfx_cfg_load: Image configuration failed
-> FX-MGRD> ERROR: Failed to load fpga config: 1
+> FX-MGRD> ERROR: Failed to load firmware config: 1
 > DFX-MGRD> ERROR: load_accel: Failed to load partial bitstream ret -1
-> DFX-MGRD> ERROR: load_accelerator: Failed to load accel accelize-kv260-drmdemo-fpga
+> DFX-MGRD> ERROR: load_accelerator: Failed to load accel accelize-kv260-drmdemo-firmware
 > Accelerator loaded to slot -1
 
 Take a look a the output of the 'dmesg' command:
