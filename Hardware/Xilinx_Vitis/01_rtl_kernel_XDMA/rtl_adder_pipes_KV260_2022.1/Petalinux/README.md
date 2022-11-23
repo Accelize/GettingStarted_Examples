@@ -71,7 +71,7 @@ petalinux-upgrade -u http://petalinux.xilinx.com/sswreleases/rel-v2022/sdkupdate
 
 ## 2.2. Create PetaLinux project for FPGA Bitstream:
 In a new terminal (fresh environment - not contaminated by the previous steps):
-```bashproject-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.1.bb
+```bash
 mkdir petalnx-prj
 cd petalnx-prj
 source <path-to-installed-PetaLinux>/settings.sh
@@ -101,7 +101,7 @@ echo 'CONFIG_USER_LAYER_2=""' >> project-spec/configs/config
 echo 'MACHINE_FEATURES:append = " provencore accelize fpga-overlay"' >> project-spec/meta-user/conf/petalinuxbsp.conf
 
 ### Configure base project
-petalinux-config --silentconfig
+@yes | petalinux-config --silentconfig
 
 ### [FIX] Rename Provencore and Accelize recipes in Petalinux conf
 sed -i 's/uppercase/provenrun-uppercase/g' components/yocto/layers/meta-petalinux/dynamic-layers/provenrun/recipes-core/images/petalinux-image-common-provencore.inc
@@ -113,10 +113,10 @@ sed -i 's/drmselftest/accelize-drmselftest/g' components/yocto/layers/meta-petal
 petalinux-create -t apps --template fpgamanager -n accelize-kv260-drmdemo-firmware --enable --srcuri "$PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-firmware/kv260-aibox-reid.dtsi $PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-firmware/shell.json $PATH_TO_KV260_PRJ/_x/link/int/system.bit $PATH_TO_KV260_PRJ/xclbin/rtl_adder_pipes_xilinx_kv260.xclbin "
 
 ### Rename recipe to add version number for the resulting rpm
-mv project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_1.0.bb
+mv project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_1.1.bb
 
 ### Add rpm version tag
-echo 'PKGR = "1.pl2022.1"' >> project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_1.0.bb
+echo 'PKGR = "1.pl2022.1"' >> project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_1.1.bb
 ```
     
 ## 2.5. Create PetaLinux Recipe for FPGA App:
@@ -127,10 +127,10 @@ petalinux-create -t apps -n accelize-kv260-drmdemo-app --enable --srcuri "$PATH_
 cp $PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb
 
 ### Rename recipe to add version number for the resulting rpm
-mv project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.0.bb
+mv project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.1.bb
 
 ### Add rpm version tag
-echo 'PKGR = "1.pl2022.1"' >> project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.0.bb
+echo 'PKGR = "1.pl2022.1"' >> project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.1.bb
 ```
 
 ## 2.6. [FIX] XRT version in applications recipe

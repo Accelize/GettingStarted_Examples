@@ -68,8 +68,8 @@ petalinux-add-apps: check
 	@echo 'PKGR = "$(PR)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_$(VERSION).bb
 
 petalinux-fix-xrt: check
-	@echo 'RDEPENDS:$${PN} += " zocl (=202210.2.13.479)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.1.bb
-	@echo 'RDEPENDS:$${PN} += " xrt  (=202210.2.13.479)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.1.bb
+	@echo 'RDEPENDS:$${PN} += " zocl (=202210.2.13.479)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_$(VERSION).bb
+	@echo 'RDEPENDS:$${PN} += " xrt  (=202210.2.13.479)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_$(VERSION).bb
 
 petalinux-build: check
 	@petalinux-build -p $(PROJECT_PATH)
@@ -90,7 +90,7 @@ petalinux-rpms: check
 	@echo "RPM Archive is available here: /tmp/kv260-rpms-$(VERSION)-$(PR).tar.gz"
 
 petalinux-jtag: check
-	@cd $(PROJECT_PATH) && petalinux-package --prebuilt --force --fpga project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-fpga_1.0/files/rtl_adder_pipes_xilinx_kv260.xclbin
+	@cd $(PROJECT_PATH) && petalinux-package --prebuilt --force --fpga project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware_$(VERSION)/files/rtl_adder_pipes_xilinx_kv260.xclbin
 	@cd $(PROJECT_PATH) && petalinux-boot --jtag --prebuilt 3 --tcl jtag_boot.tcl
 	@rm -rf /tmp/jtag-pkg* && mkdir /tmp/jtag-pkg
 	@cp -f $(PROJECT_PATH)/pre-built/linux/images/bl31.elf /tmp/jtag-pkg/.
