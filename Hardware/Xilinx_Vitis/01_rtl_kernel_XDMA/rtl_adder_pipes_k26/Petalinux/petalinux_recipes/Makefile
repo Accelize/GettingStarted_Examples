@@ -3,7 +3,7 @@ PROJECT_NAME       ?= xilinx-k26-starterkit-drmdemo
 PROJECT_PATH       = $(ROOT)/$(PROJECT_NAME)
 META_PATH          = $(PROJECT_PATH)/components/ext_sources
 K26_BSP_PATH       ?= $(HOME)/xilinx-kv260-starterkit-v2022.1-05140151.bsp
-PATH_TO_KV260_PRJ  ?= $(HOME)/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_KV260_2022.1/Petalinux
+PATH_TO_K26_PRJ    ?= $(HOME)/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_KV260_2022.1/Petalinux
 VERSION            ?= 1.1
 RELEASE            ?= 2
 DIST               ?= pl2022_1
@@ -52,18 +52,18 @@ petalinux-fix-conf: check
 petalinux-add-apps: check
 	@# ============= Add FPGA Bitstream =============
 	@petalinux-create -p $(PROJECT_PATH) --force -t apps --template fpgamanager -n accelize-kv260-drmdemo-firmware --enable --srcuri " \
-			$(PATH_TO_KV260_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-firmware/kv260-aibox-reid.dtsi \
-			$(PATH_TO_KV260_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-firmware/shell.json  \
-			$(PATH_TO_KV260_PRJ)/_x/link/int/system.bit  \
-			$(PATH_TO_KV260_PRJ)/xclbin/rtl_adder_pipes_xilinx_kv260.xclbin"
+			$(PATH_TO_K26_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-firmware/kv260-aibox-reid.dtsi \
+			$(PATH_TO_K26_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-firmware/shell.json  \
+			$(PATH_TO_K26_PRJ)/_x/link/int/system.bit  \
+			$(PATH_TO_K26_PRJ)/xclbin/rtl_adder_pipes_xilinx_kv260.xclbin"
 	@mv ${PROJECT_PATH}/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware.bb ${PROJECT_PATH}/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_${VERSION}.bb
 	@echo 'PKGR = "$(PR)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_$(VERSION).bb
 	@# ============= Add FPGA App =============
 	@petalinux-create -p $(PROJECT_PATH) --force -t apps -n accelize-kv260-drmdemo-app --enable --srcuri "\
-			$(PATH_TO_KV260_PRJ)/app/Makefile \
-			$(PATH_TO_KV260_PRJ)/app/main.cpp \
-			$(PATH_TO_KV260_PRJ)/app/conf.json"
-	@cp $(PATH_TO_KV260_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb
+			$(PATH_TO_K26_PRJ)/app/Makefile \
+			$(PATH_TO_K26_PRJ)/app/main.cpp \
+			$(PATH_TO_K26_PRJ)/app/conf.json"
+	@cp $(PATH_TO_K26_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb
 	@mv $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_${VERSION}.bb
 	@echo 'PKGR = "$(PR)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_$(VERSION).bb
 

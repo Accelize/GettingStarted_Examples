@@ -1,0 +1,2 @@
+cd /tmp/accelize-k26-drmdemo && make && cp accelize-k26-drmdemo /usr/bin/.
+rm -rf /tmp/accelize-k26-drmdemo

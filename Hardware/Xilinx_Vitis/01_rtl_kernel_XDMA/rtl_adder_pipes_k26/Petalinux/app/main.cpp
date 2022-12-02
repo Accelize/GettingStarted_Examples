@@ -28,11 +28,11 @@ using namespace Accelize::DRM;
 int main(int argc, char** argv)
 {
     if (argc > 2) {
-        std::cout << "Usage: " << argv[0] << " <increment_value>"  << std::endl;
+        std::cout << "Usage: " << argv[0] << " [increment_value]{10}"  << std::endl;
         return EXIT_FAILURE;
     }
     
-    int inc = atoi(argv[1]);
+    int inc = (argc == 2) ? atoi(argv[1]) : 10;
     int size = DATA_SIZE;
     std::string binary_file ("/lib/firmware/xilinx/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware.xclbin");
 
@@ -138,7 +138,6 @@ int main(int argc, char** argv)
     
     // Compare the results of the Device to the simulation
     int match = 0;
-    std::cout<< "Nb data processed: "<< size << std::endl;
     for (int i = 0 ; i < size ; i++){
         if (source_hw_results[i] != source_sw_results[i]){
             std::cout << "Error: Result mismatch" << std::endl;

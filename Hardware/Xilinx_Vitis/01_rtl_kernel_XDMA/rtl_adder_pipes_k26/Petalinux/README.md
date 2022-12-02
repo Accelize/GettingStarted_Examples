@@ -3,9 +3,9 @@ Adder With Pipes (RTL)
 This example shows an adder with pipes using 3 RTL kernels and protected with Accelize DRM Solution.
 
 ## SUPPORTED PLATFORMS
-Board | Software Version
-------|-----------------
-Xilinx Kria Starter Kit KV260|Vitis 2022.1
+Board | Software Version | Kria OS Version
+------|------------------|----------------
+Xilinx Kria Starter Kit KV260|Vitis 2022.1|Petalinux 2022.1
 
 # 1.Run Synthesis
 Configure environment for Vitis  2022.1:
@@ -36,7 +36,7 @@ set_param board.repoPaths [get_property LOCAL_ROOT_DIR [xhub::get_xstores xilinx
 ```bash
 git clone https://github.com/Accelize/GettingStarted_Examples.git --depth=1
 cd GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_KV260_2022.1/Petalinux
-export PATH_TO_KV260_PRJ=$PWD
+export PATH_TO_K26_PRJ=$PWD
 ```
 
 Run the synthesis:
@@ -110,7 +110,7 @@ sed -i 's/drmselftest/accelize-drmselftest/g' components/yocto/layers/meta-petal
 
 ## 2.4. Create PetaLinux Recipe for FPGA Bitstream:
 ```bash
-petalinux-create -t apps --template fpgamanager -n accelize-kv260-drmdemo-firmware --enable --srcuri "$PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-firmware/kv260-aibox-reid.dtsi $PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-firmware/shell.json $PATH_TO_KV260_PRJ/_x/link/int/system.bit $PATH_TO_KV260_PRJ/xclbin/rtl_adder_pipes_xilinx_kv260.xclbin "
+petalinux-create -t apps --template fpgamanager -n accelize-kv260-drmdemo-firmware --enable --srcuri "$PATH_TO_K26_PRJ/petalinux_recipes/accelize-kv260-drmdemo-firmware/kv260-aibox-reid.dtsi $PATH_TO_K26_PRJ/petalinux_recipes/accelize-kv260-drmdemo-firmware/shell.json $PATH_TO_K26_PRJ/_x/link/int/system.bit $PATH_TO_K26_PRJ/xclbin/rtl_adder_pipes_xilinx_kv260.xclbin "
 
 ### Rename recipe to add version number for the resulting rpm
 mv project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_1.1.bb
@@ -121,10 +121,10 @@ echo 'PKGR = "1.pl2022.1"' >> project-spec/meta-user/recipes-apps/accelize-kv260
     
 ## 2.5. Create PetaLinux Recipe for FPGA App:
 ```bash
-petalinux-create -t apps -n accelize-kv260-drmdemo-app --enable --srcuri "$PATH_TO_KV260_PRJ/app/Makefile $PATH_TO_KV260_PRJ/app/main.cpp $PATH_TO_KV260_PRJ/app/conf.json"
+petalinux-create -t apps -n accelize-kv260-drmdemo-app --enable --srcuri "$PATH_TO_K26_PRJ/app/Makefile $PATH_TO_K26_PRJ/app/main.cpp $PATH_TO_K26_PRJ/app/conf.json"
 
 ### Copy edited app recipe to the project
-cp $PATH_TO_KV260_PRJ/petalinux_recipes/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb
+cp $PATH_TO_K26_PRJ/petalinux_recipes/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb
 
 ### Rename recipe to add version number for the resulting rpm
 mv project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_1.1.bb

@@ -1,11 +1,11 @@
 #
 # Accelize Getting Started App Makefile
 #
-APP=app
+APP=accelize-k26-drmdemo
 
 ${APP}: main.cpp
 		$(CXX) -Wall -g -std=c++17 -Wno-unused-variable main.cpp -o ${APP} \
-		       -I${STAGING_INCDIR} -I${STAGING_INCDIR}/xrt -I${STAGING_INCDIR}/jsoncpp \
+		       -I/usr/include -I/usr/include/xrt -I/usr/include/jsoncpp \
 		       -lpthread -lrt -lxrt_coreutil -ljsoncpp -laccelize_drm
 
 clean:

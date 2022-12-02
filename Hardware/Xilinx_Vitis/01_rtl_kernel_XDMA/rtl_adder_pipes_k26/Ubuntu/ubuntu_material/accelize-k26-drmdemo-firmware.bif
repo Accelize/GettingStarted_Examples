@@ -1,0 +1,4 @@
+all:
+{
+    accelize-k26-drmdemo-firmware.bit
+}

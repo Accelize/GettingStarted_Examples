@@ -28,12 +28,12 @@ do_install() {
     install -d ${D}${bindir}
     install -d -m 0777 ${D}${sysconfdir}/xilinx_appstore
     install -d ${D}${sysconfdir}/xilinx_appstore/xlz-kv260-drmdemo
-    install -m 0755 ${S}/app ${D}${bindir}
+    install -m 0755 ${S}/accelize-kv260-drmdemo ${D}${bindir}
     install -m 0644 ${S}/conf.json ${D}${sysconfdir}/xilinx_appstore/xlz-kv260-drmdemo/
 }
 
 pkg_postinst:${PN} () {
     #!/bin/sh -e
     chmod a+rw $D${sysconfdir}/xilinx_appstore 
-    chmod u+s  $D${bindir}/app
+    chmod u+s  $D${bindir}/accelize-kv260-drmdemo
 }

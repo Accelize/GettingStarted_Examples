@@ -1,0 +1,6 @@
+Package: accelize-k26-drmdemo
+Version: 1.2-2+jammy
+Maintainer: Accelize
+Architecture: arm64
+Description: Accelize DRM adder demo app
+Depends: uuid-dev, libjsoncpp-dev, libaccelize-drm, libaccelize-drm-dev

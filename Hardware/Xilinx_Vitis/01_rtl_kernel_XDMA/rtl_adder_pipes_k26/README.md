@@ -8,7 +8,7 @@ Board | Software Version
 Xilinx Kria Starter Kit KV260|Vitis 2022.1
 
 
-The KV26 Apps can be built and distributed either using Petalinux or Ubuntu.
+The KV260 Apps can be built and distributed either using Petalinux or Ubuntu.
 
 You can find step-by-step instructions for both flow below:
 
