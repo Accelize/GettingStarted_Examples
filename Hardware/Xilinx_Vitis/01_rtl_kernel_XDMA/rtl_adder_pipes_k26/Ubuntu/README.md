@@ -181,17 +181,6 @@ Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on th
 
 Insert the SD Card in the KV260 slot and power-on the board.
 
-[//]: <> ()
-[//]: <> (## 3.1.2. Update KV260 Firmware)
-[//]: <> (he starter kit must be configured with a Boot FW Image containing the Trusted Application for DRM operations.)
-[//]: <> (ou can request this Boot FW Image [here](mailto:support@accelize.com))
-[//]: <> ()
-[//]: <> (he firmware update process is described on the [Xilinx Kria Confluence Page](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/1641152513/Kria+K26+SOM#Boot-Firmware-Updates))
-[//]: <> ()
-[//]: <> (*Step-by-step Process in Video:**)
-[//]: <> ()
-[//]: <> (ttps://user-images.githubusercontent.com/30148903/164562995-331eef87-3f7a-44cb-a0de-a29c86a1a9b8.mp4)
-[//]: <> ()
 ### 3.1.2. DRM Library
 
 Install the DRM Library for Kria using the following commands:
