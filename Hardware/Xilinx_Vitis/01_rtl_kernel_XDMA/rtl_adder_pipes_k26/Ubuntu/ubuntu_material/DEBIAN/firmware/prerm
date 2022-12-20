@@ -1,2 +1,1 @@
 sudo rm -fr /lib/firmware/xilinx/accelize-k26-drmdemo-firmware
-sudo rm -fr /usr/bin/accelize-k26-drmdemo

@@ -46,14 +46,6 @@ make
 ```
 Once synthesis is complete, the bitstream will be located in the *xclbin* folder
 
-[//]: <> ()
-[//]: <> (&#x26a0;&#xfe0f; WARNING: If you're using the Vivado flow instead of the Vitis one, please make sure to set the DRM Controller Bridge Address using the following command at synthesis:)
-[//]: <> (```tcl)
-[//]: <> (set ctrl_if_name [get_bd_addr_segs -addressables -of [get_bd_intf_pins kernel_drm_controller_1/s_axi_control]])
-[//]: <> (assign_bd_address -offset 0xA0010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces PS_0/Data] [get_bd_addr_segs $ctrl_if_name] -force)
-[//]: <> (```)
-[//]: <> ()
-
 # 2. Build the Embedded Linux Packages using Ubuntu
 
 &#x26a0;&#xfe0f; We provide pre-filled assets in folder "ubuntu_material" for this example project. If you use your own project, you might need to adapt them.
@@ -134,26 +126,50 @@ cp ${PATH_TO_K26_PRJ}/ubuntu_material/shell.json accelize-k26-drmdemo/accelize-k
 
 You can find numerous online documentation and tutorial on how to build a debian packages.
 
-Here we'll create the most basic package, using files from "ubuntu_material" folder. 
+Here we'll create the most basic packages, using files from "ubuntu_material" folder.
+For your package to be compliant with the package feed you need to add a MD5SUM summary file in your package.
+To do so, we use the tools MD5SUM (availbale with the command '''sudo apt install md5sum''')
 
+2 debian packages will be created for a Kria application. One for the bitstream firmware and one for the software application.  
 
 ```bash
-mkdir -p /tmp/accelize-k26-drmdemo/DEBIAN
-mkdir -p /tmp/accelize-k26-drmdemo/lib/firmware/xilinx/
-mkdir -p /tmp/accelize-k26-drmdemo/usr/bin
-mkdir -p /tmp/accelize-k26-drmdemo/tmp/accelize-k26-drmdemo
-mkdir -p /tmp/accelize-k26-drmdemo/etc/xilinx_appstore/xlz-k26-drmdemo/
-cp -rf accelize-k26-drmdemo/accelize-k26-drmdemo-firmware /tmp/accelize-k26-drmdemo/lib/firmware/xilinx/.
-cp -f app/* /tmp/accelize-k26-drmdemo/tmp/accelize-k26-drmdemo/.
-cp app/conf.json /tmp/accelize-k26-drmdemo/etc/xilinx_appstore/xlz-k26-drmdemo/.
-cp ubuntu_material/DEBIAN/* /tmp/accelize-k26-drmdemo/DEBIAN/.
-chmod 555 /tmp/accelize-k26-drmdemo/DEBIAN/postinst
-chmod 555 /tmp/accelize-k26-drmdemo/DEBIAN/prerm
-cd /tmp/accelize-k26-drmdemo
-find ./usr/ ./tmp/ -type f -exec md5sum "{}" + > ./DEBIAN/md5sums
-dpkg-deb --build ../accelize-k26-drmdemo
+### Firmware debian package
+mkdir -p /tmp/accelize-k26-drmdemo-firmware_1.2-2+jammy_arm64/DEBIAN
+mkdir -p /tmp/accelize-k26-drmdemo-firmware_1.2-2+jammy_arm64/lib/firmware/xilinx/
+cp -rf accelize-k26-drmdemo/accelize-k26-drmdemo-firmware /tmp/accelize-k26-drmdemo-firmware_1.2-2+jammy_arm64/lib/firmware/xilinx/.
+cp ubuntu_material/DEBIAN/firmware/* /tmp/accelize-k26-drmdemo-firmware_1.2-2+jammy_arm64/DEBIAN/.
+chmod 555 /tmp/accelize-k26-drmdemo-firmware_1.2-2+jammy_arm64/DEBIAN/prerm
+cd /tmp/accelize-k26-drmdemo-firmware_1.2-2+jammy_arm64
+
+### MD5SUM compute
+find ./lib/ -type f -exec md5sum "{}" + > ./DEBIAN/md5sums
+
+### Package build
+dpkg-deb --build --root-owner-group ../accelize-k26-drmdemo-firmware_1.2-2+jammy_arm64
 cd -
-cp /tmp/accelize-k26-drmdemo.deb accelize-k26-drmdemo/.
+
+### Software debian package
+mkdir -p /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64/DEBIAN
+mkdir -p /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64/usr/bin
+mkdir -p /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64/tmp/accelize-k26-drmdemo
+mkdir -p /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64/etc/xilinx_appstore/xlz-k26-drmdemo/
+cp -f app/* /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64/tmp/accelize-k26-drmdemo/.
+cp app/conf.json /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64/etc/xilinx_appstore/xlz-k26-drmdemo/.
+cp ubuntu_material/DEBIAN/software/* /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64/DEBIAN/.
+chmod 555 /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64/DEBIAN/postinst
+chmod 555 /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64/DEBIAN/prerm
+cd /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64
+
+### MD5SUM compute
+find ./usr/ ./tmp/ ./etc/ -type f -exec md5sum "{}" + > ./DEBIAN/md5sums
+
+### Package build
+dpkg-deb --build --root-owner-group ../accelize-k26-drmdemo_1.2-2+jammy_arm64
+cd -
+
+### Get generated packages
+cp /tmp/accelize-k26-drmdemo-firmware_1.2-2+jammy_arm64.deb accelize-k26-drmdemo/.
+cp /tmp/accelize-k26-drmdemo_1.2-2+jammy_arm64.deb accelize-k26-drmdemo/.
 ```
 
 ## 2.4. Upload Debian package on the Kria Store package Repository
@@ -198,8 +214,8 @@ cmake -DPKG=ON ..
 make -j
 sudo make package
 
-sudo apt install -y packages/libaccelize-drm_*
-sudo apt install -y packages/libaccelize-drm-dev_*
+sudo apt install -y ./packages/libaccelize-drm_*
+sudo apt install -y ./packages/libaccelize-drm-dev_*
 ```
 
 ### 3.1.3. Update and setup XRT tools
@@ -242,10 +258,11 @@ cd -
 
 + Manual .deb Installation
 
-Copy the **accelize-k26-drmdemo.deb** file on the KV260 O/S using scp, rsync, ... and run:
+Copy both DEBIAN packge files from 2.3 on the KV260 O/S using scp, rsync, ... and run:
 
 ```bash
-sudo apt install -y ./accelize-k26-drmdemo.deb
+sudo apt install -y ./accelize-k26-drmdemo-firmware_1.2-2+jammy_arm64.deb
+sudo apt install -y ./accelize-k26-drmdemo_1.2-2+jammy_arm64.deb
 ```
   
 + Install from Kria Store Debian Package Repository

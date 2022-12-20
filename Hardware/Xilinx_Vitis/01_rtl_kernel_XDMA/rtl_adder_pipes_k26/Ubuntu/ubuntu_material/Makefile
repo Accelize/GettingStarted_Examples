@@ -6,6 +6,7 @@ APP_PL_NAME        ?= $(APP_NAME)-firmware
 APP_VERSION        ?= 1.2-2+jammy
 APP_ARCH           ?= arm64
 DEB_NAME           ?= $(APP_NAME)_$(APP_VERSION)_$(APP_ARCH)
+DEB_NAME_FIRMWARE  ?= $(APP_NAME)-firmware_$(APP_VERSION)_$(APP_ARCH)
 ASSETS_FOLDER_PATH ?= $(PROJECT_PATH)/$(APP_PL_NAME)
 ASSETS_INSTALL_DIR ?=/lib/firmware/xilinx
 
@@ -47,23 +48,32 @@ assets_folder: $(ASSETS_FOLDER_PATH)/$(APP_PL_NAME).bit.bin $(ASSETS_FOLDER_PATH
 	@tar czf $(PROJECT_PATH)/$(APP_PL_NAME).tar.gz $(ASSETS_FOLDER_PATH)
 
 package:
-	# Build DEBIAN Package
+	# Build firmware DEBIAN Package
+	@rm -rf /tmp/$(DEB_NAME_FIRMWARE)
+	@mkdir -p /tmp/$(DEB_NAME_FIRMWARE)/DEBIAN
+	@mkdir -p /tmp/$(DEB_NAME_FIRMWARE)/$(ASSETS_INSTALL_DIR)
+	@cp -r $(ASSETS_FOLDER_PATH) /tmp/$(DEB_NAME_FIRMWARE)/$(ASSETS_INSTALL_DIR)/.
+	@cp ubuntu_material/DEBIAN/firmware/* /tmp/$(DEB_NAME_FIRMWARE)/DEBIAN/.
+	@chmod 555 /tmp/$(DEB_NAME_FIRMWARE)/DEBIAN/prerm
+	@cd /tmp/$(DEB_NAME_FIRMWARE) && find ./lib/ -type f -exec md5sum "{}" + > ./DEBIAN/md5sums
+	# Build firmware DEBIAN Package
 	@rm -rf /tmp/$(DEB_NAME)
 	@mkdir -p /tmp/$(DEB_NAME)/DEBIAN
-	@mkdir -p /tmp/$(DEB_NAME)/$(ASSETS_INSTALL_DIR)
 	@mkdir -p /tmp/$(DEB_NAME)/usr/bin
 	@mkdir -p /tmp/$(DEB_NAME)/tmp/$(APP_NAME)
 	@mkdir -p /tmp/$(DEB_NAME)/etc/xilinx_appstore/xlz-k26-drmdemo
-	@cp -r $(ASSETS_FOLDER_PATH) /tmp/$(DEB_NAME)/$(ASSETS_INSTALL_DIR)/.
 	@cp -f $(PATH_TO_K26_PRJ)/app/* /tmp/$(DEB_NAME)/tmp/$(APP_NAME)/.
 	@cp $(PATH_TO_K26_PRJ)/app/conf.json /tmp/$(DEB_NAME)/usr/bin
-	@cp ubuntu_material/DEBIAN/* /tmp/$(DEB_NAME)/DEBIAN/.
+	@cp ubuntu_material/DEBIAN/software/* /tmp/$(DEB_NAME)/DEBIAN/.
 	@chmod 555 /tmp/$(DEB_NAME)/DEBIAN/postinst
 	@chmod 555 /tmp/$(DEB_NAME)/DEBIAN/prerm
-	@cd /tmp/$(DEB_NAME) && find ./usr/ ./tmp/ -type f -exec md5sum "{}" + > ./DEBIAN/md5sums
-#	@cd /tmp && dpkg-deb --build --root-owner-group $(DEB_NAME)
-	@cd /tmp && dpkg-deb --build $(DEB_NAME)
+	@cd /tmp/$(DEB_NAME) && find ./usr/ ./tmp/ ./etc/ -type f -exec md5sum "{}" + > ./DEBIAN/md5sums
+	# Get generated Packages
+	@cd /tmp && dpkg-deb --build --root-owner-group $(DEB_NAME_FIRMWARE)
+	@cd /tmp && dpkg-deb --build --root-owner-group $(DEB_NAME)
 	@mv /tmp/$(DEB_NAME).deb $(PROJECT_PATH)/.
+	@mv /tmp/$(DEB_NAME_FIRMWARE).deb $(PROJECT_PATH)/.
+	@rm -rf /tmp/$(DEB_NAME_FIRMWARE)
 	@rm -rf /tmp/$(DEB_NAME)
 
 .PHONY: all clean assets_folder package

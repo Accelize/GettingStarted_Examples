@@ -1,0 +1,7 @@
+Package: accelize-k26-drmdemo-firmware
+Version: 1.2-2+jammy
+Vendor: Accelize
+Maintainer: Accelize
+Architecture: arm64
+Description: Accelize DRM adder demo firmware
+Depends: xrt (>= 2.13.0)
