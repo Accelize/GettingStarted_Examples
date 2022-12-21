@@ -122,13 +122,21 @@ You can use the one provide in "ubuntu_material"
 cp ${PATH_TO_K26_PRJ}/ubuntu_material/shell.json accelize-k26-drmdemo/accelize-k26-drmdemo-firmware/.
 ```
 
-## 2.3. Generate Debian Package from the assets folder
+## 2.3. Generate Debian Packages
 
-You can find numerous online documentation and tutorial on how to build a debian packages.
+You can find numerous online documentation and tutorial on how to build a debian package.   
 
-Here we'll create the most basic packages, using files from "ubuntu_material" folder.
-For your package to be compliant with the package feed you need to add a MD5SUM summary file in your package.
-To do so, we use the tools MD5SUM (availbale with the command '''sudo apt install md5sum''')
+The control file contains mandatory metadata (i.e. Package, Vendor, Version and Architecture).    
+Those fields will be compared to the name you give to your package when you will upload it to the Kria Store Package Repository.    
+
+Be sure to set the name of your package according to those fields and the debian package naming convention described on the package upload page of your Accelize portal (cf. 2.4 Upload Debian package on the Kria Store Package Repository).    
+
+**Note: The name of the root directory of your package files will be used by the tool to set the package name.**    
+
+Furthermore, for your package to be compliant with the Kria Store Repository you need to add a md5sum summary file in your package.   
+To do so, we use the tools MD5SUM (available with the command `sudo apt install md5sum`)   
+
+Here we'll create the most basic packages, using files from "ubuntu_material" folder.   
 
 2 debian packages will be created for a Kria application. One for the bitstream firmware and one for the software application.  
 
@@ -181,6 +189,10 @@ Then select "Package Upload" menu
 
 &#x26a0;&#xfe0f;  **Note: Make sure to follow the package naming convention for Debian**
 
+If an error occurs when you try to upload a package, an email will be sent to the email address associated to your account with the details in it.    
+
+After a valid upload, the package will be available in a PRERELEASE repository for test and validation.   
+The package will be published to STABLE repository when validation is done. [Send a mail to your Accelize FAE](mailto:support@accelize.com) to trigger the publication. 
 
 # 3. Run the Application on the KV260 Starter Kit
 
@@ -197,7 +209,31 @@ Install [balenaEtcher](https://www.balena.io/etcher/) and write the ".wic" on th
 
 Insert the SD Card in the KV260 slot and power-on the board.
 
-### 3.1.2. DRM Library
+### 3.1.2. Install Kria Store package Repository
+
+To install the STABLE Kria Store package Repository run the following commands:
+```bash
+# Ensure wget is installed (It can be removed once the repository is installed)
+sudo apt update
+sudo apt install -y wget
+
+# Add Accelize GPG public key for package signature verification
+sudo wget https://tech.accelize.com/gpg_unarmored -O /etc/apt/trusted.gpg.d/accelize.gpg
+
+# Install repository
+echo "deb https://tech.accelize.com/deb $(grep -ioP '^VERSION_CODENAME=\K.+' /etc/os-release) stable" | sudo tee /etc/apt/sources.list.d/accelize_stable.list
+sudo apt update
+```
+
+To get packages from PRERELEASE Kria Store package Repository for test and validation purpose, run the following commands.
+```bash
+echo "deb https://tech.accelize.com/deb $(grep -ioP '^VERSION_CODENAME=\K.+' /etc/os-release) prerelease" | sudo tee /etc/apt/sources.list.d/accelize_prerelease.list
+sudo apt update
+```
+
+**Note: When you are done with test and validation don't forget to remove accelize_prerelease.list file.**
+
+### 3.1.3. DRM Library
 
 Install the DRM Library for Kria using the following commands:
 
@@ -218,7 +254,7 @@ sudo apt install -y ./packages/libaccelize-drm_*
 sudo apt install -y ./packages/libaccelize-drm-dev_*
 ```
 
-### 3.1.3. Update and setup XRT tools
+### 3.1.4. Update and setup XRT tools
 After first boot on Ubuntu you need to install xrt libraries and tools; and update them to the last version to be aligned with vivado/vitis 2022.1
 
 ```bash
