@@ -191,7 +191,7 @@ Then select "Package Upload" menu
 
 If an error occurs when you try to upload a package, an email will be sent to the email address associated to your account with the details in it.    
 
-After a valid upload, the package will be available in a PRERELEASE repository for test and validation.   
+After a valid upload, the package will be available in a STAGING repository for test and validation.   
 The package will be published to STABLE repository when validation is done. [Send a mail to your Accelize FAE](mailto:support@accelize.com) to trigger the publication. 
 
 # 3. Run the Application on the KV260 Starter Kit
@@ -225,13 +225,13 @@ echo "deb https://tech.accelize.com/deb $(grep -ioP '^VERSION_CODENAME=\K.+' /et
 sudo apt update
 ```
 
-To get packages from PRERELEASE Kria Store package Repository for test and validation purpose, run the following commands.
+To get packages from STAGING Kria Store package Repository for test and validation purpose, run the following commands.
 ```bash
-echo "deb https://tech.accelize.com/deb $(grep -ioP '^VERSION_CODENAME=\K.+' /etc/os-release) prerelease" | sudo tee /etc/apt/sources.list.d/accelize_prerelease.list
+echo "deb https://tech.accelize.com/deb $(grep -ioP '^VERSION_CODENAME=\K.+' /etc/os-release) staging" | sudo tee /etc/apt/sources.list.d/accelize_staging.list
 sudo apt update
 ```
 
-**Note: When you are done with test and validation don't forget to remove accelize_prerelease.list file.**
+**Note: When you are done with test and validation don't forget to remove accelize_staging.list file.**
 
 ### 3.1.3. DRM Library
 
