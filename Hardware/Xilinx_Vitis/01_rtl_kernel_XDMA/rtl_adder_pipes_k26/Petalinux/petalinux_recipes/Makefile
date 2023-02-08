@@ -2,8 +2,8 @@ ROOT               ?= $(PWD)
 PROJECT_NAME       ?= xilinx-k26-starterkit-drmdemo
 PROJECT_PATH       = $(ROOT)/$(PROJECT_NAME)
 META_PATH          = $(PROJECT_PATH)/components/ext_sources
-K26_BSP_PATH       ?= $(HOME)/xilinx-kv260-starterkit-v2022.1-05140151.bsp
-PATH_TO_K26_PRJ    ?= $(HOME)/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_KV260_2022.1/Petalinux
+K26_BSP_PATH       ?= $(HOME)/xilinx-k26-som-v2022.1-04191534.bsp
+PATH_TO_K26_PRJ    ?= $(HOME)/GettingStarted_Examples/Hardware/Xilinx_Vitis/01_rtl_kernel_XDMA/rtl_adder_pipes_k26/Petalinux
 VERSION            ?= 1.1
 RELEASE            ?= 2
 DIST               ?= pl2022_1
@@ -47,50 +47,51 @@ petalinux-config: check
 
 petalinux-fix-conf: check
 	@sed -i 's/uppercase/provenrun-uppercase/g' $(PROJECT_PATH)/components/yocto/layers/meta-petalinux/dynamic-layers/provenrun/recipes-core/images/petalinux-image-common-provencore.inc
+	@sed -i 's/SRC_URI:append:k26-kv/SRC_URI/g' $(PROJECT_PATH)/components/ext_sources/meta-provenrun/recipes-integration/applications/provenrun-uppercase-firmware/provenrun-uppercase-firmware.bb
 	@sed -i 's/drmselftest/accelize-drmselftest/g' $(PROJECT_PATH)/components/yocto/layers/meta-petalinux/dynamic-layers/accelize/recipes-core/images/petalinux-image-common-accelize.inc
 
 petalinux-add-apps: check
 	@# ============= Add FPGA Bitstream =============
-	@petalinux-create -p $(PROJECT_PATH) --force -t apps --template fpgamanager -n accelize-kv260-drmdemo-firmware --enable --srcuri " \
-			$(PATH_TO_K26_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-firmware/kv260-aibox-reid.dtsi \
-			$(PATH_TO_K26_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-firmware/shell.json  \
+	@petalinux-create -p $(PROJECT_PATH) --force -t apps --template fpgamanager -n accelize-drmdemo-k26-firmware --enable --srcuri " \
+			$(PATH_TO_K26_PRJ)/petalinux_recipes/accelize-drmdemo-k26-firmware/rtl_adder_pipes_xilinx_k26.dtsi \
+			$(PATH_TO_K26_PRJ)/petalinux_recipes/accelize-drmdemo-k26-firmware/shell.json  \
 			$(PATH_TO_K26_PRJ)/_x/link/int/system.bit  \
-			$(PATH_TO_K26_PRJ)/xclbin/rtl_adder_pipes_xilinx_kv260.xclbin"
-	@mv ${PROJECT_PATH}/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware.bb ${PROJECT_PATH}/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_${VERSION}.bb
-	@echo 'PKGR = "$(PR)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware_$(VERSION).bb
+			$(PATH_TO_K26_PRJ)/xclbin/rtl_adder_pipes_xilinx_k26.xclbin"
+	@mv ${PROJECT_PATH}/project-spec/meta-user/recipes-apps/accelize-drmdemo-k26-firmware/accelize-drmdemo-k26-firmware.bb ${PROJECT_PATH}/project-spec/meta-user/recipes-apps/accelize-drmdemo-k26-firmware/accelize-drmdemo-k26-firmware_${VERSION}.bb
+	@echo 'PKGR = "$(PR)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-drmdemo-k26-firmware/accelize-drmdemo-k26-firmware_$(VERSION).bb
 	@# ============= Add FPGA App =============
-	@petalinux-create -p $(PROJECT_PATH) --force -t apps -n accelize-kv260-drmdemo-app --enable --srcuri "\
+	@petalinux-create -p $(PROJECT_PATH) --force -t apps -n accelize-drmdemo-k26 --enable --srcuri "\
 			$(PATH_TO_K26_PRJ)/app/Makefile \
 			$(PATH_TO_K26_PRJ)/app/main.cpp \
 			$(PATH_TO_K26_PRJ)/app/conf.json"
-	@cp $(PATH_TO_K26_PRJ)/petalinux_recipes/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb
-	@mv $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_${VERSION}.bb
-	@echo 'PKGR = "$(PR)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_$(VERSION).bb
+	@cp $(PATH_TO_K26_PRJ)/petalinux_recipes/accelize-drmdemo-k26/accelize-drmdemo-k26.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-drmdemo-k26/accelize-drmdemo-k26.bb
+	@mv $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-drmdemo-k26/accelize-drmdemo-k26.bb $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-drmdemo-k26/accelize-drmdemo-k26_${VERSION}.bb
+	@echo 'PKGR = "$(PR)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-drmdemo-k26/accelize-drmdemo-k26_$(VERSION).bb
 
 petalinux-fix-xrt: check
-	@echo 'RDEPENDS:$${PN} += " zocl (=202210.2.13.479)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_$(VERSION).bb
-	@echo 'RDEPENDS:$${PN} += " xrt  (=202210.2.13.479)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-app/accelize-kv260-drmdemo-app_$(VERSION).bb
+	@echo 'RDEPENDS:$${PN} += " zocl (=202210.2.13.479)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-drmdemo-k26/accelize-drmdemo-k26_$(VERSION).bb
+	@echo 'RDEPENDS:$${PN} += " xrt  (=202210.2.13.479)"' >> $(PROJECT_PATH)/project-spec/meta-user/recipes-apps/accelize-drmdemo-k26/accelize-drmdemo-k26_$(VERSION).bb
 
 petalinux-build: check
 	@petalinux-build -p $(PROJECT_PATH)
 
 petalinux-package: check
-	@cd $(PROJECT_PATH) && petalinux-package --wic --images-dir images/linux/ --bootfiles "ramdisk.cpio.gz.u-boot,boot.scr,Image,system.dtb,system-zynqmp-sck-kv-g-revB.dtb" --disk-name "mmcblk1"
+	@cd $(PROJECT_PATH) && petalinux-package --wic --images-dir images/linux/ --bootfiles "ramdisk.cpio.gz.u-boot,boot.scr,Image,system.dtb"
 	@cd $(PROJECT_PATH) && gzip images/linux/petalinux-sdimage.wic
 
 petalinux-rpms: check
-	@rm -rf /tmp/kv260-rpms /tmp/kv260-rpms.tar.gz
-	@mkdir /tmp/kv260-rpms
-	@find $(PROJECT_PATH) -name "*.rpm" | grep "accelize" | xargs -P 0 -I {} cp {} /tmp/kv260-rpms/.
-	@find $(PROJECT_PATH) -name "*.rpm" | grep "libjsoncpp" | xargs -P 0 -I {} cp {} /tmp/kv260-rpms/.
-	@find $(PROJECT_PATH) -name "*.rpm" | grep "provencore" | xargs -P 0 -I {} cp {} /tmp/kv260-rpms/.
-	@find $(PROJECT_PATH) -name "*.rpm" | grep "pnc" | xargs -P 0 -I {} cp {} /tmp/kv260-rpms/.
-	@rm -rf /tmp/kv260-rpms/accelize-repo*
-	@tar czf /tmp/kv260-rpms-$(VERSION)-$(PR).tar.gz /tmp/kv260-rpms
-	@echo "RPM Archive is available here: /tmp/kv260-rpms-$(VERSION)-$(PR).tar.gz"
+	@rm -rf /tmp/k26-rpms /tmp/k26-rpms.tar.gz
+	@mkdir /tmp/k26-rpms
+	@find $(PROJECT_PATH) -name "*.rpm" | grep "accelize" | xargs -P 0 -I {} cp {} /tmp/k26-rpms/.
+	@find $(PROJECT_PATH) -name "*.rpm" | grep "libjsoncpp" | xargs -P 0 -I {} cp {} /tmp/k26-rpms/.
+	@find $(PROJECT_PATH) -name "*.rpm" | grep "provencore" | xargs -P 0 -I {} cp {} /tmp/k26-rpms/.
+	@find $(PROJECT_PATH) -name "*.rpm" | grep "pnc" | xargs -P 0 -I {} cp {} /tmp/k26-rpms/.
+	@rm -rf /tmp/k26-rpms/accelize-repo*
+	@tar czf /tmp/k26-rpms-$(VERSION)-$(PR).tar.gz /tmp/k26-rpms
+	@echo "RPM Archive is available here: /tmp/k26-rpms-$(VERSION)-$(PR).tar.gz"
 
 petalinux-jtag: check
-	@cd $(PROJECT_PATH) && petalinux-package --prebuilt --force --fpga project-spec/meta-user/recipes-apps/accelize-kv260-drmdemo-firmware_$(VERSION)/files/rtl_adder_pipes_xilinx_kv260.xclbin
+	@cd $(PROJECT_PATH) && petalinux-package --prebuilt --force --fpga project-spec/meta-user/recipes-apps/accelize-drmdemo-k26-firmware_$(VERSION)/files/rtl_adder_pipes_xilinx_k26.xclbin
 	@cd $(PROJECT_PATH) && petalinux-boot --jtag --prebuilt 3 --tcl jtag_boot.tcl
 	@rm -rf /tmp/jtag-pkg* && mkdir /tmp/jtag-pkg
 	@cp -f $(PROJECT_PATH)/pre-built/linux/images/bl31.elf /tmp/jtag-pkg/.

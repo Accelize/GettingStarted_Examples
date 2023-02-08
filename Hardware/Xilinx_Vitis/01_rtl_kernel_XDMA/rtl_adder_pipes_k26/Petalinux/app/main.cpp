@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     
     int inc = (argc == 2) ? atoi(argv[1]) : 10;
     int size = DATA_SIZE;
-    std::string binary_file ("/lib/firmware/xilinx/accelize-kv260-drmdemo-firmware/accelize-kv260-drmdemo-firmware.xclbin");
+    std::string binary_file ("/lib/firmware/xilinx/accelize-drmdemo-k26-firmware/accelize-drmdemo-k26-firmware.xclbin");
 
     //Allocate Memory in Host Memory
     size_t vector_size_bytes = sizeof(int) * size;
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
     
     // Create drm manager
     DrmManager *pDrmManag = new DrmManager(
-        std::string("/etc/xilinx_appstore/xlz-kv260-drmdemo/conf.json"),
+        std::string("/etc/xilinx_appstore/xlz-drmdemo-k26/conf.json"),
         std::string("/etc/xilinx_appstore/cred.json"),
         NULL,
         NULL,

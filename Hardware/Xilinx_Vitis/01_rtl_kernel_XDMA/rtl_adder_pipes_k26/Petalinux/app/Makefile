@@ -1,7 +1,7 @@
 #
 # Accelize Getting Started App Makefile
 #
-APP=accelize-kv260-drmdemo
+APP=accelize-drmdemo-k26
 
 ${APP}: main.cpp
 		$(CXX) -Wall -g -std=c++17 -Wno-unused-variable main.cpp -o ${APP} \
